@@ -63,10 +63,11 @@ struct EnhancementSettingsView: View {
                         }
                     } label: {
                         Image(systemName: "gear")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(isShowingSettings ? .accentColor : .secondary)
+                            .font(.rowTitle)
+                            .foregroundStyle(isShowingSettings ? Color.accentColor : Color.secondary)
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                     .help("Enhancement settings")
                 }
             }
@@ -90,7 +91,7 @@ struct EnhancementSettingsView: View {
                         enhancementService.deletePrompt(prompt)
                     }
                 )
-                .padding(.vertical, 8)
+                .padding(.vertical, Spacing.standard)
             } header: {
                 HStack {
                     Text("Enhancement Prompts")
@@ -102,11 +103,12 @@ struct EnhancementSettingsView: View {
                         }
                     } label: {
                         Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 18))
+                            .font(.titleEmphasis)
                             .symbolRenderingMode(.hierarchical)
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                     .help("Add new prompt")
                 }
             }
@@ -114,7 +116,7 @@ struct EnhancementSettingsView: View {
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .slidingPanel(isPresented: .init(
             get: { isPanelOpen },
             set: { newValue in
@@ -159,17 +161,17 @@ private struct ReorderablePromptGrid: View {
     @State private var draggingItem: CustomPrompt?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Spacing.comfy) {
             if enhancementService.customPrompts.isEmpty {
                 Text("No prompts available")
-                    .foregroundColor(.secondary)
-                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .font(.rowDetail)
             } else {
                 let columns = [
                     GridItem(.adaptive(minimum: 80, maximum: 100), spacing: 36)
                 ]
 
-                LazyVGrid(columns: columns, spacing: 16) {
+                LazyVGrid(columns: columns, spacing: Spacing.section) {
                     ForEach(enhancementService.customPrompts) { prompt in
                         prompt.promptIcon(
                             isSelected: selectedPromptId == prompt.id,
@@ -207,20 +209,20 @@ private struct ReorderablePromptGrid: View {
                         )
                     }
                 }
-                .padding(.vertical, 12)
-                .padding(.horizontal, 16)
+                .padding(.vertical, Spacing.comfy)
+                .padding(.horizontal, Spacing.section)
 
                 HStack {
                     Image(systemName: "info.circle")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.rowDetail)
+                    .foregroundStyle(.secondary)
 
                     Text("Double-click to edit • Right-click for more options")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.rowDetail)
+                    .foregroundStyle(.secondary)
                 }
-                .padding(.top, 8)
-                .padding(.horizontal, 16)
+                .padding(.top, Spacing.standard)
+                .padding(.horizontal, Spacing.section)
             }
         }
     }

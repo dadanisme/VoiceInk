@@ -68,28 +68,28 @@ struct PromptEditorView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Header
-            HStack(spacing: 12) {
+            HStack(spacing: Spacing.comfy) {
                 Text(isEditingPredefinedPrompt ? "Edit Trigger Words" : (mode == .add ? "New Prompt" : "Edit Prompt"))
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+                    .font(.sectionHeader)
+                    .foregroundStyle(.primary)
 
                 Spacer()
 
                 Button(action: dismissPanel) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                        .padding(6)
+                        .font(.rowDetail)
+                        .foregroundStyle(.secondary)
+                        .padding(Spacing.tight + 2)
                         .background(Color.secondary.opacity(0.1))
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
+                .contentShape(Rectangle())
                 .help("Close")
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .background(Color(NSColor.windowBackgroundColor))
+            .padding(.horizontal, Spacing.group)
+            .padding(.vertical, Spacing.section)
+            .background(Color.windowBackground)
             .overlay(
                 Divider().opacity(0.5), alignment: .bottom
             )
@@ -106,8 +106,7 @@ struct PromptEditorView: View {
                 HStack {
                     Button("Cancel") { dismissPanel() }
                         .keyboardShortcut(.escape, modifiers: [])
-                        .buttonStyle(.plain)
-                        .foregroundColor(.secondary)
+                        .buttonStyle(.bordered)
 
                     Spacer()
 
@@ -122,12 +121,12 @@ struct PromptEditorView: View {
                     .disabled(isEditingPredefinedPrompt ? false : (title.isEmpty || promptText.isEmpty))
                     .keyboardShortcut(.return, modifiers: .command)
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
-                .background(Color(NSColor.windowBackgroundColor))
+                .padding(.horizontal, Spacing.group)
+                .padding(.vertical, Spacing.section)
+                .background(Color.windowBackground)
             }
         }
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color.windowBackground)
     }
 
     // MARK: - Predefined Prompt Form
@@ -136,8 +135,8 @@ struct PromptEditorView: View {
         Form {
             Section {
                 Text("You can only customize the trigger words for system prompts.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.rowSubtitle)
+                    .foregroundStyle(.secondary)
             } header: {
                 Text("Editing: \(title)")
             }
@@ -155,20 +154,22 @@ struct PromptEditorView: View {
     private var customPromptForm: some View {
         Form {
             Section {
-                HStack(alignment: .center, spacing: 14) {
+                HStack(alignment: .center, spacing: Spacing.section - 2) {
                     Button(action: { showingIconPicker = true }) {
                         Image(systemName: selectedIcon)
-                            .font(.system(size: 22))
-                            .foregroundColor(.primary)
+                            .font(.titleEmphasis)
+                            .foregroundStyle(.primary)
                             .frame(width: 44, height: 44)
-                            .background(Color(NSColor.controlBackgroundColor))
+                            .background(Color.controlBackground)
                             .cornerRadius(10)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
+                                    .stroke(Color.separatorColor.opacity(0.6), lineWidth: 1)
                             )
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
+                    .help("Choose icon")
                     .popover(isPresented: $showingIconPicker, arrowEdge: .bottom) {
                         IconPickerPopover(selectedIcon: $selectedIcon, isPresented: $showingIconPicker)
                     }
@@ -287,9 +288,11 @@ struct TriggerWordsEditor: View {
                     Image(systemName: "plus.circle.fill")
                         .symbolRenderingMode(.hierarchical)
                         .foregroundStyle(Color.accentColor)
-                        .font(.system(size: 18))
+                        .font(.titleEmphasis)
                 }
                 .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .help("Add trigger word")
                 .disabled(newTriggerWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
 
@@ -303,8 +306,8 @@ struct TriggerWordsEditor: View {
                 }
             } else {
                 Text("No trigger words added")
-                    .font(.caption)
-                    .foregroundColor(.secondary.opacity(0.7))
+                    .font(.rowDetail)
+                    .foregroundStyle(.tertiary)
                     .italic()
             }
         }
@@ -329,29 +332,32 @@ struct TriggerWordItemView: View {
     @State private var isHovered = false
     
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: Spacing.tight) {
                 Text(word)
-                    .font(.system(size: 12))
+                    .font(.rowDetail)
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .frame(maxWidth: 120, alignment: .leading)
-                    .foregroundColor(.primary)
-            
+                    .foregroundStyle(.primary)
+
             Button(action: onDelete) {
                 Image(systemName: "xmark")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(.secondary)
+                    .font(.rowDetail)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .help("Remove")
             .padding(.leading, 2)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(Color(NSColor.controlBackgroundColor))
+        .padding(.horizontal, Spacing.standard)
+        .padding(.vertical, Spacing.tight)
+        .background(Color.controlBackground)
         .cornerRadius(4)
         .overlay(
             RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
+                .stroke(Color.separatorColor.opacity(0.6), lineWidth: 1)
         )
     }
 }
@@ -426,24 +432,25 @@ struct IconPickerPopover: View {
                     }) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(selectedIcon == icon ? Color(NSColor.windowBackgroundColor) : Color(NSColor.controlBackgroundColor))
+                                .fill(selectedIcon == icon ? Color.windowBackground : Color.controlBackground)
                                 .frame(width: 52, height: 52)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(selectedIcon == icon ? Color(NSColor.separatorColor) : Color.secondary.opacity(0.2), lineWidth: selectedIcon == icon ? 2 : 1)
+                                        .stroke(selectedIcon == icon ? Color.separatorColor : Color.separatorColor.opacity(0.6), lineWidth: selectedIcon == icon ? 2 : 1)
                                 )
-                            
+
                             Image(systemName: icon)
-                                .font(.system(size: 24, weight: .medium))
-                                .foregroundColor(.primary)
+                                .font(.titleEmphasis)
+                                .foregroundStyle(.primary)
                         }
                         .scaleEffect(selectedIcon == icon ? 1.1 : 1.0)
                         .animation(.spring(response: 0.2, dampingFraction: 0.7), value: selectedIcon == icon)
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                 }
             }
-            .padding(20)
+            .padding(Spacing.group)
         }
         .frame(width: 400, height: 400)
     }
