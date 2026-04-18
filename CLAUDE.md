@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 VoiceInk is a native macOS app (macOS 14.4+) that transcribes speech to text, optionally runs the result through an AI enhancement step, and pastes it into the frontmost app. This repo is a fork of `Beingpax/VoiceInk`; upstream does **not** accept PRs, and `origin` points at the user's fork (`dadanisme/VoiceInk`).
 
+## Git workflow
+
+**Never commit directly to `main`.** Always work on a separate feature branch (e.g. `feat/...`, `fix/...`, `chore/...`) and open a PR back to `main`. If you find yourself on `main` with changes staged or about to commit, stop and create a new branch first (`git checkout -b <branch>`).
+
 ## Build & Run
 
 The project uses a Makefile wrapper around `xcodebuild`. The most common workflow is `make local` — it builds with ad-hoc signing (no Apple Developer account required), drops the app in `~/Downloads/VoiceInk.app`, and strips quarantine attributes.
