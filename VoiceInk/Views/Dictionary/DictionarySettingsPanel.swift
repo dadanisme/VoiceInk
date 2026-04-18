@@ -7,28 +7,28 @@ struct DictionarySettingsPanel: View {
     var body: some View {
         VStack(spacing: 0) {
             // Header
-            HStack(spacing: 12) {
+            HStack(spacing: Spacing.comfy) {
                 Text("Dictionary Settings")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+                    .font(.sectionHeader)
+                    .foregroundStyle(.primary)
 
                 Spacer()
 
                 Button(action: onDismiss) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
+                        .font(.rowTitle)
+                        .foregroundStyle(.secondary)
                         .padding(6)
                         .background(Color.secondary.opacity(0.1))
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
+                .contentShape(Rectangle())
                 .help("Close")
             }
             .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .background(Color(NSColor.windowBackgroundColor))
+            .padding(.vertical, Spacing.section)
+            .background(Color.windowBackground)
             .overlay(
                 Divider().opacity(0.5), alignment: .bottom
             )

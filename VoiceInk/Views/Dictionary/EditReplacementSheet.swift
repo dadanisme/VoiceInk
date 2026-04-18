@@ -39,13 +39,13 @@ struct EditReplacementSheet: View {
     private var header: some View {
         HStack {
             Button("Cancel", role: .cancel) { dismiss() }
-                .buttonStyle(.borderless)
+                .buttonStyle(.bordered)
                 .keyboardShortcut(.escape, modifiers: [])
 
             Spacer()
 
             Text("Edit Word Replacement")
-                .font(.headline)
+                .font(.sectionHeader)
 
             Spacer()
 
@@ -56,13 +56,13 @@ struct EditReplacementSheet: View {
                 .keyboardShortcut(.return, modifiers: [])
         }
         .padding(.horizontal)
-        .padding(.vertical, 12)
-        .background(CardBackground(isSelected: false))
+        .padding(.vertical, Spacing.comfy)
+        .background(Color.controlBackground)
     }
 
     private var formContent: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: Spacing.group) {
                 descriptionSection
                 inputSection
             }
@@ -72,27 +72,27 @@ struct EditReplacementSheet: View {
 
     private var descriptionSection: some View {
         Text("Update the word or phrase that should be automatically replaced.")
-            .font(.subheadline)
-            .foregroundColor(.secondary)
+            .font(.rowSubtitle)
+            .foregroundStyle(.secondary)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
-            .padding(.top, 8)
+            .padding(.top, Spacing.standard)
     }
 
     private var inputSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: Spacing.section) {
             // Original Text Field
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text("Original Text")
-                        .font(.headline)
+                        .font(.sectionHeader)
                     Text("Required")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 TextField("Enter word or phrase to replace (use commas for multiple)", text: $originalWord)
                     .textFieldStyle(.roundedBorder)
-                
+
             }
             .padding(.horizontal)
 
@@ -100,20 +100,20 @@ struct EditReplacementSheet: View {
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text("Replacement Text")
-                        .font(.headline)
+                        .font(.sectionHeader)
                     Text("Required")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 TextEditor(text: $replacementWord)
                     .font(.body)
                     .frame(height: 100)
-                    .padding(8)
-                    .background(Color(.textBackgroundColor))
+                    .padding(Spacing.standard)
+                    .background(Color.controlBackground)
                     .cornerRadius(6)
                     .overlay(
                         RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color(.separatorColor), lineWidth: 1)
+                            .stroke(Color.separatorColor, lineWidth: 1)
                     )
             }
             .padding(.horizontal)

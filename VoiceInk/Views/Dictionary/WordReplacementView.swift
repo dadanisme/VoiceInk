@@ -59,48 +59,51 @@ struct WordReplacementView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: Spacing.group) {
             GroupBox {
                 Label {
                     Text("Define word replacements to automatically replace specific words or phrases")
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+                        .font(.rowSubtitle)
+                        .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 } icon: {
                     Button(action: { showInfoPopover.toggle() }) {
                         Image(systemName: "info.circle.fill")
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.tint)
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
+                    .help("How word replacements work")
                     .popover(isPresented: $showInfoPopover) {
                         WordReplacementInfoPopover()
                     }
                 }
             }
 
-            HStack(spacing: 8) {
+            HStack(spacing: Spacing.standard) {
                 TextField("Original text (use commas for multiple)", text: $originalWord)
                     .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 13))
+                    .font(.rowSubtitle)
 
                 Image(systemName: "arrow.right")
-                    .foregroundColor(.secondary)
-                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+                    .font(.caption2)
                     .frame(width: 10)
 
                 TextField("Replacement text", text: $replacementWord)
                     .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 13))
+                    .font(.rowSubtitle)
                     .onSubmit { addReplacement() }
 
                 if shouldShowAddButton {
                     Button(action: addReplacement) {
                         Image(systemName: "plus.circle.fill")
                             .symbolRenderingMode(.hierarchical)
-                            .foregroundStyle(.blue)
-                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.tint)
+                            .font(.sectionHeader)
                     }
-                    .buttonStyle(.borderless)
+                    .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                     .disabled(originalWord.isEmpty || replacementWord.isEmpty)
                     .help("Add word replacement")
                 }
@@ -109,48 +112,50 @@ struct WordReplacementView: View {
 
             if !wordReplacements.isEmpty {
                 VStack(spacing: 0) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: Spacing.standard) {
                         Button(action: { toggleSort(for: .original) }) {
-                            HStack(spacing: 4) {
+                            HStack(spacing: Spacing.tight) {
                                 Text("Original")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.secondary)
+                                    .font(.rowSubtitle)
+                                    .foregroundStyle(.secondary)
 
                                 if sortMode == .originalAsc || sortMode == .originalDesc {
                                     Image(systemName: sortMode == .originalAsc ? "chevron.up" : "chevron.down")
                                         .font(.caption)
-                                        .foregroundColor(.accentColor)
+                                        .foregroundStyle(Color.accentColor)
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .buttonStyle(.plain)
+                        .contentShape(Rectangle())
                         .help("Sort by original")
 
                         Image(systemName: "arrow.right")
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 10))
+                            .foregroundStyle(.secondary)
+                            .font(.caption2)
                             .frame(width: 10)
 
                         Button(action: { toggleSort(for: .replacement) }) {
-                            HStack(spacing: 4) {
+                            HStack(spacing: Spacing.tight) {
                                 Text("Replacement")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.secondary)
+                                    .font(.rowSubtitle)
+                                    .foregroundStyle(.secondary)
 
                                 if sortMode == .replacementAsc || sortMode == .replacementDesc {
                                     Image(systemName: sortMode == .replacementAsc ? "chevron.up" : "chevron.down")
                                         .font(.caption)
-                                        .foregroundColor(.accentColor)
+                                        .foregroundStyle(Color.accentColor)
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .buttonStyle(.plain)
+                        .contentShape(Rectangle())
                         .help("Sort by replacement")
                     }
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Spacing.tight)
+                    .padding(.vertical, Spacing.standard)
 
                     Divider()
 
@@ -172,7 +177,7 @@ struct WordReplacementView: View {
                     }
                     .frame(maxHeight: 300)
                 }
-                .padding(.top, 4)
+                .padding(.top, Spacing.tight)
             }
         }
         .padding()
@@ -214,80 +219,80 @@ struct WordReplacementView: View {
 
 struct WordReplacementInfoPopover: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: Spacing.section) {
             Text("How to use Word Replacements")
-                .font(.headline)
+                .font(.sectionHeader)
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: Spacing.standard) {
                 Text("Separate multiple originals with commas:")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.rowSubtitle)
+                    .foregroundStyle(.secondary)
 
                 Text("Voicing, Voice ink, Voiceing")
                     .font(.callout)
-                    .padding(8)
+                    .padding(Spacing.standard)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(.textBackgroundColor))
+                    .background(Color.controlBackground)
                     .cornerRadius(6)
             }
 
             Divider()
 
             Text("Examples")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+                .font(.rowSubtitle)
+                .foregroundStyle(.secondary)
 
-            VStack(spacing: 12) {
-                HStack(spacing: 8) {
-                    VStack(alignment: .leading, spacing: 4) {
+            VStack(spacing: Spacing.comfy) {
+                HStack(spacing: Spacing.standard) {
+                    VStack(alignment: .leading, spacing: Spacing.tight) {
                         Text("Original:")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                         Text("my website link")
                             .font(.callout)
                     }
 
                     Image(systemName: "arrow.right")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
 
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: Spacing.tight) {
                         Text("Replacement:")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                         Text("https://tryvoiceink.com")
                             .font(.callout)
                     }
                 }
                 .padding(10)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(.textBackgroundColor))
+                .background(Color.controlBackground)
                 .cornerRadius(6)
 
-                HStack(spacing: 8) {
-                    VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: Spacing.standard) {
+                    VStack(alignment: .leading, spacing: Spacing.tight) {
                         Text("Original:")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                         Text("Voicing, Voice ink")
                             .font(.callout)
                     }
 
                     Image(systemName: "arrow.right")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
 
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: Spacing.tight) {
                         Text("Replacement:")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                         Text("VoiceInk")
                             .font(.callout)
                     }
                 }
                 .padding(10)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(.textBackgroundColor))
+                .background(Color.controlBackground)
                 .cornerRadius(6)
             }
         }
@@ -305,20 +310,20 @@ struct ReplacementRow: View {
     @State private var isDeleteHovered = false
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Spacing.standard) {
             Text(original)
-                .font(.system(size: 13))
+                .font(.rowSubtitle)
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Image(systemName: "arrow.right")
-                .foregroundColor(.secondary)
-                .font(.system(size: 10))
+                .foregroundStyle(.secondary)
+                .font(.caption2)
                 .frame(width: 10)
 
             ZStack(alignment: .trailing) {
                 Text(replacement)
-                    .font(.system(size: 13))
+                    .font(.rowSubtitle)
                     .lineLimit(2)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.trailing, 50)
@@ -327,10 +332,11 @@ struct ReplacementRow: View {
                     Button(action: onEdit) {
                         Image(systemName: "pencil.circle.fill")
                             .symbolRenderingMode(.hierarchical)
-                            .foregroundColor(isEditHovered ? .accentColor : .secondary)
+                            .foregroundStyle(isEditHovered ? Color.accentColor : .secondary)
                             .contentTransition(.symbolEffect(.replace))
                     }
-                    .buttonStyle(.borderless)
+                    .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                     .help("Edit replacement")
                     .onHover { hover in
                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -344,7 +350,8 @@ struct ReplacementRow: View {
                             .foregroundStyle(isDeleteHovered ? .red : .secondary)
                             .contentTransition(.symbolEffect(.replace))
                     }
-                    .buttonStyle(.borderless)
+                    .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                     .help("Remove replacement")
                     .onHover { hover in
                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -355,7 +362,7 @@ struct ReplacementRow: View {
             }
             .frame(maxWidth: .infinity)
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 4)
+        .padding(.vertical, Spacing.standard)
+        .padding(.horizontal, Spacing.tight)
     }
-} 
+}

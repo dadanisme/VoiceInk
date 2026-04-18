@@ -43,33 +43,34 @@ struct VocabularyView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: Spacing.group) {
             GroupBox {
                 Label {
                     Text("Add words to help VoiceInk recognize them properly. (Requires AI enhancement)")
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+                        .font(.rowSubtitle)
+                        .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 } icon: {
                     Image(systemName: "info.circle.fill")
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.tint)
                 }
             }
 
-            HStack(spacing: 8) {
+            HStack(spacing: Spacing.standard) {
                 TextField("Add word to vocabulary", text: $newWord)
                     .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 13))
+                    .font(.rowSubtitle)
                     .onSubmit { addWords() }
 
                 if shouldShowAddButton {
                     Button(action: addWords) {
                         Image(systemName: "plus.circle.fill")
                             .symbolRenderingMode(.hierarchical)
-                            .foregroundStyle(.blue)
-                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.tint)
+                            .font(.sectionHeader)
                     }
-                    .buttonStyle(.borderless)
+                    .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                     .disabled(newWord.isEmpty)
                     .help("Add word")
                 }
@@ -77,34 +78,35 @@ struct VocabularyView: View {
             .animation(.easeInOut(duration: 0.2), value: shouldShowAddButton)
 
             if !vocabularyWords.isEmpty {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: Spacing.comfy) {
                     Button(action: toggleSort) {
-                        HStack(spacing: 4) {
+                        HStack(spacing: Spacing.tight) {
                             Text("Vocabulary Words (\(vocabularyWords.count))")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.secondary)
+                                .font(.rowSubtitle)
+                                .foregroundStyle(.secondary)
 
                             Image(systemName: sortMode == .wordAsc ? "chevron.up" : "chevron.down")
                                 .font(.caption)
-                                .foregroundColor(.accentColor)
+                                .foregroundStyle(Color.accentColor)
                         }
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                     .help("Sort alphabetically")
 
                     ScrollView {
-                        FlowLayout(spacing: 8) {
+                        FlowLayout(spacing: Spacing.standard) {
                             ForEach(sortedItems) { item in
                                 VocabularyWordView(item: item) {
                                     removeWord(item)
                                 }
                             }
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, Spacing.tight)
                     }
                     .frame(maxHeight: 200)
                 }
-                .padding(.top, 4)
+                .padding(.top, Spacing.tight)
             }
         }
         .padding()
@@ -114,7 +116,7 @@ struct VocabularyView: View {
             Text(alertMessage)
         }
     }
-    
+
     private func addWords() {
         let input = newWord.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !input.isEmpty else { return }
@@ -148,9 +150,9 @@ struct VocabularyWordView: View {
     var body: some View {
         HStack(spacing: 6) {
             Text(item.word)
-                .font(.system(size: 13))
+                .font(.rowSubtitle)
                 .lineLimit(1)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
 
             Button(action: onDelete) {
                 Image(systemName: "xmark.circle.fill")
@@ -158,7 +160,8 @@ struct VocabularyWordView: View {
                     .foregroundStyle(isDeleteHovered ? .red : .secondary)
                     .contentTransition(.symbolEffect(.replace))
             }
-            .buttonStyle(.borderless)
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
             .help("Remove word")
             .onHover { hover in
                 withAnimation(.easeInOut(duration: 0.2)) {
@@ -166,16 +169,15 @@ struct VocabularyWordView: View {
                 }
             }
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, Spacing.standard)
         .padding(.vertical, 6)
         .background {
             RoundedRectangle(cornerRadius: 6)
-                .fill(Color(.windowBackgroundColor).opacity(0.4))
+                .fill(Color.windowBackground.opacity(0.4))
         }
         .overlay {
             RoundedRectangle(cornerRadius: 6)
-                .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
+                .stroke(Color.separatorColor.opacity(0.6), lineWidth: 1)
         }
-        .shadow(color: Color.black.opacity(0.05), radius: 2, y: 1)
     }
-} 
+}

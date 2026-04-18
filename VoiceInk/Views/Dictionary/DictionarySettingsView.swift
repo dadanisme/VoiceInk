@@ -38,7 +38,7 @@ struct DictionarySettingsView: View {
             }
         }
         .frame(minWidth: 600, minHeight: 500)
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .slidingPanel(isPresented: $isShowingSettings, width: 400) {
             DictionarySettingsPanel {
                 withAnimation(.smooth(duration: 0.3)) {
@@ -62,16 +62,15 @@ struct DictionarySettingsView: View {
             sectionSelector
             selectedSectionContent
         }
-        .padding(.horizontal, 32)
+        .padding(.horizontal, Spacing.page)
         .padding(.vertical, 40)
     }
-    
+
     private var sectionSelector: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: Spacing.group) {
             HStack {
                 Text("Select Section")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .font(.titleEmphasis)
 
                 Spacer()
 
@@ -81,14 +80,15 @@ struct DictionarySettingsView: View {
                     }
                 } label: {
                     Image(systemName: "gear")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(isShowingSettings ? .accentColor : .secondary)
+                        .font(.sectionHeader)
+                        .foregroundStyle(isShowingSettings ? Color.accentColor : .secondary)
                 }
                 .buttonStyle(.plain)
+                .contentShape(Rectangle())
                 .help("Dictionary settings")
             }
 
-            HStack(spacing: 20) {
+            HStack(spacing: Spacing.group) {
                 ForEach(DictionarySection.allCases, id: \.self) { section in
                     SectionCard(
                         section: section,
@@ -99,16 +99,18 @@ struct DictionarySettingsView: View {
             }
         }
     }
-    
+
     private var selectedSectionContent: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: Spacing.group) {
             switch selectedSection {
             case .spellings:
-                VocabularyView(whisperPrompt: whisperPrompt)
-                    .background(CardBackground(isSelected: false))
+                SurfaceCard {
+                    VocabularyView(whisperPrompt: whisperPrompt)
+                }
             case .replacements:
-                WordReplacementView()
-                    .background(CardBackground(isSelected: false))
+                SurfaceCard {
+                    WordReplacementView()
+                }
             }
         }
     }
@@ -118,29 +120,31 @@ struct SectionCard: View {
     let section: DictionarySettingsView.DictionarySection
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 12) {
-                Image(systemName: section.icon)
-                    .font(.system(size: 28))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(isSelected ? .blue : .secondary)
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(section.rawValue)
-                        .font(.headline)
-                    
-                    Text(section.description)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+            SurfaceCard(style: isSelected ? .selected : .plain) {
+                VStack(alignment: .leading, spacing: Spacing.comfy) {
+                    Image(systemName: section.icon)
+                        .font(.system(size: 28))
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(isSelected ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
+
+                    VStack(alignment: .leading, spacing: Spacing.tight) {
+                        Text(section.rawValue)
+                            .font(.sectionHeader)
+
+                        Text(section.description)
+                            .font(.rowSubtitle)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
-            .background(CardBackground(isSelected: isSelected))
         }
         .buttonStyle(.plain)
+        .contentShape(Rectangle())
     }
-} 
+}
+

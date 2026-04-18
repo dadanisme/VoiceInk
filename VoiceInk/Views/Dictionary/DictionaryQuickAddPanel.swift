@@ -169,8 +169,8 @@ struct DictionaryQuickAddView: View {
             if let errorMessage {
                 Text(errorMessage)
                     .font(.caption)
-                    .foregroundColor(.red)
-                    .padding(.horizontal, 16)
+                    .foregroundStyle(.red)
+                    .padding(.horizontal, Spacing.section)
                     .padding(.bottom, 6)
             }
             Divider().opacity(0.4)
@@ -209,16 +209,16 @@ struct DictionaryQuickAddView: View {
     // MARK: - Mode Bar
 
     private var modeBar: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: Spacing.tight) {
             ForEach(Mode.allCases, id: \.self) { m in
                 Button {
                     withAnimation(.easeInOut(duration: 0.15)) { mode = m }
                 } label: {
                     HStack(spacing: 5) {
                         Image(systemName: m.icon)
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.caption2)
                         Text(m.label)
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.rowSubtitle)
                     }
                     .foregroundStyle(mode == m ? .primary : .secondary)
                     .padding(.horizontal, 10)
@@ -229,6 +229,8 @@ struct DictionaryQuickAddView: View {
                     )
                 }
                 .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .help(m.label)
             }
             Spacer()
         }
@@ -250,46 +252,46 @@ struct DictionaryQuickAddView: View {
     private var vocabularyInput: some View {
         HStack(spacing: 11) {
             Image(systemName: "character.book.closed.fill")
-                .font(.system(size: 14))
+                .font(.rowTitle)
                 .foregroundStyle(.secondary)
-            TextField("", text: $wordInput, prompt: Text("e.g. Prakash, VoiceInk").foregroundColor(.secondary))
+            TextField("", text: $wordInput, prompt: Text("e.g. Prakash, VoiceInk").foregroundStyle(.secondary))
                 .textFieldStyle(.roundedBorder)
-                .font(.system(size: 14))
+                .font(.rowTitle)
                 .focused($focusedField, equals: .word)
                 .onSubmit { submitVocabulary() }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, Spacing.section)
         .padding(.vertical, 14)
     }
 
     private var replacementInputView: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: Spacing.standard) {
             HStack(spacing: 10) {
                 Text("Replace")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.rowSubtitle)
                     .foregroundStyle(.secondary)
                     .frame(width: 56, alignment: .trailing)
-                TextField("", text: $originalInput, prompt: Text("e.g. my email, my mail").foregroundColor(.secondary))
+                TextField("", text: $originalInput, prompt: Text("e.g. my email, my mail").foregroundStyle(.secondary))
                     .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 14))
+                    .font(.rowTitle)
                     .focused($focusedField, equals: .original)
                     .onSubmit { focusedField = .replacement }
             }
 
             HStack(spacing: 10) {
                 Text("With")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.rowSubtitle)
                     .foregroundStyle(.secondary)
                     .frame(width: 56, alignment: .trailing)
-                TextField("", text: $replacementInput, prompt: Text("e.g. prakashjoshipax@gmail.com").foregroundColor(.secondary))
+                TextField("", text: $replacementInput, prompt: Text("e.g. prakashjoshipax@gmail.com").foregroundStyle(.secondary))
                     .textFieldStyle(.roundedBorder)
-                    .font(.system(size: 14))
+                    .font(.rowTitle)
                     .focused($focusedField, equals: .replacement)
                     .onSubmit { submitReplacement() }
             }
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .padding(.vertical, Spacing.comfy)
     }
 
     // MARK: - Hint Bar
@@ -298,22 +300,22 @@ struct DictionaryQuickAddView: View {
         HStack {
             Spacer()
             HStack(spacing: 14) {
-                HStack(spacing: 4) {
+                HStack(spacing: Spacing.tight) {
                     KeyHint("↵")
                     Text("Add")
-                        .font(.system(size: 11))
+                        .font(.caption)
                         .foregroundStyle(.tertiary)
                 }
-                HStack(spacing: 4) {
+                HStack(spacing: Spacing.tight) {
                     KeyHint("esc")
                     Text("Dismiss")
-                        .font(.system(size: 11))
+                        .font(.caption)
                         .foregroundStyle(.tertiary)
                 }
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(.horizontal, Spacing.section)
+        .padding(.vertical, Spacing.standard)
     }
 
     // MARK: - Actions
@@ -348,16 +350,16 @@ private struct KeyHint: View {
 
     var body: some View {
         Text(label)
-            .font(.system(size: 10, weight: .medium))
+            .font(.caption2)
             .foregroundStyle(.secondary)
             .padding(.horizontal, 5)
             .padding(.vertical, 2)
             .background(
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(Color(NSColor.controlBackgroundColor).opacity(0.7))
+                    .fill(Color.controlBackground.opacity(0.7))
                     .overlay(
                         RoundedRectangle(cornerRadius: 4)
-                            .strokeBorder(Color.secondary.opacity(0.2), lineWidth: 0.5)
+                            .strokeBorder(Color.separatorColor.opacity(0.6), lineWidth: 0.5)
                     )
             )
     }
