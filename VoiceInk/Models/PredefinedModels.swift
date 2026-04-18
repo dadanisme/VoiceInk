@@ -138,6 +138,28 @@ import Foundation
             ramUsage: 0.8,
             supportedLanguages: getLanguageDictionary(isMultilingual: true, provider: .fluidAudio)
         ),
+        FluidAudioModel(
+            name: "nemotron-streaming-0.6b",
+            displayName: "Nemotron 0.6B (Real-time)",
+            description: "NVIDIA Nemotron Speech Streaming 0.6B — on-device, real-time English transcription. Batch transcription falls back to Parakeet V3.",
+            family: .nemotronStreaming,
+            size: "~600 MB per chunk-size variant",
+            speed: 0.99,
+            accuracy: 0.95,
+            ramUsage: 0.9,
+            supportedLanguages: getLanguageDictionary(isMultilingual: false, provider: .fluidAudio)
+        ),
+        FluidAudioModel(
+            name: "parakeet-eou-120m",
+            displayName: "Parakeet EOU 120M (Real-time)",
+            description: "NVIDIA Parakeet Real-time EOU 120M — on-device, real-time English transcription with end-of-utterance detection. Batch transcription falls back to Parakeet V3.",
+            family: .parakeetEou,
+            size: "~150 MB per chunk-size variant",
+            speed: 0.99,
+            accuracy: 0.93,
+            ramUsage: 0.5,
+            supportedLanguages: getLanguageDictionary(isMultilingual: false, provider: .fluidAudio)
+        ),
 
          // Local Models
          LocalModel(
