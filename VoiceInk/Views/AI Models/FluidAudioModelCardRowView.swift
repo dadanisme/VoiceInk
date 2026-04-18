@@ -23,36 +23,37 @@ struct FluidAudioModelCardRowView: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
-            VStack(alignment: .leading, spacing: 6) {
-                headerSection
-                metadataSection
-                descriptionSection
-                if model.family == .nemotronStreaming || model.family == .parakeetEou {
-                    chunkSizePicker
-                        .padding(.top, 4)
+        SurfaceCard(style: isCurrent ? .selected : .plain) {
+            HStack(alignment: .top, spacing: Spacing.section) {
+                VStack(alignment: .leading, spacing: Spacing.standard) {
+                    headerSection
+                    metadataSection
+                    descriptionSection
+                    if model.family == .nemotronStreaming || model.family == .parakeetEou {
+                        chunkSizePicker
+                            .padding(.top, Spacing.tight)
+                    }
+                    progressSection
                 }
-                progressSection
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            actionSection
+                actionSection
+            }
         }
-        .padding(16)
-        .background(CardBackground(isSelected: isCurrent, useAccentGradientWhenSelected: isCurrent))
     }
 
     private var headerSection: some View {
         HStack(alignment: .firstTextBaseline) {
             Text(model.displayName)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(Color(.labelColor))
+                .font(.rowTitle)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
 
             statusBadge
             if model.family == .nemotronStreaming || model.family == .parakeetEou {
                 Text("Real-time only")
                     .font(.caption2.weight(.medium))
-                    .padding(.horizontal, 6)
+                    .padding(.horizontal, Spacing.standard)
                     .padding(.vertical, 2)
                     .background(Color.accentColor.opacity(0.15))
                     .foregroundStyle(Color.accentColor)
@@ -66,24 +67,26 @@ struct FluidAudioModelCardRowView: View {
         Group {
             if isCurrent {
                 Text("Default")
-                    .font(.system(size: 11, weight: .medium))
-                    .padding(.horizontal, 6)
+                    .font(.rowDetail)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, Spacing.standard)
                     .padding(.vertical, 2)
                     .background(Capsule().fill(Color.accentColor))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.primary)
             } else if isDownloaded {
                 Text("Downloaded")
-                    .font(.system(size: 11, weight: .medium))
-                    .padding(.horizontal, 6)
+                    .font(.rowDetail)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, Spacing.standard)
                     .padding(.vertical, 2)
-                    .background(Capsule().fill(Color(.quaternaryLabelColor)))
-                    .foregroundColor(Color(.labelColor))
+                    .background(Capsule().fill(Color.labelQuaternary))
+                    .foregroundStyle(.primary)
             }
         }
     }
 
     private var metadataSection: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: Spacing.comfy) {
             Label(model.language, systemImage: "globe")
             Label(model.size, systemImage: "internaldrive")
             HStack(spacing: 3) {
@@ -97,16 +100,16 @@ struct FluidAudioModelCardRowView: View {
             }
             .fixedSize(horizontal: true, vertical: false)
         }
-        .font(.system(size: 11))
-        .foregroundColor(Color(.secondaryLabelColor))
+        .font(.rowDetail)
+        .foregroundStyle(.secondary)
         .lineLimit(1)
     }
 
     private var descriptionSection: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: Spacing.tight) {
             Text(model.description)
-                .font(.system(size: 11))
-                .foregroundColor(Color(.secondaryLabelColor))
+                .font(.rowDetail)
+                .foregroundStyle(.secondary)
                 .lineLimit(2)
                 .fixedSize(horizontal: false, vertical: true)
             if model.family == .nemotronStreaming || model.family == .parakeetEou {
@@ -115,12 +118,12 @@ struct FluidAudioModelCardRowView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .padding(.top, 4)
+        .padding(.top, Spacing.tight)
     }
 
     @ViewBuilder
     private var chunkSizePicker: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Spacing.standard) {
             Text("Chunk size")
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -159,17 +162,17 @@ struct FluidAudioModelCardRowView: View {
                 ProgressView(value: progress)
                     .progressViewStyle(LinearProgressViewStyle())
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 8)
+                    .padding(.top, Spacing.standard)
             }
         }
     }
 
     private var actionSection: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Spacing.standard) {
             if isCurrent {
                 Text("Default Model")
-                    .font(.system(size: 12))
-                    .foregroundColor(Color(.secondaryLabelColor))
+                    .font(.rowSubtitle)
+                    .foregroundStyle(.secondary)
             } else if isDownloaded {
                 Button(action: {
                     Task {
@@ -177,7 +180,7 @@ struct FluidAudioModelCardRowView: View {
                     }
                 }) {
                     Text("Set as Default")
-                        .font(.system(size: 12))
+                        .font(.rowSubtitle)
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
@@ -187,17 +190,13 @@ struct FluidAudioModelCardRowView: View {
                         await fluidAudioModelManager.downloadFluidAudioModel(model)
                     }
                 }) {
-                    HStack(spacing: 4) {
+                    HStack(spacing: Spacing.tight) {
                         Text(isDownloading ? "Downloading..." : "Download")
                         Image(systemName: "arrow.down.circle")
                     }
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Capsule().fill(Color.accentColor))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
                 .disabled(isDownloading)
             }
 
@@ -222,11 +221,12 @@ struct FluidAudioModelCardRowView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
-                        .font(.system(size: 14))
+                        .font(.rowTitle)
                 }
                 .menuStyle(.borderlessButton)
                 .menuIndicator(.hidden)
                 .frame(width: 20, height: 20)
+                .help("More actions")
             }
         }
     }

@@ -149,7 +149,7 @@ struct LanguageSelectionView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .cornerRadius(10)
     }
 
@@ -188,7 +188,7 @@ struct LanguageSelectionView: View {
                     HStack {
                         Text("Language: \(currentLanguageDisplayName())")
                         Image(systemName: "chevron.up.chevron.down")
-                            .font(.system(size: 10))
+                            .font(.rowDetail)
                     }
                 }
             } else {

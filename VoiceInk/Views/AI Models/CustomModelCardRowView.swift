@@ -8,111 +8,114 @@ struct CustomModelCardView: View {
     var setDefaultAction: () -> Void
     var deleteAction: () -> Void
     var editAction: (CustomCloudModel) -> Void
-    
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Main card content
-            HStack(alignment: .top, spacing: 16) {
-                VStack(alignment: .leading, spacing: 6) {
-                    headerSection
-                    metadataSection
-                    descriptionSection
+        SurfaceCard(style: isCurrent ? .selected : .plain) {
+            VStack(alignment: .leading, spacing: 0) {
+                // Main card content
+                HStack(alignment: .top, spacing: Spacing.section) {
+                    VStack(alignment: .leading, spacing: Spacing.standard) {
+                        headerSection
+                        metadataSection
+                        descriptionSection
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    actionSection
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                actionSection
             }
-            .padding(16)
         }
-        .background(CardBackground(isSelected: isCurrent, useAccentGradientWhenSelected: isCurrent))
     }
-    
+
     private var headerSection: some View {
         HStack(alignment: .firstTextBaseline) {
             Text(model.displayName)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(Color(.labelColor))
-            
+                .font(.rowTitle)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+
             statusBadge
-            
+
             Spacer()
         }
     }
-    
+
     private var statusBadge: some View {
         Group {
             if isCurrent {
                 Text("Default")
-                    .font(.system(size: 11, weight: .medium))
-                    .padding(.horizontal, 6)
+                    .font(.rowDetail)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, Spacing.standard)
                     .padding(.vertical, 2)
                     .background(Capsule().fill(Color.accentColor))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.primary)
             } else {
                 Text("Custom")
-                    .font(.system(size: 11, weight: .medium))
-                    .padding(.horizontal, 6)
+                    .font(.rowDetail)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, Spacing.standard)
                     .padding(.vertical, 2)
-                    .background(Capsule().fill(Color.orange.opacity(0.2)))
-                    .foregroundColor(Color.orange)
+                    .background(Capsule().fill(Color.accentColor.opacity(0.2)))
+                    .foregroundStyle(Color.accentColor)
             }
         }
     }
-    
+
     private var metadataSection: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: Spacing.comfy) {
             // Provider
             Label("Custom Provider", systemImage: "cloud")
-                .font(.system(size: 11))
-                .foregroundColor(Color(.secondaryLabelColor))
+                .font(.rowDetail)
+                .foregroundStyle(.secondary)
                 .lineLimit(1)
-            
+
             // Language
             Label(model.language, systemImage: "globe")
-                .font(.system(size: 11))
-                .foregroundColor(Color(.secondaryLabelColor))
+                .font(.rowDetail)
+                .foregroundStyle(.secondary)
                 .lineLimit(1)
-            
+
             // OpenAI Compatible
             Label("OpenAI Compatible", systemImage: "checkmark.seal")
-                .font(.system(size: 11))
-                .foregroundColor(Color(.secondaryLabelColor))
+                .font(.rowDetail)
+                .foregroundStyle(.secondary)
                 .lineLimit(1)
         }
         .lineLimit(1)
     }
-    
+
     private var descriptionSection: some View {
         Text(model.description)
-            .font(.system(size: 11))
-            .foregroundColor(Color(.secondaryLabelColor))
+            .font(.rowDetail)
+            .foregroundStyle(.secondary)
             .lineLimit(2)
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.top, 4)
+            .padding(.top, Spacing.tight)
     }
-    
+
     private var actionSection: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Spacing.standard) {
             if isCurrent {
                 Text("Default Model")
-                    .font(.system(size: 12))
-                    .foregroundColor(Color(.secondaryLabelColor))
+                    .font(.rowSubtitle)
+                    .foregroundStyle(.secondary)
             } else {
                 Button(action: setDefaultAction) {
                     Text("Set as Default")
-                        .font(.system(size: 12))
+                        .font(.rowSubtitle)
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
             }
-            
+
             Menu {
                 Button {
                     editAction(model)
                 } label: {
                     Label("Edit Model", systemImage: "pencil")
                 }
-                
+
                 Button(role: .destructive) {
                     deleteAction()
                 } label: {
@@ -120,11 +123,12 @@ struct CustomModelCardView: View {
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
-                    .font(.system(size: 14))
+                    .font(.rowTitle)
             }
             .menuStyle(.borderlessButton)
             .menuIndicator(.hidden)
             .frame(width: 20, height: 20)
+            .help("More actions")
         }
     }
 }

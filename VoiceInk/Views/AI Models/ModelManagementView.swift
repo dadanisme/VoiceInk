@@ -42,7 +42,7 @@ struct ModelManagementView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: Spacing.group) {
                 if SystemArchitecture.isIntelMac {
                     intelMacWarningBanner
                 }
@@ -51,10 +51,10 @@ struct ModelManagementView: View {
                 languageSelectionSection
                 availableModelsSection
             }
-            .padding(40)
+            .padding(Spacing.page)
         }
         .frame(minWidth: 600, minHeight: 500)
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .slidingPanel(isPresented: $isShowingSettings, width: settingsPanelWidth) {
             settingsPanelContent
         }
@@ -71,28 +71,27 @@ struct ModelManagementView: View {
     private var settingsPanelContent: some View {
         VStack(spacing: 0) {
             // Header
-            HStack(spacing: 12) {
+            HStack(spacing: Spacing.comfy) {
                 Text("Model Settings")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+                    .font(.sectionHeader)
+                    .foregroundStyle(.primary)
 
                 Spacer()
 
                 Button(action: { closeSettings() }) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .padding(6)
                         .background(Color.secondary.opacity(0.1))
                         .clipShape(Circle())
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .help("Close")
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .background(Color(NSColor.windowBackgroundColor))
+            .padding(.horizontal, Spacing.group)
+            .padding(.vertical, Spacing.section)
+            .background(Color.windowBackground)
             .overlay(
                 Divider().opacity(0.5), alignment: .bottom
             )
@@ -103,18 +102,16 @@ struct ModelManagementView: View {
     }
     
     private var defaultModelSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Default Model")
-                .font(.headline)
-                .foregroundColor(.secondary)
-            Text(transcriptionModelManager.currentTranscriptionModel?.displayName ?? "No model selected")
-                .font(.title2)
-                .fontWeight(.bold)
+        SurfaceCard {
+            VStack(alignment: .leading, spacing: Spacing.standard) {
+                Text("Default Model")
+                    .font(.sectionHeader)
+                    .foregroundStyle(.secondary)
+                Text(transcriptionModelManager.currentTranscriptionModel?.displayName ?? "No model selected")
+                    .font(.titleEmphasis)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CardBackground(isSelected: false))
-        .cornerRadius(10)
     }
 
     private var languageSelectionSection: some View {
@@ -122,50 +119,37 @@ struct ModelManagementView: View {
     }
     
     private var availableModelsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: Spacing.section) {
             HStack {
                 // Modern compact pill switcher
-                HStack(spacing: 12) {
-                    ForEach(ModelFilter.allCases, id: \.self) { filter in
-                        Button(action: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                selectedFilter = filter
-                                isShowingSettings = false
-                            }
-                        }) {
-                            Text(filter.rawValue)
-                                .font(.system(size: 14, weight: selectedFilter == filter ? .semibold : .medium))
-                                .foregroundColor(selectedFilter == filter ? .primary : .primary.opacity(0.7))
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .background(
-                                    CardBackground(isSelected: selectedFilter == filter, cornerRadius: 22)
-                                )
-                        }
-                        .buttonStyle(PlainButtonStyle())
+                Picker("Filter", selection: $selectedFilter) {
+                    ForEach(ModelFilter.allCases) { filter in
+                        Text(filter.rawValue).tag(filter)
                     }
                 }
-                
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .onChange(of: selectedFilter) { _, _ in
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        isShowingSettings = false
+                    }
+                }
+
                 Spacer()
-                
+
                 Button(action: {
                     withAnimation(.smooth(duration: 0.3)) {
                         isShowingSettings.toggle()
                     }
                 }) {
                     Image(systemName: "gear")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(isShowingSettings ? .accentColor : .primary.opacity(0.7))
-                        .padding(12)
-                        .background(
-                            CardBackground(isSelected: isShowingSettings, cornerRadius: 22)
-                        )
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.bordered)
+                .help("Model settings")
             }
-            .padding(.bottom, 12)
+            .padding(.bottom, Spacing.comfy)
             
-            VStack(spacing: 12) {
+            VStack(spacing: Spacing.comfy) {
                     ForEach(filteredModels, id: \.id) { model in
                         let isWarming = (model as? LocalModel).map { localModel in
                             warmupCoordinator.isWarming(modelNamed: localModel.name)
@@ -218,19 +202,16 @@ struct ModelManagementView: View {
                     
                     // Import button as a card at the end of the Local list
                     if selectedFilter == .local {
-                        HStack(spacing: 8) {
+                        HStack(spacing: Spacing.standard) {
                             Button(action: { presentImportPanel() }) {
-                                HStack(spacing: 8) {
+                                HStack(spacing: Spacing.standard) {
                                     Image(systemName: "square.and.arrow.down")
                                     Text("Import Local Model…")
-                                        .font(.system(size: 12, weight: .semibold))
                                 }
                                 .frame(maxWidth: .infinity)
-                                .padding(16)
-                                .background(CardBackground(isSelected: false))
-                                .cornerRadius(10)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.bordered)
+                            .controlSize(.large)
 
                             InfoTip(
                                 "Add a custom fine-tuned whisper model to use with VoiceInk. Select the downloaded .bin file.",
@@ -239,16 +220,15 @@ struct ModelManagementView: View {
                             .help("Read more about custom local models")
                         }
                     }
-                    
+
                     if selectedFilter == .custom {
-                        HStack(spacing: 6) {
+                        HStack(spacing: Spacing.standard) {
                             Image(systemName: "info.circle")
-                                .font(.system(size: 12))
                             Text("Only OpenAI-compatible transcription APIs are supported.")
-                                .font(.system(size: 12))
                         }
-                        .foregroundColor(.secondary)
-                        .padding(.bottom, 4)
+                        .font(.rowSubtitle)
+                        .foregroundStyle(.secondary)
+                        .padding(.bottom, Spacing.tight)
 
                         AddCustomModelCardView(
                             customModelManager: customModelManager,
@@ -267,14 +247,13 @@ struct ModelManagementView: View {
 
 
     private var intelMacWarningBanner: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Spacing.comfy) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.orange)
+                .foregroundStyle(.orange)
 
             Text("Local models don't work reliably on Intel Macs")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundColor(.primary.opacity(0.85))
+                .font(.rowSubtitle)
+                .foregroundStyle(.primary)
 
             Spacer()
 
@@ -283,22 +262,16 @@ struct ModelManagementView: View {
                     selectedFilter = .cloud
                 }
             }) {
-                HStack(spacing: 4) {
+                HStack(spacing: Spacing.tight) {
                     Text("Use Cloud")
-                        .font(.system(size: 12, weight: .semibold))
                     Image(systemName: "arrow.right")
-                        .font(.system(size: 10, weight: .bold))
                 }
-                .foregroundColor(.orange)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Color.orange.opacity(0.12))
-                .cornerRadius(6)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.bordered)
+            .controlSize(.small)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
+        .padding(.horizontal, Spacing.section)
+        .padding(.vertical, Spacing.comfy)
         .background(Color.orange.opacity(0.08))
         .cornerRadius(8)
     }

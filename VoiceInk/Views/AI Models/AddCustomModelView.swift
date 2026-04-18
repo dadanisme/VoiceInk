@@ -4,18 +4,18 @@ struct AddCustomModelCardView: View {
     @ObservedObject var customModelManager: CustomModelManager
     var onModelAdded: () -> Void
     var editingModel: CustomCloudModel? = nil
-    
+
     @State private var isExpanded = false
     @State private var displayName = ""
     @State private var apiEndpoint = ""
     @State private var apiKey = ""
     @State private var modelName = ""
     @State private var isMultilingual = true
-    
+
     @State private var validationErrors: [String] = []
     @State private var showingAlert = false
     @State private var isSaving = false
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Simple Add Model Button
@@ -41,125 +41,101 @@ struct AddCustomModelCardView: View {
                         }
                     }
                 }) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: Spacing.standard) {
                         Image(systemName: "plus")
-                            .font(.system(size: 14, weight: .medium))
                         Text(editingModel != nil ? "Edit Model" : "Add Model")
-                            .font(.system(size: 14, weight: .semibold))
                     }
-                    .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(Color.accentColor)
-                    .cornerRadius(12)
                 }
-                .buttonStyle(.plain)
-                .shadow(color: Color.accentColor.opacity(0.3), radius: 8, y: 4)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
             }
-            
+
             // Expandable Form Section
             if isExpanded {
-                VStack(alignment: .leading, spacing: 20) {
-                    // Header
-                    HStack {
-                        Text(editingModel != nil ? "Edit Custom Model" : "Add Custom Model")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            withAnimation(.interpolatingSpring(stiffness: 170, damping: 20)) {
-                                isExpanded = false
-                                clearForm()
-                            }
-                        }) {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.secondary)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    
-                    // Disclaimer
-                    HStack(spacing: 8) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(.orange)
-                            .font(.caption)
-                        Text("Only OpenAI-compatible transcription APIs are supported")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color.orange.opacity(0.1))
-                    .cornerRadius(8)
-                    
-                    // Form fields
-                    VStack(alignment: .leading, spacing: 16) {
-                        FormField(title: "Display Name", text: $displayName, placeholder: "My Custom Model")
-                        FormField(title: "API Endpoint", text: $apiEndpoint, placeholder: "https://api.example.com/v1/audio/transcriptions")
-                        FormField(title: "API Key", text: $apiKey, placeholder: "your-api-key", isSecure: true)
-                        FormField(title: "Model Name", text: $modelName, placeholder: "whisper-1")
-                        
-                        Toggle("Multilingual Model", isOn: $isMultilingual)
-                    }
-                    
-                    // Action buttons
-                    HStack(spacing: 12) {
-                        Button(action: {
-                            withAnimation(.interpolatingSpring(stiffness: 170, damping: 20)) {
-                                isExpanded = false
-                                clearForm()
-                            }
-                        }) {
-                            Text("Cancel")
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundColor(.secondary)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
-                                .background(Color.secondary.opacity(0.1))
-                                .cornerRadius(8)
-                        }
-                        .buttonStyle(.plain)
-                        
-                        Button(action: {
-                            addModel()
-                        }) {
-                            HStack(spacing: 6) {
-                                if isSaving {
-                                    ProgressView()
-                                        .scaleEffect(0.8)
-                                        .frame(width: 14, height: 14)
-                                } else {
-                                    Image(systemName: editingModel != nil ? "checkmark.circle.fill" : "plus.circle.fill")
-                                        .font(.system(size: 14))
+                SurfaceCard {
+                    VStack(alignment: .leading, spacing: Spacing.group) {
+                        // Header
+                        HStack {
+                            Text(editingModel != nil ? "Edit Custom Model" : "Add Custom Model")
+                                .font(.sectionHeader)
+                                .foregroundStyle(.primary)
+
+                            Spacer()
+
+                            Button(action: {
+                                withAnimation(.interpolatingSpring(stiffness: 170, damping: 20)) {
+                                    isExpanded = false
+                                    clearForm()
                                 }
-                                Text(editingModel != nil ? "Update Model" : "Add Model")
-                                    .font(.system(size: 13, weight: .medium))
+                            }) {
+                                Image(systemName: "xmark")
+                                    .foregroundStyle(.secondary)
+                                    .contentShape(Rectangle())
                             }
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(isFormValid ? Color(.controlAccentColor) : Color.secondary)
-                                    .shadow(color: (isFormValid ? Color(.controlAccentColor) : Color.secondary).opacity(0.2), radius: 2, x: 0, y: 1)
-                            )
+                            .buttonStyle(.plain)
+                            .help("Close")
                         }
-                        .buttonStyle(.plain)
-                        .disabled(!isFormValid || isSaving)
+
+                        // Disclaimer
+                        HStack(spacing: Spacing.standard) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                                .font(.caption)
+                            Text("Only OpenAI-compatible transcription APIs are supported")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.horizontal, Spacing.comfy)
+                        .padding(.vertical, Spacing.standard)
+                        .background(Color.orange.opacity(0.1))
+                        .cornerRadius(8)
+
+                        // Form fields
+                        VStack(alignment: .leading, spacing: Spacing.section) {
+                            FormField(title: "Display Name", text: $displayName, placeholder: "My Custom Model")
+                            FormField(title: "API Endpoint", text: $apiEndpoint, placeholder: "https://api.example.com/v1/audio/transcriptions")
+                            FormField(title: "API Key", text: $apiKey, placeholder: "your-api-key", isSecure: true)
+                            FormField(title: "Model Name", text: $modelName, placeholder: "whisper-1")
+
+                            Toggle("Multilingual Model", isOn: $isMultilingual)
+                        }
+
+                        // Action buttons
+                        HStack(spacing: Spacing.comfy) {
+                            Button(action: {
+                                withAnimation(.interpolatingSpring(stiffness: 170, damping: 20)) {
+                                    isExpanded = false
+                                    clearForm()
+                                }
+                            }) {
+                                Text("Cancel")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.large)
+
+                            Button(action: {
+                                addModel()
+                            }) {
+                                HStack(spacing: Spacing.standard) {
+                                    if isSaving {
+                                        ProgressView()
+                                            .scaleEffect(0.8)
+                                            .frame(width: 14, height: 14)
+                                    } else {
+                                        Image(systemName: editingModel != nil ? "checkmark.circle.fill" : "plus.circle.fill")
+                                    }
+                                    Text(editingModel != nil ? "Update Model" : "Add Model")
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.large)
+                            .disabled(!isFormValid || isSaving)
+                        }
                     }
                 }
-                .padding(16)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.windowBackgroundColor))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(.separatorColor), lineWidth: 1)
-                        )
-                )
             }
         }
         .alert("Validation Errors", isPresented: $showingAlert) {
@@ -183,14 +159,14 @@ struct AddCustomModelCardView: View {
             }
         }
     }
-    
+
     private var isFormValid: Bool {
         !displayName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         !apiEndpoint.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         !modelName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
-    
+
     private func clearForm() {
         displayName = ""
         apiEndpoint = ""
@@ -198,16 +174,16 @@ struct AddCustomModelCardView: View {
         modelName = ""
         isMultilingual = true
     }
-    
+
     private func addModel() {
         let trimmedDisplayName = displayName.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedApiEndpoint = apiEndpoint.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedApiKey = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedModelName = modelName.trimmingCharacters(in: .whitespacesAndNewlines)
-        
+
         // Generate a name from display name (lowercase, no spaces)
         let generatedName = trimmedDisplayName.lowercased().replacingOccurrences(of: " ", with: "-")
-        
+
         validationErrors = customModelManager.validateModel(
             name: generatedName,
             displayName: trimmedDisplayName,
@@ -216,12 +192,12 @@ struct AddCustomModelCardView: View {
             modelName: trimmedModelName,
             excludingId: editingModel?.id
         )
-        
+
         if !validationErrors.isEmpty {
             showingAlert = true
             return
         }
-        
+
         isSaving = true
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -235,7 +211,7 @@ struct AddCustomModelCardView: View {
                     modelName: trimmedModelName,
                     isMultilingual: isMultilingual
                 )
-                
+
                 if APIKeyManager.shared.saveCustomModelAPIKey(trimmedApiKey, forModelId: editing.id) {
                     customModelManager.updateCustomModel(updatedModel)
                 } else {
@@ -253,7 +229,7 @@ struct AddCustomModelCardView: View {
                     modelName: trimmedModelName,
                     isMultilingual: isMultilingual
                 )
-                
+
                 if APIKeyManager.shared.saveCustomModelAPIKey(trimmedApiKey, forModelId: customModel.id) {
                     customModelManager.addCustomModel(customModel)
                 } else {
@@ -280,14 +256,14 @@ struct FormField: View {
     @Binding var text: String
     let placeholder: String
     var isSecure: Bool = false
-    
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Spacing.standard) {
             Text(title)
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(.primary)
-            
+                .foregroundStyle(.primary)
+
             if isSecure {
                 SecureField(placeholder, text: $text)
                     .textFieldStyle(.roundedBorder)
@@ -297,4 +273,4 @@ struct FormField: View {
             }
         }
     }
-} 
+}

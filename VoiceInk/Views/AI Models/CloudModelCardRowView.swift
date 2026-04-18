@@ -14,15 +14,15 @@ struct CloudModelCardView: View {
     @State private var isVerifying = false
     @State private var verificationStatus: VerificationStatus = .none
     @State private var verificationError: String? = nil
-    
+
     enum VerificationStatus {
         case none, verifying, success, failure
     }
-    
+
     private var isConfigured: Bool {
         return APIKeyManager.shared.hasAPIKey(forProvider: providerKey)
     }
-    
+
     private var providerKey: String {
         switch model.provider {
         case .groq:
@@ -43,95 +43,99 @@ struct CloudModelCardView: View {
             return model.provider.rawValue
         }
     }
-    
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Main card content
-            HStack(alignment: .top, spacing: 16) {
-                VStack(alignment: .leading, spacing: 6) {
-                    headerSection
-                    metadataSection
-                    descriptionSection
+        SurfaceCard(style: isCurrent ? .selected : .plain) {
+            VStack(alignment: .leading, spacing: 0) {
+                // Main card content
+                HStack(alignment: .top, spacing: Spacing.section) {
+                    VStack(alignment: .leading, spacing: Spacing.standard) {
+                        headerSection
+                        metadataSection
+                        descriptionSection
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    actionSection
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                actionSection
-            }
-            .padding(16)
-            
-            // Expandable configuration section
-            if isExpanded {
-                Divider()
-                    .padding(.horizontal, 16)
-                
-                configurationSection
-                    .padding(16)
+
+                // Expandable configuration section
+                if isExpanded {
+                    Divider()
+                        .padding(.vertical, Spacing.comfy)
+
+                    configurationSection
+                }
             }
         }
-        .background(CardBackground(isSelected: isCurrent, useAccentGradientWhenSelected: isCurrent))
         .onAppear {
             loadSavedAPIKey()
         }
     }
-    
+
     private var headerSection: some View {
         HStack(alignment: .firstTextBaseline) {
             Text(model.displayName)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(Color(.labelColor))
-            
+                .font(.rowTitle)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+
             statusBadge
-            
+
             Spacer()
         }
     }
-    
+
     private var statusBadge: some View {
         Group {
             if isCurrent {
                 Text("Default")
-                    .font(.system(size: 11, weight: .medium))
-                    .padding(.horizontal, 6)
+                    .font(.rowDetail)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, Spacing.standard)
                     .padding(.vertical, 2)
                     .background(Capsule().fill(Color.accentColor))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.primary)
             } else if isConfigured {
                 Text("Configured")
-                    .font(.system(size: 11, weight: .medium))
-                    .padding(.horizontal, 6)
+                    .font(.rowDetail)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, Spacing.standard)
                     .padding(.vertical, 2)
                     .background(Capsule().fill(Color(.systemGreen).opacity(0.2)))
-                    .foregroundColor(Color(.systemGreen))
+                    .foregroundStyle(Color(.systemGreen))
             } else {
                 Text("Setup Required")
-                    .font(.system(size: 11, weight: .medium))
-                    .padding(.horizontal, 6)
+                    .font(.rowDetail)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, Spacing.standard)
                     .padding(.vertical, 2)
                     .background(Capsule().fill(Color(.systemOrange).opacity(0.2)))
-                    .foregroundColor(Color(.systemOrange))
+                    .foregroundStyle(Color(.systemOrange))
             }
         }
     }
-    
+
     private var metadataSection: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: Spacing.comfy) {
             // Provider
             Label(model.provider.rawValue, systemImage: "cloud")
-                .font(.system(size: 11))
-                .foregroundColor(Color(.secondaryLabelColor))
+                .font(.rowDetail)
+                .foregroundStyle(.secondary)
                 .lineLimit(1)
-            
+
             // Language
             Label(model.language, systemImage: "globe")
-                .font(.system(size: 11))
-                .foregroundColor(Color(.secondaryLabelColor))
+                .font(.rowDetail)
+                .foregroundStyle(.secondary)
                 .lineLimit(1)
 
             // Speed
             HStack(spacing: 3) {
                 Text("Speed")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(Color(.secondaryLabelColor))
+                    .font(.rowDetail)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
                 progressDotsWithNumber(value: model.speed * 10)
             }
             .lineLimit(1)
@@ -140,8 +144,9 @@ struct CloudModelCardView: View {
             // Accuracy
             HStack(spacing: 3) {
                 Text("Accuracy")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(Color(.secondaryLabelColor))
+                    .font(.rowDetail)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
                 progressDotsWithNumber(value: model.accuracy * 10)
             }
             .lineLimit(1)
@@ -149,26 +154,26 @@ struct CloudModelCardView: View {
         }
         .lineLimit(1)
     }
-    
+
     private var descriptionSection: some View {
         Text(model.description)
-            .font(.system(size: 11))
-            .foregroundColor(Color(.secondaryLabelColor))
+            .font(.rowDetail)
+            .foregroundStyle(.secondary)
             .lineLimit(2)
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.top, 4)
+            .padding(.top, Spacing.tight)
     }
-    
+
     private var actionSection: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Spacing.standard) {
             if isCurrent {
                 Text("Default Model")
-                    .font(.system(size: 12))
-                    .foregroundColor(Color(.secondaryLabelColor))
+                    .font(.rowSubtitle)
+                    .foregroundStyle(.secondary)
             } else if isConfigured {
                 Button(action: setDefaultAction) {
                     Text("Set as Default")
-                        .font(.system(size: 12))
+                        .font(.rowSubtitle)
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
@@ -178,24 +183,15 @@ struct CloudModelCardView: View {
                         isExpanded.toggle()
                     }
                 }) {
-                    HStack(spacing: 4) {
+                    HStack(spacing: Spacing.tight) {
                         Text("Configure")
-                            .font(.system(size: 12, weight: .medium))
                         Image(systemName: "gear")
-                            .font(.system(size: 12, weight: .medium))
                     }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        Capsule()
-                            .fill(Color(.controlAccentColor))
-                            .shadow(color: Color(.controlAccentColor).opacity(0.2), radius: 2, x: 0, y: 1)
-                    )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
             }
-            
+
             if isConfigured {
                 Menu {
                     Button {
@@ -205,76 +201,70 @@ struct CloudModelCardView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
-                        .font(.system(size: 14))
+                        .font(.rowTitle)
                 }
                 .menuStyle(.borderlessButton)
                 .menuIndicator(.hidden)
                 .frame(width: 20, height: 20)
+                .help("More actions")
             }
         }
     }
-    
+
     private var configurationSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Spacing.comfy) {
             Text("API Key Configuration")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(Color(.labelColor))
-            
-            HStack(spacing: 8) {
+                .font(.rowTitle)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+
+            HStack(spacing: Spacing.standard) {
                 SecureField("Enter your \(model.provider.rawValue) API key", text: $apiKey)
                     .textFieldStyle(.roundedBorder)
                     .disabled(isVerifying)
-                
+
                 Button(action: verifyAPIKey) {
-                    HStack(spacing: 4) {
+                    HStack(spacing: Spacing.tight) {
                         if isVerifying {
                             ProgressView()
                                 .scaleEffect(0.7)
                                 .frame(width: 12, height: 12)
                         } else {
                             Image(systemName: verificationStatus == .success ? "checkmark" : "checkmark.shield")
-                                .font(.system(size: 12, weight: .medium))
                         }
                         Text(isVerifying ? "Verifying..." : "Verify")
-                            .font(.system(size: 12, weight: .medium))
                     }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        Capsule()
-                            .fill(verificationStatus == .success ? Color(.systemGreen) : Color(.controlAccentColor))
-                    )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
                 .disabled(apiKey.isEmpty || isVerifying)
             }
-            
+
             if verificationStatus == .failure {
                 if let error = verificationError {
                     Text(error)
                         .font(.caption)
-                        .foregroundColor(Color(.systemRed))
+                        .foregroundStyle(Color(.systemRed))
                 } else {
                     Text("Verification failed")
                         .font(.caption)
-                        .foregroundColor(Color(.systemRed))
+                        .foregroundStyle(Color(.systemRed))
                 }
             } else if verificationStatus == .success {
                 Text("API key verified successfully!")
                     .font(.caption)
-                    .foregroundColor(Color(.systemGreen))
+                    .foregroundStyle(Color(.systemGreen))
             }
         }
     }
-    
+
     private func loadSavedAPIKey() {
         if let savedKey = APIKeyManager.shared.getAPIKey(forProvider: providerKey) {
             apiKey = savedKey
             verificationStatus = .success
         }
     }
-    
+
     private func verifyAPIKey() {
         guard !apiKey.isEmpty else { return }
 
@@ -329,7 +319,7 @@ struct CloudModelCardView: View {
             }
         }
     }
-    
+
     private func clearAPIKey() {
         APIKeyManager.shared.deleteAPIKey(forProvider: providerKey)
         apiKey = ""
