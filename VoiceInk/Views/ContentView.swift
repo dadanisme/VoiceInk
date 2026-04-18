@@ -91,11 +91,11 @@ struct ContentView: View {
                         }
 
                         Text("VoiceInk")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.headline)
 
                         if case .licensed = licenseViewModel.licenseState {
                             Text("PRO")
-                                .font(.system(size: 9, weight: .heavy))
+                                .font(.caption2.weight(.heavy))
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 4)
                                 .padding(.vertical, 2)
@@ -108,19 +108,17 @@ struct ContentView: View {
                     .padding(.vertical, 4)
                 }
 
-                ForEach(visibleViewTypes) { viewType in
-                    Section {
+                Section {
+                    ForEach(visibleViewTypes) { viewType in
                         NavigationLink(value: viewType) {
-                            SidebarItemView(viewType: viewType)
+                            NativeSidebarRow(title: viewType.rawValue, systemImage: viewType.icon, help: viewType.rawValue)
                         }
-                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                        .listRowSeparator(.hidden)
                     }
                 }
             }
             .listStyle(.sidebar)
             .navigationTitle("VoiceInk")
-            .navigationSplitViewColumnWidth(210)
+            .navigationSplitViewColumnWidth(min: 180, ideal: 210, max: 260)
         } detail: {
             if let selectedView = selectedView {
                 detailView(for: selectedView)
@@ -132,6 +130,41 @@ struct ContentView: View {
             }
         }
         .navigationSplitViewStyle(.balanced)
+        .background {
+            Group {
+                Button("") { selectedView = .metrics }
+                    .keyboardShortcut("1", modifiers: .command)
+                Button("") { selectedView = .transcribeAudio }
+                    .keyboardShortcut("2", modifiers: .command)
+                Button("") { selectedView = .history }
+                    .keyboardShortcut("3", modifiers: .command)
+                Button("") { selectedView = .models }
+                    .keyboardShortcut("4", modifiers: .command)
+                Button("") { selectedView = .enhancement }
+                    .keyboardShortcut("5", modifiers: .command)
+                if powerModeUIFlag {
+                    Button("") { selectedView = .powerMode }
+                        .keyboardShortcut("6", modifiers: .command)
+                    Button("") { selectedView = .permissions }
+                        .keyboardShortcut("7", modifiers: .command)
+                    Button("") { selectedView = .audioInput }
+                        .keyboardShortcut("8", modifiers: .command)
+                    Button("") { selectedView = .dictionary }
+                        .keyboardShortcut("9", modifiers: .command)
+                } else {
+                    Button("") { selectedView = .permissions }
+                        .keyboardShortcut("6", modifiers: .command)
+                    Button("") { selectedView = .audioInput }
+                        .keyboardShortcut("7", modifiers: .command)
+                    Button("") { selectedView = .dictionary }
+                        .keyboardShortcut("8", modifiers: .command)
+                    Button("") { selectedView = .settings }
+                        .keyboardShortcut("9", modifiers: .command)
+                }
+            }
+            .hidden()
+            .accessibilityHidden(true)
+        }
         .frame(width: 950)
         .frame(minHeight: 730)
         .onAppear {
@@ -193,27 +226,6 @@ struct ContentView: View {
         case .permissions:
             PermissionsView()
         }
-    }
-}
-
-private struct SidebarItemView: View {
-    let viewType: ViewType
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: viewType.icon)
-                .font(.system(size: 18, weight: .medium))
-                .frame(width: 24, height: 24)
-
-            Text(viewType.rawValue)
-                .font(.system(size: 14, weight: .medium))
-
-            Spacer()
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .contentShape(Rectangle())
-        .padding(.vertical, 8)
-        .padding(.horizontal, 2)
     }
 }
 
