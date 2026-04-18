@@ -90,7 +90,11 @@ class FluidAudioModelManager: ObservableObject {
     }
 
     func isFluidAudioModelDownloading(_ model: FluidAudioModel) -> Bool {
-        parakeetDownloadStates[model.name] ?? false
+        parakeetDownloadStates[progressKey(for: model)] ?? false
+    }
+
+    func downloadProgress(for model: FluidAudioModel) -> Double? {
+        downloadProgress[progressKey(for: model)]
     }
 
     // MARK: - Download
@@ -99,13 +103,14 @@ class FluidAudioModelManager: ObservableObject {
         if isFluidAudioModelDownloaded(model) { return }
 
         let modelName = model.name
-        parakeetDownloadStates[modelName] = true
-        downloadProgress[modelName] = 0.0
+        let key = progressKey(for: model)
+        parakeetDownloadStates[key] = true
+        downloadProgress[key] = 0.0
 
         let timer = Timer.scheduledTimer(withTimeInterval: 1.2, repeats: true) { timer in
             Task { @MainActor in
-                if let currentProgress = self.downloadProgress[modelName], currentProgress < 0.9 {
-                    self.downloadProgress[modelName] = currentProgress + 0.005
+                if let currentProgress = self.downloadProgress[key], currentProgress < 0.9 {
+                    self.downloadProgress[key] = currentProgress + 0.005
                 }
             }
         }
@@ -134,15 +139,15 @@ class FluidAudioModelManager: ObservableObject {
             }
 
             UserDefaults.standard.set(true, forKey: defaultsKey)
-            downloadProgress[modelName] = 1.0
+            downloadProgress[key] = 1.0
         } catch {
             UserDefaults.standard.set(false, forKey: defaultsKey)
             logger.error("❌ FluidAudio download failed for \(modelName, privacy: .public): \(error.localizedDescription, privacy: .public)")
         }
 
         timer.invalidate()
-        parakeetDownloadStates[modelName] = false
-        downloadProgress[modelName] = nil
+        parakeetDownloadStates[key] = false
+        downloadProgress[key] = nil
 
         onModelsChanged?()
     }
@@ -174,6 +179,27 @@ class FluidAudioModelManager: ObservableObject {
     }
 
     // MARK: - Private helpers
+
+    /// Dict key for in-flight download state. Matches `downloadedDefaultsKey` scoping:
+    /// - parakeetTdt: just the model name (one variant)
+    /// - nemotronStreaming: model name + current chunk size
+    /// - parakeetEou: model name + current chunk size
+    private func progressKey(for model: FluidAudioModel) -> String {
+        switch model.family {
+        case .parakeetTdt:
+            return model.name
+        case .nemotronStreaming:
+            return "\(model.name)@\(nemotronChunkSize.rawValue)"
+        case .parakeetEou:
+            let ms: Int
+            switch parakeetEouChunkSize {
+            case .ms160:  ms = 160
+            case .ms320:  ms = 320
+            case .ms1280: ms = 1280
+            }
+            return "\(model.name)@\(ms)"
+        }
+    }
 
     /// Stable UserDefaults key for tracking whether a given model+chunk variant is downloaded.
     /// For parakeetTdt family, the key does not include chunk size (there is only one variant).

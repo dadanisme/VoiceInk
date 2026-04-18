@@ -155,7 +155,7 @@ struct FluidAudioModelCardRowView: View {
     private var progressSection: some View {
         Group {
             if isDownloading {
-                let progress = fluidAudioModelManager.downloadProgress[model.name] ?? 0.0
+                let progress = fluidAudioModelManager.downloadProgress(for: model) ?? 0.0
                 ProgressView(value: progress)
                     .progressViewStyle(LinearProgressViewStyle())
                     .frame(maxWidth: .infinity, alignment: .leading)
