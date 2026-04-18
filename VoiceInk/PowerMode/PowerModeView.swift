@@ -71,71 +71,49 @@ struct PowerModeView: View {
     var body: some View {
             VStack(spacing: 0) {
                 // Header Section
-                VStack(spacing: 12) {
+                VStack(spacing: Spacing.comfy) {
                     HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack(spacing: 8) {
+                        VStack(alignment: .leading, spacing: Spacing.tight) {
+                            HStack(spacing: Spacing.standard) {
                                 Text("Power Modes")
-                                    .font(.system(size: 28, weight: .bold, design: .default))
-                                    .foregroundColor(.primary)
-                                
+                                    .font(.largeTitle)
+                                    .foregroundStyle(.primary)
+
                                 InfoTip(
                                     "Automatically apply custom configurations based on the app/website you are using.",
                                     learnMoreURL: "https://tryvoiceink.com/docs/power-mode"
                                 )
                             }
-                            
-                            Text("Automate your workflows with context-aware configurations.")
-                                .font(.system(size: 14))
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        Spacer()
-                        
-                        HStack(spacing: 8) {
-                            Button(action: {
-                                openPanel(mode: .add)
-                            }) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "plus")
-                                        .font(.system(size: 12, weight: .medium))
-                                    Text("Add Power Mode")
-                                        .font(.system(size: 13, weight: .medium))
-                                }
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(Color.accentColor)
-                                .cornerRadius(6)
-                            }
-                            .buttonStyle(PlainButtonStyle())
 
-                            Button(action: { openReorderPanel() }) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "arrow.up.arrow.down")
-                                        .font(.system(size: 12, weight: .medium))
-                                    Text("Reorder")
-                                        .font(.system(size: 13, weight: .medium))
-                                }
-                                .foregroundColor(.primary)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(Color(NSColor.controlBackgroundColor))
-                                .cornerRadius(6)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .stroke(Color(NSColor.separatorColor), lineWidth: 1)
-                                )
+                            Text("Automate your workflows with context-aware configurations.")
+                                .font(.rowTitle)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+
+                        HStack(spacing: Spacing.standard) {
+                            Button {
+                                openPanel(mode: .add)
+                            } label: {
+                                Label("Add Power Mode", systemImage: "plus")
                             }
-                            .buttonStyle(PlainButtonStyle())
+                            .buttonStyle(.borderedProminent)
+
+                            Button {
+                                openReorderPanel()
+                            } label: {
+                                Label("Reorder", systemImage: "arrow.up.arrow.down")
+                            }
+                            .buttonStyle(.bordered)
                         }
                     }
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 20)
-                .padding(.bottom, 16)
+                .padding(.horizontal, Spacing.group)
+                .padding(.top, Spacing.group)
+                .padding(.bottom, Spacing.section)
                 .frame(maxWidth: .infinity)
-                .background(Color(NSColor.windowBackgroundColor))
+                .background(Color.windowBackground)
                 
                 // Content Section
                 Group {
@@ -143,28 +121,28 @@ struct PowerModeView: View {
                             ScrollView {
                                 VStack(spacing: 0) {
                                     if powerModeManager.configurations.isEmpty {
-                                        VStack(spacing: 24) {
+                                        VStack(spacing: Spacing.group) {
                                             Spacer()
                                                 .frame(height: geometry.size.height * 0.2)
-                                            
-                                            VStack(spacing: 16) {
+
+                                            VStack(spacing: Spacing.section) {
                                                 Image(systemName: "square.grid.2x2.fill")
                                                     .font(.system(size: 48, weight: .regular))
-                                                    .foregroundColor(.secondary.opacity(0.6))
-                                                
-                                                VStack(spacing: 8) {
+                                                    .foregroundStyle(.tertiary)
+
+                                                VStack(spacing: Spacing.standard) {
                                                     Text("No Power Modes Yet")
-                                                        .font(.system(size: 20, weight: .medium))
-                                                        .foregroundColor(.primary)
-                                                    
+                                                        .font(.titleEmphasis)
+                                                        .foregroundStyle(.primary)
+
                                                     Text("Create first power mode to automate your VoiceInk workflow based on apps/website you are using")
-                                                        .font(.system(size: 14))
-                                                        .foregroundColor(.secondary)
+                                                        .font(.rowTitle)
+                                                        .foregroundStyle(.secondary)
                                                         .multilineTextAlignment(.center)
                                                         .lineSpacing(2)
                                                 }
                                             }
-                                            
+
                                             Spacer()
                                         }
                                         .frame(maxWidth: .infinity)
@@ -177,9 +155,9 @@ struct PowerModeView: View {
                                                     openPanel(mode: .edit(config))
                                                 }
                                             )
-                                            .padding(.horizontal, 24)
-                                            .padding(.vertical, 20)
-                                            
+                                            .padding(.horizontal, Spacing.group)
+                                            .padding(.vertical, Spacing.group)
+
                                             Spacer()
                                                 .frame(height: 40)
                                         }
@@ -189,9 +167,9 @@ struct PowerModeView: View {
                         }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(NSColor.controlBackgroundColor))
+                .background(Color.controlBackground)
             }
-            .background(Color(NSColor.controlBackgroundColor))
+            .background(Color.controlBackground)
             .slidingPanel(isPresented: .init(
                 get: { isPanelOpen },
                 set: { if !$0 { closePanel() } }
@@ -244,76 +222,76 @@ struct ReorderPanelView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Header
-            HStack(spacing: 12) {
+            HStack(spacing: Spacing.comfy) {
                 Text("Reorder Power Modes")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+                    .font(.sectionHeader)
+                    .foregroundStyle(.primary)
                 Spacer()
                 Button(action: onDismiss) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                        .padding(6)
+                        .font(.rowSubtitle)
+                        .foregroundStyle(.secondary)
+                        .padding(Spacing.standard)
                         .background(Color.secondary.opacity(0.1))
                         .clipShape(Circle())
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .help("Close")
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .background(Color(NSColor.windowBackgroundColor))
+            .padding(.horizontal, Spacing.group)
+            .padding(.vertical, Spacing.section)
+            .background(Color.windowBackground)
             .overlay(Divider().opacity(0.5), alignment: .bottom)
 
             // Reorder list
             List {
                 ForEach(powerModeManager.configurations) { config in
-                    HStack(spacing: 12) {
+                    HStack(spacing: Spacing.comfy) {
                         Image(systemName: "line.3.horizontal")
-                            .font(.system(size: 14))
-                            .foregroundColor(.secondary)
+                            .font(.rowSubtitle)
+                            .foregroundStyle(.secondary)
 
                         ZStack {
                             Circle()
-                                .fill(Color(NSColor.controlBackgroundColor))
+                                .fill(Color.controlBackground)
                                 .frame(width: 36, height: 36)
                             Text(config.emoji)
-                                .font(.system(size: 18))
+                                .font(.rowTitle)
                         }
 
                         Text(config.name)
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.rowTitle.weight(.medium))
 
                         Spacer()
 
-                        HStack(spacing: 6) {
+                        HStack(spacing: Spacing.standard) {
                             if config.isDefault {
                                 Text("Default")
-                                    .font(.system(size: 11, weight: .medium))
-                                    .padding(.horizontal, 6)
+                                    .font(.rowDetail)
+                                    .padding(.horizontal, Spacing.standard)
                                     .padding(.vertical, 2)
                                     .background(Capsule().fill(Color.accentColor))
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.primary)
                             }
                             if !config.isEnabled {
                                 Text("Disabled")
-                                    .font(.system(size: 11, weight: .medium))
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(Capsule().fill(Color(NSColor.controlBackgroundColor)))
+                                    .font(.rowDetail)
+                                    .padding(.horizontal, Spacing.standard)
+                                    .padding(.vertical, Spacing.tight)
+                                    .background(Capsule().fill(Color.controlBackground))
                                     .overlay(
-                                        Capsule().stroke(Color(NSColor.separatorColor), lineWidth: 0.5)
+                                        Capsule().stroke(Color.separatorColor, lineWidth: 0.5)
                                     )
-                                    .foregroundColor(.secondary)
+                                    .foregroundStyle(.secondary)
                             }
                         }
                     }
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 10)
+                    .padding(.vertical, Spacing.standard)
+                    .padding(.horizontal, Spacing.comfy)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(NSColor.controlBackgroundColor))
+                            .fill(Color.controlBackground)
                     )
                     .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                     .listRowBackground(Color.clear)
@@ -323,9 +301,9 @@ struct ReorderPanelView: View {
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
-            .padding(.top, 8)
+            .padding(.top, Spacing.standard)
         }
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color.windowBackground)
     }
 }
 
@@ -335,8 +313,8 @@ struct SectionHeader: View {
 
     var body: some View {
         Text(title)
-            .font(.system(size: 16, weight: .bold))
+            .font(.sectionHeader)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.bottom, 8)
+            .padding(.bottom, Spacing.standard)
     }
 }

@@ -4,21 +4,13 @@ struct VoiceInkButton: View {
     let title: String
     let action: () -> Void
     var isDisabled: Bool = false
-    
+
     var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(isDisabled ? Color.accentColor.opacity(0.5) : Color.accentColor)
-                )
-        }
-        .buttonStyle(.plain)
-        .disabled(isDisabled)
+        Button(title, action: action)
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .frame(maxWidth: .infinity)
+            .disabled(isDisabled)
     }
 }
 
@@ -26,19 +18,18 @@ struct PowerModeEmptyStateView: View {
     let action: () -> Void
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: Spacing.section) {
             Image(systemName: "bolt.circle.fill")
                 .font(.system(size: 48))
-                .foregroundColor(.secondary)
-            
+                .foregroundStyle(.secondary)
+
             Text("No Power Modes")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
+                .font(.titleEmphasis)
+
             Text("Add customized power modes for different contexts")
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-            
+
             VoiceInkButton(
                 title: "Add New Power Mode",
                 action: action
@@ -55,7 +46,7 @@ struct PowerModeConfigurationsGrid: View {
     @EnvironmentObject var enhancementService: AIEnhancementService
     
     var body: some View {
-        LazyVStack(spacing: 12) {
+        LazyVStack(spacing: Spacing.comfy) {
             ForEach($powerModeManager.configurations) { $config in
                 ConfigurationRow(
                     config: $config,
@@ -77,9 +68,10 @@ struct AddIconButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "plus.circle.fill")
-                .font(.system(size: 18))
+                .font(.titleEmphasis)
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(.secondary)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .help(helpText)
@@ -151,56 +143,56 @@ struct ConfigurationRow: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 12) {
+            HStack(spacing: Spacing.comfy) {
                 ZStack {
                     Circle()
-                        .fill(Color(NSColor.controlBackgroundColor))
+                        .fill(Color.controlBackground)
                         .frame(width: 40, height: 40)
-                    
+
                     Text(config.emoji)
-                        .font(.system(size: 20))
+                        .font(.titleEmphasis)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 3) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: Spacing.standard) {
                         Text(config.name)
-                            .font(.system(size: 15, weight: .semibold))
-                        
+                            .font(.rowTitle.weight(.semibold))
+
                         if config.isDefault {
                             Text("Default")
-                                .font(.system(size: 11, weight: .medium))
-                                .padding(.horizontal, 6)
+                                .font(.rowDetail)
+                                .padding(.horizontal, Spacing.standard)
                                 .padding(.vertical, 2)
                                 .background(Capsule().fill(Color.accentColor))
-                                .foregroundColor(.white)
+                                .foregroundStyle(.primary)
                         }
                     }
-                    
-                    HStack(spacing: 12) {
+
+                    HStack(spacing: Spacing.comfy) {
                         if appCount > 0 {
-                            HStack(spacing: 4) {
+                            HStack(spacing: Spacing.tight) {
                                 Image(systemName: "app.fill")
-                                    .font(.system(size: 10))
+                                    .font(.caption2)
                                 Text(appText)
                                     .font(.caption2)
                             }
                         }
 
                         if websiteCount > 0 {
-                            HStack(spacing: 4) {
+                            HStack(spacing: Spacing.tight) {
                                 Image(systemName: "globe")
-                                    .font(.system(size: 10))
+                                    .font(.caption2)
                                 Text(websiteText)
                                     .font(.caption2)
                             }
                         }
                     }
                     .padding(.top, 2)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 Toggle("", isOn: $config.isEnabled)
                     .toggleStyle(SwitchToggleStyle(tint: .accentColor))
                     .labelsHidden()
@@ -208,121 +200,123 @@ struct ConfigurationRow: View {
                         powerModeManager.updateConfiguration(config)
                     }
             }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 14)
-            
+            .padding(.vertical, Spacing.comfy)
+            .padding(.horizontal, Spacing.section)
+
             if selectedModel != nil || selectedLanguage != nil || config.isAIEnhancementEnabled || config.autoSendKey.isEnabled {
                 Divider()
-                
-                HStack(spacing: 8) {
+
+                HStack(spacing: Spacing.standard) {
                     if let model = selectedModel, model != "Default" {
-                        HStack(spacing: 4) {
+                        HStack(spacing: Spacing.tight) {
                             Image(systemName: "waveform")
-                                .font(.system(size: 10))
+                                .font(.caption2)
                             Text(model)
                                 .font(.caption)
                         }
-                        .padding(.horizontal, 6)
+                        .padding(.horizontal, Spacing.standard)
                         .padding(.vertical, 2)
-                        .background(Capsule()
-                            .fill(Color(NSColor.controlBackgroundColor)))
+                        .background(Capsule().fill(Color.controlBackground))
                         .overlay(
                             Capsule()
-                                .stroke(Color(NSColor.separatorColor), lineWidth: 0.5)
+                                .stroke(Color.separatorColor, lineWidth: 0.5)
                         )
                     }
-                    
+
                     if let language = selectedLanguage, language != "Default" {
-                        HStack(spacing: 4) {
+                        HStack(spacing: Spacing.tight) {
                             Image(systemName: "globe")
-                                .font(.system(size: 10))
+                                .font(.caption2)
                             Text(language)
                                 .font(.caption)
                         }
-                        .padding(.horizontal, 6)
+                        .padding(.horizontal, Spacing.standard)
                         .padding(.vertical, 2)
-                        .background(Capsule()
-                            .fill(Color(NSColor.controlBackgroundColor)))
+                        .background(Capsule().fill(Color.controlBackground))
                         .overlay(
                             Capsule()
-                                .stroke(Color(NSColor.separatorColor), lineWidth: 0.5)
+                                .stroke(Color.separatorColor, lineWidth: 0.5)
                         )
                     }
-                    
+
                     if config.isAIEnhancementEnabled, let modelName = config.selectedAIModel, !modelName.isEmpty {
-                        HStack(spacing: 4) {
+                        HStack(spacing: Spacing.tight) {
                             Image(systemName: "cpu")
-                                .font(.system(size: 10))
+                                .font(.caption2)
                             Text(modelName.count > 20 ? String(modelName.prefix(18)) + "..." : modelName)
                                 .font(.caption)
                         }
-                        .padding(.horizontal, 6)
+                        .padding(.horizontal, Spacing.standard)
                         .padding(.vertical, 2)
-                        .background(Capsule()
-                            .fill(Color(NSColor.controlBackgroundColor)))
+                        .background(Capsule().fill(Color.controlBackground))
                         .overlay(
                             Capsule()
-                                .stroke(Color(NSColor.separatorColor), lineWidth: 0.5)
+                                .stroke(Color.separatorColor, lineWidth: 0.5)
                         )
                     }
-                    
+
                     if config.autoSendKey.isEnabled {
-                        HStack(spacing: 4) {
+                        HStack(spacing: Spacing.tight) {
                             Image(systemName: "keyboard")
-                                .font(.system(size: 10))
+                                .font(.caption2)
                             Text(config.autoSendKey.displayName)
                                 .font(.caption)
                         }
-                        .padding(.horizontal, 6)
+                        .padding(.horizontal, Spacing.standard)
                         .padding(.vertical, 2)
-                        .background(Capsule()
-                            .fill(Color(NSColor.controlBackgroundColor)))
+                        .background(Capsule().fill(Color.controlBackground))
                         .overlay(
                             Capsule()
-                                .stroke(Color(NSColor.separatorColor), lineWidth: 0.5)
+                                .stroke(Color.separatorColor, lineWidth: 0.5)
                         )
                     }
                     if config.isAIEnhancementEnabled {
                         if config.useScreenCapture {
-                            HStack(spacing: 4) {
+                            HStack(spacing: Spacing.tight) {
                                 Image(systemName: "camera.viewfinder")
-                                    .font(.system(size: 10))
+                                    .font(.caption2)
                                 Text("Context Awareness")
                                     .font(.caption)
                             }
-                            .padding(.horizontal, 6)
+                            .padding(.horizontal, Spacing.standard)
                             .padding(.vertical, 2)
-                            .background(Capsule()
-                                .fill(Color(NSColor.controlBackgroundColor)))
+                            .background(Capsule().fill(Color.controlBackground))
                             .overlay(
                                 Capsule()
-                                    .stroke(Color(NSColor.separatorColor), lineWidth: 0.5)
+                                    .stroke(Color.separatorColor, lineWidth: 0.5)
                             )
                         }
-                        
-                        HStack(spacing: 4) {
+
+                        HStack(spacing: Spacing.tight) {
                             Image(systemName: "sparkles")
-                                .font(.system(size: 10))
+                                .font(.caption2)
                             Text(selectedPrompt?.title ?? "AI")
                                 .font(.caption)
                         }
-                        .padding(.horizontal, 6)
+                        .padding(.horizontal, Spacing.standard)
                         .padding(.vertical, 2)
                         .background(Capsule()
                             .fill(Color.accentColor.opacity(0.1)))
-                        .foregroundColor(.accentColor)
+                        .foregroundStyle(Color.accentColor)
                     }
 
                     Spacer()
                 }
-                
-                .padding(.vertical, 6)
-                .padding(.horizontal, 16)
-                .background(Color.secondary.opacity(0.1))
+
+                .padding(.vertical, Spacing.standard)
+                .padding(.horizontal, Spacing.section)
+                .background(Color.controlBackground.opacity(0.5))
             }
     }
     .clipShape(RoundedRectangle(cornerRadius: 16))
-    .background(CardBackground(isSelected: isEditing))
+    .background(
+        RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .fill(isEditing ? Color.accentColor.opacity(0.15) : Color.controlBackground)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(Color.separatorColor.opacity(0.6), lineWidth: 0.5)
+            )
+    )
     .opacity(config.isEnabled ? 1.0 : 0.5)
 
     .onHover { hovering in
@@ -373,8 +367,8 @@ struct PowerModeAppIcon: View {
                 .frame(width: 20, height: 20)
         } else {
             Image(systemName: "app.fill")
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
+                .font(.rowSubtitle)
+                .foregroundStyle(.secondary)
                 .frame(width: 20, height: 20)
         }
     }
@@ -387,28 +381,29 @@ struct AppGridItem: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 8) {
+            VStack(spacing: Spacing.standard) {
                 Image(nsImage: app.icon)
                     .resizable()
                     .frame(width: 40, height: 40)
                     .cornerRadius(8)
                     .shadow(color: Color(NSColor.shadowColor).opacity(0.1), radius: 2, x: 0, y: 1)
                 Text(app.name)
-                    .font(.system(size: 10))
+                    .font(.caption2)
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
                     .frame(height: 28)
             }
             .frame(width: 80, height: 80)
-            .padding(6)
+            .padding(Spacing.standard)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
+                    .fill(isSelected ? Color.accentColor.opacity(0.15) : Color.clear)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 1)
             )
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
