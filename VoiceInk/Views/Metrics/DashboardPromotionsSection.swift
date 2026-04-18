@@ -29,28 +29,28 @@ struct DashboardPromotionsSection: View {
     
     var body: some View {
         if shouldShowPromotions {
-            HStack(alignment: .top, spacing: 18) {
+            HStack(alignment: .top, spacing: Spacing.section) {
                 if shouldShowUpgradePromotion {
                     DashboardPromotionCard(
                         badge: "30% OFF",
                         title: "Unlock VoiceInk Pro For Less",
                         message: "Share VoiceInk on your socials, and instantly unlock a 30% discount on VoiceInk Pro.",
                         accentSymbol: "megaphone.fill",
-                        glowColor: Color(red: 0.08, green: 0.48, blue: 0.85),
+                        glowColor: .accentColor,
                         actionTitle: "Share & Unlock",
                         actionIcon: "arrow.up.right",
                         action: openSocialShare
                     )
                     .frame(maxWidth: .infinity)
                 }
-                
+
                 if shouldShowAffiliatePromotion {
                     DashboardPromotionCard(
                         badge: "AFFILIATE 30%",
                         title: "Earn With The VoiceInk Affiliate Program",
                         message: "Share VoiceInk with friends or your audience and receive 30% on every referral that upgrades.",
                         accentSymbol: "link.badge.plus",
-                        glowColor: Color(red: 0.08, green: 0.48, blue: 0.85),
+                        glowColor: .accentColor,
                         actionTitle: "Explore Affiliate",
                         actionIcon: "arrow.up.right",
                         action: openAffiliateProgram,
@@ -98,8 +98,8 @@ private struct DashboardPromotionCard: View {
 
     private static let defaultGradient: LinearGradient = LinearGradient(
         colors: [
-            Color(red: 0.08, green: 0.48, blue: 0.85),
-            Color(red: 0.05, green: 0.18, blue: 0.42)
+            Color.accentColor,
+            Color.accentColor.opacity(0.6)
         ],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
@@ -107,41 +107,42 @@ private struct DashboardPromotionCard: View {
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: Spacing.section) {
                 Text(badge.uppercased())
                     .font(.system(size: 11, weight: .heavy))
                     .tracking(0.8)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, Spacing.comfy)
+                    .padding(.vertical, Spacing.tight + 2)
                     .background(.white.opacity(0.2))
                     .clipShape(Capsule())
                     .foregroundColor(.white)
 
                 Text(title)
-                    .font(.system(size: 20, weight: .heavy, design: .rounded))
+                    .font(.titleEmphasis)
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text(message)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.rowSubtitle)
                     .foregroundColor(.white.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
 
                 Button(action: action) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: Spacing.tight + 2) {
                         Text(actionTitle)
                         Image(systemName: actionIcon)
                     }
                     .font(.system(size: 13, weight: .semibold))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 9)
+                    .padding(.horizontal, Spacing.section)
+                    .padding(.vertical, Spacing.standard + 1)
                     .background(.white.opacity(0.22))
                     .clipShape(Capsule())
                     .foregroundColor(.white)
                 }
                 .buttonStyle(.plain)
+                .contentShape(Rectangle())
             }
-            .padding(18)
+            .padding(Spacing.section + 2)
             .frame(maxWidth: .infinity, alignment: .topLeading)
 
             if let onDismiss = onDismiss {
@@ -151,7 +152,8 @@ private struct DashboardPromotionCard: View {
                         .foregroundColor(.white.opacity(0.7))
                 }
                 .buttonStyle(.plain)
-                .padding(12)
+                .contentShape(Rectangle())
+                .padding(Spacing.comfy)
                 .help("Dismiss this promotion")
             }
         }

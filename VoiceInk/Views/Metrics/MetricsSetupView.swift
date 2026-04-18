@@ -9,27 +9,27 @@ struct MetricsSetupView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: Spacing.group) {
                 // Header
-                VStack(spacing: 12) {
+                VStack(spacing: Spacing.comfy) {
                     AppIconView()
                         .frame(width: 80, height: 80)
-                        .padding(.bottom, 20)
-                       
-                    VStack(spacing: 4) {
+                        .padding(.bottom, Spacing.section)
+
+                    VStack(spacing: Spacing.tight) {
                         Text("Welcome to VoiceInk")
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .font(.largeTitle)
                             .multilineTextAlignment(.center)
-                        
+
                         Text("Complete the setup to get started")
-                            .font(.system(size: 16))
-                            .foregroundColor(.secondary)
+                            .font(.rowSubtitle)
+                            .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                     }
                 }
-                .padding(.top, 20)
-                .padding(.bottom, 20)
-                
+                .padding(.top, Spacing.section)
+                .padding(.bottom, Spacing.section)
+
                 // Setup Steps
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(0..<4) { index in
@@ -43,23 +43,23 @@ struct MetricsSetupView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                        .stroke(Color.separatorColor.opacity(0.6), lineWidth: 1)
                 )
                 .padding(.horizontal)
-                
-                Spacer(minLength: 20)
-                
+
+                Spacer(minLength: Spacing.section)
+
                 // Action Button
                 actionButton
                     .frame(maxWidth: 400)
-                
+
                 // Help Text
                 helpText
             }
             .padding()
         }
         .frame(minWidth: 500, minHeight: 600)
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
     }
     
     private func setupStep(for index: Int) -> some View {
@@ -96,25 +96,24 @@ struct MetricsSetupView: View {
             )
         }
         
-        return HStack(spacing: 16) {
+        return HStack(spacing: Spacing.section) {
             Image(systemName: stepInfo.icon)
                 .font(.system(size: 18))
                 .frame(width: 40, height: 40)
                 .background((stepInfo.isCompleted ? Color.green : Color.accentColor).opacity(0.1))
                 .foregroundColor(stepInfo.isCompleted ? .green : Color.accentColor)
                 .clipShape(Circle())
-            
-            VStack(alignment: .leading, spacing: 3) {
+
+            VStack(alignment: .leading, spacing: Spacing.tight) {
                 Text(stepInfo.title)
-                    .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.sectionHeader)
                 Text(stepInfo.description)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.rowSubtitle)
+                    .foregroundStyle(.secondary)
             }
-            
+
             Spacer()
-            
+
             if stepInfo.isCompleted {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 24))
@@ -122,7 +121,7 @@ struct MetricsSetupView: View {
             } else {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(Color(NSColor.separatorColor))
+                    .foregroundStyle(.tertiary)
             }
         }
         .padding()
@@ -136,13 +135,10 @@ struct MetricsSetupView: View {
                 Image(systemName: "arrow.right")
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(Color.accentColor)
-            .foregroundColor(.white)
-            .cornerRadius(12)
+            .padding(.vertical, Spacing.comfy)
         }
-        .buttonStyle(.plain)
-        .shadow(color: Color.accentColor.opacity(0.3), radius: 8, y: 4)
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
     }
     
     private func handleActionButton() {
@@ -181,8 +177,8 @@ struct MetricsSetupView: View {
     
     private var helpText: some View {
         Text("Need help? Check the Help menu for support options")
-            .font(.caption)
-            .foregroundColor(.secondary)
+            .font(.rowDetail)
+            .foregroundStyle(.secondary)
     }
     
     private var isShortcutAndAccessibilityGranted: Bool {

@@ -23,15 +23,15 @@ struct MetricsContent: View {
             } else {
                 GeometryReader { geometry in
                     ScrollView {
-                        VStack(spacing: 24) {
+                        VStack(spacing: Spacing.group) {
                             heroSection
                             metricsSection
-                            HStack(alignment: .top, spacing: 18) {
+                            HStack(alignment: .top, spacing: Spacing.section) {
                                 HelpAndResourcesSection()
                                 DashboardPromotionsSection(licenseState: licenseState)
                             }
 
-                            Spacer(minLength: 20)
+                            Spacer(minLength: Spacing.group)
 
                             HStack {
                                 Spacer()
@@ -39,10 +39,10 @@ struct MetricsContent: View {
                             }
                         }
                         .frame(minHeight: geometry.size.height - 56)
-                        .padding(.vertical, 28)
-                        .padding(.horizontal, 32)
+                        .padding(.vertical, Spacing.group)
+                        .padding(.horizontal, Spacing.page)
                     }
-                    .background(Color(.windowBackgroundColor))
+                    .background(Color.windowBackground)
                 }
             }
         }
@@ -132,17 +132,17 @@ struct MetricsContent: View {
     }
 
     private var emptyStateView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: Spacing.section) {
             Image(systemName: "waveform")
                 .font(.system(size: 56, weight: .semibold))
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
             Text("No Transcriptions Yet")
-                .font(.title3.weight(.semibold))
+                .font(.titleEmphasis)
             Text("Start your first recording to unlock value insights.")
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.windowBackgroundColor))
+        .background(Color.windowBackground)
     }
     
     // MARK: - Sections
@@ -180,7 +180,7 @@ struct MetricsContent: View {
                 .frame(maxWidth: .infinity)
             
         }
-        .padding(28)
+        .padding(Spacing.group)
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
@@ -192,9 +192,9 @@ struct MetricsContent: View {
         )
         .shadow(color: Color.black.opacity(0.08), radius: 30, x: 0, y: 16)
     }
-    
+
     private var metricsSection: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 240), spacing: 16)], spacing: 16) {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 240), spacing: Spacing.section)], spacing: Spacing.section) {
             MetricCard(
                 icon: "mic.fill",
                 title: "Sessions Recorded",
@@ -324,7 +324,7 @@ private struct CopySystemInfoButton: View {
         Button(action: {
             copySystemInfo()
         }) {
-            HStack(spacing: 8) {
+            HStack(spacing: Spacing.standard) {
                 Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
                     .rotationEffect(.degrees(isCopied ? 360 : 0))
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isCopied)
@@ -332,12 +332,8 @@ private struct CopySystemInfoButton: View {
                 Text(isCopied ? "Copied!" : "Copy System Info")
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isCopied)
             }
-            .font(.system(size: 13, weight: .medium))
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(Capsule().fill(.thinMaterial))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.bordered)
         .scaleEffect(isCopied ? 1.1 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isCopied)
     }

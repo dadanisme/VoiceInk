@@ -15,14 +15,14 @@ struct PerformanceAnalysisPanelView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(Color(NSColor.windowBackgroundColor))
+                .padding(.horizontal, Spacing.section + 4)
+                .padding(.vertical, Spacing.comfy)
+                .background(Color.windowBackground)
                 .overlay(Divider().opacity(0.5), alignment: .bottom)
                 .zIndex(1)
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: Spacing.section + 4) {
                     summarySection
                     systemInfoSection
 
@@ -34,7 +34,7 @@ struct PerformanceAnalysisPanelView: View {
                         enhancementModelsSection
                     }
                 }
-                .padding(16)
+                .padding(Spacing.section)
             }
         }
     }
@@ -42,30 +42,31 @@ struct PerformanceAnalysisPanelView: View {
     // MARK: - Header
 
     private var header: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: Spacing.comfy) {
             Text("Performance Analysis")
-                .font(.headline)
-                .fontWeight(.semibold)
+                .font(.sectionHeader)
             Spacer()
             Button(action: onClose) {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.secondary)
-                    .padding(6)
+                    .foregroundStyle(.secondary)
+                    .padding(Spacing.tight + 2)
                     .background(Color.secondary.opacity(0.1))
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .help("Close performance analysis")
         }
     }
 
     // MARK: - Summary
 
     private var summarySection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Spacing.standard) {
             sectionHeader("Summary")
 
-            HStack(spacing: 10) {
+            HStack(spacing: Spacing.standard + 2) {
                 summaryPill(icon: "doc.text.fill", value: "\(analysis.totalTranscripts)", label: "Total", color: .indigo)
                 summaryPill(icon: "waveform.path.ecg", value: "\(analysis.totalWithTranscriptionData)", label: "Analyzable", color: .teal)
                 summaryPill(icon: "sparkles", value: "\(analysis.totalEnhancedFiles)", label: "Enhanced", color: .mint)
@@ -74,19 +75,19 @@ struct PerformanceAnalysisPanelView: View {
     }
 
     private func summaryPill(icon: String, value: String, label: String, color: Color) -> some View {
-        VStack(spacing: 4) {
+        VStack(spacing: Spacing.tight) {
             Image(systemName: icon)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(color)
             Text(value)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundColor(.primary)
+                .font(.titleEmphasis)
+                .foregroundStyle(.primary)
             Text(label)
-                .font(.system(size: 10))
-                .foregroundColor(.secondary)
+                .font(.rowDetail)
+                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 10)
+        .padding(.vertical, Spacing.standard + 2)
         .background(MetricCardBackground(color: color))
         .cornerRadius(10)
     }
@@ -94,22 +95,22 @@ struct PerformanceAnalysisPanelView: View {
     // MARK: - System Info
 
     private var systemInfoSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Spacing.standard) {
             sectionHeader("System Information")
 
             VStack(spacing: 0) {
                 infoRow(label: "Device", value: PerformanceAnalyzer.getMacModel())
-                Divider().padding(.horizontal, 10)
+                Divider().padding(.horizontal, Spacing.standard + 2)
                 infoRow(label: "Processor", value: PerformanceAnalyzer.getCPUInfo())
-                Divider().padding(.horizontal, 10)
+                Divider().padding(.horizontal, Spacing.standard + 2)
                 infoRow(label: "Memory", value: PerformanceAnalyzer.getMemoryInfo())
             }
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(NSColor.controlBackgroundColor))
+                    .fill(Color.controlBackground)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color(NSColor.quaternaryLabelColor).opacity(0.3), lineWidth: 1)
+                            .stroke(Color.labelQuaternary.opacity(0.3), lineWidth: 1)
                     )
             )
             .cornerRadius(10)
@@ -119,30 +120,30 @@ struct PerformanceAnalysisPanelView: View {
     private func infoRow(label: String, value: String) -> some View {
         HStack {
             Text(label)
-                .font(.system(size: 11, weight: .medium))
-                .foregroundColor(.secondary)
-            Spacer(minLength: 4)
+                .font(.rowDetail.weight(.medium))
+                .foregroundStyle(.secondary)
+            Spacer(minLength: Spacing.tight)
             Text(value)
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.primary)
+                .font(.rowDetail.weight(.semibold))
+                .foregroundStyle(.primary)
                 .lineLimit(1)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, Spacing.comfy)
+        .padding(.vertical, Spacing.standard)
     }
 
     // MARK: - Transcription Models
 
     private let gridColumns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
+        GridItem(.flexible(), spacing: Spacing.comfy),
+        GridItem(.flexible(), spacing: Spacing.comfy)
     ]
 
     private var transcriptionModelsSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: Spacing.standard + 2) {
             sectionHeader("Transcription Models")
 
-            LazyVGrid(columns: gridColumns, spacing: 12) {
+            LazyVGrid(columns: gridColumns, spacing: Spacing.comfy) {
                 ForEach(analysis.transcriptionModels) { modelStat in
                     transcriptionModelTile(modelStat)
                 }
@@ -151,60 +152,62 @@ struct PerformanceAnalysisPanelView: View {
     }
 
     private func transcriptionModelTile(_ modelStat: PerformanceAnalyzer.ModelStat) -> some View {
-        VStack(spacing: 10) {
+        VStack(spacing: Spacing.standard + 2) {
             // Model name + count
             VStack(spacing: 2) {
                 Text(modelStat.name)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.rowDetail.weight(.semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 Text("\(modelStat.fileCount) transcripts")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
+                    .font(.rowDetail)
+                    .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity)
 
             // Hero metric
             VStack(spacing: 3) {
                 Text(String(format: "%.1fx", modelStat.speedFactor))
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .font(.largeTitle)
                     .foregroundColor(.mint)
                 Text("Faster than Real-time")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
+                    .font(.rowDetail)
+                    .foregroundStyle(.secondary)
             }
 
             Divider()
-                .padding(.horizontal, 8)
+                .padding(.horizontal, Spacing.standard)
 
             // Secondary metrics
             HStack(spacing: 0) {
                 VStack(spacing: 2) {
+                    // TODO HIG: monospaced
                     Text(formatDuration(modelStat.avgAudioDuration))
                         .font(.system(size: 11, weight: .semibold, design: .monospaced))
                         .foregroundColor(.indigo)
                     Text("Avg. Audio")
-                        .font(.system(size: 9))
-                        .foregroundColor(.secondary)
+                        .font(.rowDetail)
+                        .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
 
                 Rectangle()
-                    .fill(Color(NSColor.separatorColor))
+                    .fill(Color.separatorColor)
                     .frame(width: 1, height: 24)
 
                 VStack(spacing: 2) {
+                    // TODO HIG: monospaced
                     Text(String(format: "%.2fs", modelStat.avgProcessingTime))
                         .font(.system(size: 11, weight: .semibold, design: .monospaced))
                         .foregroundColor(.teal)
                     Text("Avg. Processing")
-                        .font(.system(size: 9))
-                        .foregroundColor(.secondary)
+                        .font(.rowDetail)
+                        .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(14)
+        .padding(Spacing.section - 2)
         .background(MetricCardBackground(color: .mint))
         .cornerRadius(12)
     }
@@ -212,10 +215,10 @@ struct PerformanceAnalysisPanelView: View {
     // MARK: - Enhancement Models
 
     private var enhancementModelsSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: Spacing.standard + 2) {
             sectionHeader("Enhancement Models")
 
-            LazyVGrid(columns: gridColumns, spacing: 12) {
+            LazyVGrid(columns: gridColumns, spacing: Spacing.comfy) {
                 ForEach(analysis.enhancementModels) { modelStat in
                     enhancementModelTile(modelStat)
                 }
@@ -224,30 +227,30 @@ struct PerformanceAnalysisPanelView: View {
     }
 
     private func enhancementModelTile(_ modelStat: PerformanceAnalyzer.ModelStat) -> some View {
-        VStack(spacing: 10) {
+        VStack(spacing: Spacing.standard + 2) {
             // Model name + count
             VStack(spacing: 2) {
                 Text(modelStat.name)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.rowDetail.weight(.semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 Text("\(modelStat.fileCount) transcripts")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
+                    .font(.rowDetail)
+                    .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity)
 
             // Hero metric
             VStack(spacing: 3) {
                 Text(String(format: "%.2f s", modelStat.avgProcessingTime))
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .font(.largeTitle)
                     .foregroundColor(.indigo)
                 Text("Avg. Enhancement Time")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
+                    .font(.rowDetail)
+                    .foregroundStyle(.secondary)
             }
         }
-        .padding(14)
+        .padding(Spacing.section - 2)
         .background(MetricCardBackground(color: .indigo))
         .cornerRadius(12)
     }
@@ -256,8 +259,8 @@ struct PerformanceAnalysisPanelView: View {
 
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
-            .font(.system(size: 12, weight: .semibold))
-            .foregroundColor(.secondary)
+            .font(.rowDetail.weight(.semibold))
+            .foregroundStyle(.secondary)
             .textCase(.uppercase)
             .tracking(0.5)
     }
