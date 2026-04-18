@@ -49,7 +49,7 @@ struct MenuBarView: View {
                 HStack {
                     Text("Transcription Model: \(transcriptionModelManager.currentTranscriptionModel?.displayName ?? "None")")
                     Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 10))
+                        .font(.caption2)
                 }
             }
             
@@ -64,7 +64,7 @@ struct MenuBarView: View {
                     } label: {
                         HStack {
                             Image(systemName: prompt.icon)
-                                .foregroundColor(.accentColor)
+                                .foregroundStyle(Color.accentColor)
                             Text(prompt.title)
                             if enhancementService.selectedPromptId == prompt.id {
                                 Spacer()
@@ -77,7 +77,7 @@ struct MenuBarView: View {
                 HStack {
                     Text("Prompt: \(enhancementService.activePrompt?.title ?? "None")")
                     Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 10))
+                        .font(.caption2)
                 }
             }
             
@@ -97,13 +97,13 @@ struct MenuBarView: View {
 
                 if aiService.connectedProviders.isEmpty {
                     Text("No providers connected")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             } label: {
                 HStack {
                     Text("AI Provider: \(aiService.selectedProvider.rawValue)")
                     Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 10))
+                        .font(.caption2)
                 }
             }
             
@@ -123,13 +123,13 @@ struct MenuBarView: View {
 
                 if aiService.availableModels.isEmpty {
                     Text("No models available")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             } label: {
                 HStack {
                     Text("AI Model: \(aiService.currentModel)")
                     Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 10))
+                        .font(.caption2)
                 }
             }
             
@@ -151,13 +151,13 @@ struct MenuBarView: View {
 
                 if audioDeviceManager.availableDevices.isEmpty {
                     Text("No devices available")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             } label: {
                 HStack {
                     Text("Audio Input")
                     Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 10))
+                        .font(.caption2)
                 }
             }
 

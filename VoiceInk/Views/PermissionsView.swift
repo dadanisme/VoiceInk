@@ -95,101 +95,90 @@ struct PermissionCard: View {
     @State private var isRefreshing = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 16) {
-                // Icon with background
-                ZStack {
-                    Circle()
-                        .fill(isGranted ? Color.green.opacity(0.15) : Color.orange.opacity(0.15))
-                        .frame(width: 44, height: 44)
+        SurfaceCard {
+            VStack(alignment: .leading, spacing: Spacing.section) {
+                HStack(spacing: Spacing.section) {
+                    // Icon with background
+                    ZStack {
+                        Circle()
+                            .fill(isGranted ? Color.green.opacity(0.15) : Color.orange.opacity(0.15))
+                            .frame(width: 44, height: 44)
 
-                    Image(systemName: isGranted ? "\(icon).fill" : icon)
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(isGranted ? .green : .orange)
-                        .symbolRenderingMode(.hierarchical)
-                }
+                        Image(systemName: isGranted ? "\(icon).fill" : icon)
+                            .font(.title3.weight(.semibold))
+                            .foregroundStyle(isGranted ? Color.green : Color.orange)
+                            .symbolRenderingMode(.hierarchical)
+                    }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text(title)
-                            .font(.headline)
-                        if let message = infoTipMessage {
-                            if let link = infoTipLink, !link.isEmpty {
-                                InfoTip(message, learnMoreURL: link)
-                            } else {
-                                InfoTip(message)
+                    VStack(alignment: .leading, spacing: Spacing.tight) {
+                        HStack {
+                            Text(title)
+                                .font(.headline)
+                            if let message = infoTipMessage {
+                                if let link = infoTipLink, !link.isEmpty {
+                                    InfoTip(message, learnMoreURL: link)
+                                } else {
+                                    InfoTip(message)
+                                }
                             }
                         }
+                        Text(description)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                     }
-                    Text(description)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                // Status indicator with refresh
-                HStack(spacing: 12) {
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            isRefreshing = true
+
+                    Spacer()
+
+                    // Status indicator with refresh
+                    HStack(spacing: Spacing.comfy) {
+                        Button(action: {
+                            withAnimation(.easeInOut(duration: 0.5)) {
+                                isRefreshing = true
+                            }
+                            checkPermission()
+
+                            // Reset the animation after a delay
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                isRefreshing = false
+                            }
+                        }) {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.secondary)
+                                .rotationEffect(.degrees(isRefreshing ? 360 : 0))
                         }
-                        checkPermission()
-                        
-                        // Reset the animation after a delay
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            isRefreshing = false
+                        .buttonStyle(.plain)
+                        .contentShape(Rectangle())
+                        .help("Refresh permission status")
+
+                        if isGranted {
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.title3)
+                                .foregroundStyle(.green)
+                                .symbolRenderingMode(.hierarchical)
+                        } else {
+                            Image(systemName: "xmark.seal.fill")
+                                .font(.title3)
+                                .foregroundStyle(.orange)
+                                .symbolRenderingMode(.hierarchical)
                         }
-                    }) {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.secondary)
-                            .rotationEffect(.degrees(isRefreshing ? 360 : 0))
-                    }
-                    .buttonStyle(.plain)
-                    .contentShape(Rectangle())
-                    
-                    if isGranted {
-                        Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 20))
-                            .foregroundColor(.green)
-                            .symbolRenderingMode(.hierarchical)
-                    } else {
-                        Image(systemName: "xmark.seal.fill")
-                            .font(.system(size: 20))
-                            .foregroundColor(.orange)
-                            .symbolRenderingMode(.hierarchical)
                     }
                 }
-            }
-            
-            if !isGranted {
-                Button(action: buttonAction) {
-                    HStack {
-                        Text(buttonTitle)
-                        Spacer()
-                        Image(systemName: "arrow.right")
+
+                if !isGranted {
+                    Button(action: buttonAction) {
+                        HStack {
+                            Text(buttonTitle)
+                            Spacer()
+                            Image(systemName: "arrow.right")
+                        }
+                        .frame(maxWidth: .infinity)
                     }
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        LinearGradient(
-                            colors: [Color.accentColor, Color.accentColor.opacity(0.8)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .cornerRadius(10)
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
                 }
-                .buttonStyle(.plain)
             }
         }
-        .padding()
-        .background(CardBackground(isSelected: false))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 5, y: 2)
     }
 }
 
@@ -199,16 +188,16 @@ struct PermissionsView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 32) {
+            VStack(spacing: Spacing.page) {
                 // Header
                 CompactHeroSection(
                     icon: "shield.lefthalf.filled",
                     title: "App Permissions",
                     description: "VoiceInk requires the following permissions to function properly"
                 )
-                
+
                 // Permission Cards
-                VStack(spacing: 16) {
+                VStack(spacing: Spacing.section) {
                     // Keyboard Shortcut Permission
                     PermissionCard(
                         icon: "keyboard",
@@ -281,9 +270,9 @@ struct PermissionsView: View {
                     )
                 }
             }
-            .padding(24)
+            .padding(Spacing.group)
         }
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .onAppear {
             permissionManager.checkAllPermissions()
         }
