@@ -8,7 +8,7 @@ struct TranscriptionListItem: View {
     let onToggleCheck: () -> Void
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Spacing.standard) {
             Toggle("", isOn: Binding(
                 get: { isChecked },
                 set: { _ in onToggleCheck() }
@@ -16,36 +16,36 @@ struct TranscriptionListItem: View {
             .toggleStyle(CircularCheckboxStyle())
             .labelsHidden()
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: Spacing.tight) {
                 HStack {
                     Text(transcription.timestamp, format: .dateTime.month(.abbreviated).day().hour().minute())
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(.secondary)
+                        .font(.rowDetail)
+                        .foregroundStyle(.secondary)
                     Spacer()
                     if transcription.duration > 0 {
                         Text(transcription.duration.formatTiming())
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.rowDetail)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 3)
                             .background(
                                 RoundedRectangle(cornerRadius: 4, style: .continuous)
                                     .fill(Color.secondary.opacity(0.1))
                             )
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                 }
 
                 Text(transcription.enhancedText ?? transcription.text)
-                    .font(.system(size: 12, weight: .regular))
+                    .font(.rowSubtitle)
                     .lineLimit(2)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
             }
         }
-        .padding(10)
+        .padding(Spacing.standard)
         .background {
             if isSelected {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color(NSColor.selectedContentBackgroundColor).opacity(0.3))
+                    .fill(Color.accentColor.opacity(0.15))
             } else {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .fill(.thinMaterial)
@@ -58,14 +58,15 @@ struct TranscriptionListItem: View {
 
 struct CircularCheckboxStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
-        Button(action: {
+        Button {
             configuration.isOn.toggle()
-        }) {
+        } label: {
             Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
                 .symbolRenderingMode(.hierarchical)
-                .foregroundColor(configuration.isOn ? Color(NSColor.controlAccentColor) : .secondary)
+                .foregroundStyle(configuration.isOn ? Color.accentColor : Color.labelSecondary)
                 .font(.system(size: 18))
         }
         .buttonStyle(.plain)
+        .contentShape(Rectangle())
     }
 }

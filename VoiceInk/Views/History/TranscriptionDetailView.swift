@@ -14,9 +14,9 @@ struct TranscriptionDetailView: View {
     }
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: Spacing.comfy) {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(spacing: Spacing.section) {
                     MessageBubble(
                         label: "Original",
                         text: transcription.text,
@@ -31,7 +31,7 @@ struct TranscriptionDetailView: View {
                         )
                     }
                 }
-                .padding(16)
+                .padding(Spacing.section)
             }
 
             if hasAudioFile, let urlString = transcription.audioFileURL,
@@ -40,19 +40,19 @@ struct TranscriptionDetailView: View {
                     Divider()
 
                     AudioPlayerView(url: url, transcription: transcription, onInfoTap: onInfoTap)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, Spacing.standard)
+                        .padding(.vertical, Spacing.tight)
                         .background(
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .fill(Color(NSColor.controlBackgroundColor).opacity(0.5))
+                                .fill(Color.controlBackground.opacity(0.5))
                         )
-                        .padding(.horizontal, 12)
-                        .padding(.top, 6)
+                        .padding(.horizontal, Spacing.comfy)
+                        .padding(.top, Spacing.tight)
                 }
             }
         }
-        .padding(.vertical, 12)
-        .background(Color(NSColor.controlBackgroundColor))
+        .padding(.vertical, Spacing.comfy)
+        .background(Color.controlBackground)
     }
 }
 
@@ -65,19 +65,19 @@ private struct MessageBubble: View {
         HStack(alignment: .bottom) {
             if isEnhanced { Spacer(minLength: 60) }
 
-            VStack(alignment: isEnhanced ? .leading : .trailing, spacing: 4) {
+            VStack(alignment: isEnhanced ? .leading : .trailing, spacing: Spacing.tight) {
                 Text(label)
-                    .font(.system(size: 9, weight: .medium))
-                    .foregroundColor(.secondary.opacity(0.7))
-                    .padding(.horizontal, 12)
+                    .font(.rowDetail)
+                    .foregroundStyle(.tertiary)
+                    .padding(.horizontal, Spacing.comfy)
 
                 ScrollView {
                     Text(text)
-                        .font(.system(size: 14, weight: .regular))
+                        .font(.rowTitle)
                         .lineSpacing(2)
                         .textSelection(.enabled)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, Spacing.comfy)
+                        .padding(.vertical, Spacing.standard)
                 }
                 .frame(maxHeight: 350)
                 .background {
@@ -89,13 +89,13 @@ private struct MessageBubble: View {
                             .fill(.thinMaterial)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .strokeBorder(Color.primary.opacity(0.06), lineWidth: 0.5)
+                                    .strokeBorder(Color.separatorColor.opacity(0.6), lineWidth: 0.5)
                             )
                     }
                 }
                 .overlay(alignment: .bottomTrailing) {
                     CopyIconButton(textToCopy: text)
-                        .padding(8)
+                        .padding(Spacing.standard)
                 }
             }
 

@@ -125,10 +125,10 @@ struct TranscriptionHistoryView: View {
                 .id(selectedTranscriptions.count)
                 .frame(width: 400)
                 .frame(maxHeight: .infinity)
-                .background(Color(NSColor.windowBackgroundColor))
+                .background(Color.windowBackground)
                 .overlay(alignment: .leading) {
                     Rectangle()
-                        .fill(Color(NSColor.separatorColor))
+                        .fill(Color.separatorColor)
                         .frame(width: 1)
                 }
                 .shadow(color: .black.opacity(0.08), radius: 8, x: -2, y: 0)
@@ -167,35 +167,35 @@ struct TranscriptionHistoryView: View {
         VStack(spacing: 0) {
             HStack {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(.secondary)
-                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .font(.rowSubtitle)
                 TextField("Search transcriptions", text: $searchText)
                     .textFieldStyle(PlainTextFieldStyle())
-                    .font(.system(size: 13))
+                    .font(.rowSubtitle)
             }
-            .padding(10)
+            .padding(Spacing.standard)
             .background(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .fill(.thinMaterial)
             )
-            .padding(12)
+            .padding(Spacing.comfy)
 
             Divider()
 
             ZStack(alignment: .bottom) {
                 if displayedTranscriptions.isEmpty && !isLoading {
-                    VStack(spacing: 12) {
+                    VStack(spacing: Spacing.comfy) {
                         Image(systemName: "doc.text.magnifyingglass")
                             .font(.system(size: 40))
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                         Text("No transcriptions")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.secondary)
+                            .font(.rowTitle)
+                            .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 8) {
+                        LazyVStack(spacing: Spacing.standard) {
                             ForEach(displayedTranscriptions) { transcription in
                                 TranscriptionListItem(
                                     transcription: transcription,
@@ -207,24 +207,23 @@ struct TranscriptionHistoryView: View {
                             }
 
                             if hasMoreContent {
-                                Button(action: {
+                                Button {
                                     Task { await loadMoreContent() }
-                                }) {
-                                    HStack(spacing: 8) {
+                                } label: {
+                                    HStack(spacing: Spacing.standard) {
                                         if isLoading {
                                             ProgressView().controlSize(.small)
                                         }
                                         Text(isLoading ? "Loading..." : "Load More")
-                                            .font(.system(size: 13, weight: .medium))
                                     }
                                     .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 10)
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.bordered)
                                 .disabled(isLoading)
+                                .padding(.vertical, Spacing.tight)
                             }
                         }
-                        .padding(8)
+                        .padding(Spacing.standard)
                         .padding(.bottom, 50)
                     }
                 }
@@ -235,7 +234,7 @@ struct TranscriptionHistoryView: View {
                 }
             }
         }
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
     }
 
     private var centerPaneView: some View {
@@ -247,24 +246,24 @@ struct TranscriptionHistoryView: View {
                     .id(transcription.id)
             } else {
                 ScrollView {
-                    VStack(spacing: 32) {
+                    VStack(spacing: Spacing.page) {
                         Spacer()
                             .frame(minHeight: 40)
 
-                        VStack(spacing: 12) {
+                        VStack(spacing: Spacing.comfy) {
                             Image(systemName: "doc.text")
                                 .font(.system(size: 50))
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                             Text("No Selection")
-                                .font(.system(size: 18, weight: .medium))
-                                .foregroundColor(.secondary)
+                                .font(.titleEmphasis)
+                                .foregroundStyle(.secondary)
                             Text("Select a transcription to view details")
-                                .font(.system(size: 14))
-                                .foregroundColor(.secondary)
+                                .font(.rowTitle)
+                                .foregroundStyle(.secondary)
                         }
 
                         HistoryShortcutTipView()
-                            .padding(.horizontal, 24)
+                            .padding(.horizontal, Spacing.group)
 
                         Spacer()
                             .frame(minHeight: 40)
@@ -273,7 +272,7 @@ struct TranscriptionHistoryView: View {
                     .frame(minHeight: 600)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(NSColor.controlBackgroundColor))
+                .background(Color.controlBackground)
             }
         }
     }
@@ -284,16 +283,16 @@ struct TranscriptionHistoryView: View {
                 TranscriptionInfoPanel(transcription: transcription)
                     .id(transcription.id)
             } else {
-                VStack(spacing: 12) {
+                VStack(spacing: Spacing.comfy) {
                     Image(systemName: "info.circle")
                         .font(.system(size: 40))
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                     Text("No Metadata")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
+                        .font(.rowTitle)
+                        .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(NSColor.controlBackgroundColor))
+                .background(Color.controlBackground)
             }
         }
     }
@@ -303,53 +302,43 @@ struct TranscriptionHistoryView: View {
     }
 
     private var selectionToolbar: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: Spacing.comfy) {
             if allSelected {
                 Button("Deselect All") {
                     selectedTranscriptions.removeAll()
                 }
-                .buttonStyle(.plain)
-                .font(.system(size: 13))
-                .foregroundColor(.secondary)
+                .buttonStyle(.bordered)
             } else {
                 Button("Select All") {
                     Task { await selectAllTranscriptions() }
                 }
-                .buttonStyle(.plain)
-                .font(.system(size: 13))
-                .foregroundColor(.secondary)
+                .buttonStyle(.bordered)
             }
 
             if !selectedTranscriptions.isEmpty {
                 Divider()
                     .frame(height: 16)
 
-                Button(action: {
+                Button {
                     withAnimation(.smooth(duration: 0.3)) { isAnalysisPanelPresented = true }
-                }) {
+                } label: {
                     Image(systemName: "chart.bar.xaxis")
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(.secondary)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.bordered)
                 .help("Analyze")
 
-                Button(action: {
+                Button {
                     exportService.exportTranscriptionsToCSV(transcriptions: Array(selectedTranscriptions))
-                }) {
+                } label: {
                     Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(.secondary)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.bordered)
                 .help("Export")
 
-                Button(action: { showDeleteConfirmation = true }) {
+                Button { showDeleteConfirmation = true } label: {
                     Image(systemName: "trash")
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(.secondary)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.bordered)
                 .help("Delete")
             }
 
@@ -357,14 +346,14 @@ struct TranscriptionHistoryView: View {
 
             if !selectedTranscriptions.isEmpty {
                 Text("\(selectedTranscriptions.count) selected")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.secondary)
+                    .font(.rowSubtitle)
+                    .foregroundStyle(.secondary)
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .padding(.horizontal, Spacing.section)
+        .padding(.vertical, Spacing.standard)
         .background(
-            Color(NSColor.windowBackgroundColor)
+            Color.windowBackground
                 .shadow(color: Color.black.opacity(0.15), radius: 3, y: -2)
         )
     }

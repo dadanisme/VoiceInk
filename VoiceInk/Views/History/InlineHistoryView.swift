@@ -85,7 +85,7 @@ struct InlineHistoryView: View {
         }
         .animation(.easeInOut(duration: 0.2), value: selectedTranscriptions.isEmpty)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .overlay {
             Color.black.opacity(isPanelPresented ? 0.1 : 0)
                 .ignoresSafeArea()
@@ -103,10 +103,10 @@ struct InlineHistoryView: View {
                 panelContent
                     .frame(width: 400)
                     .frame(maxHeight: .infinity)
-                    .background(Color(NSColor.windowBackgroundColor))
+                    .background(Color.windowBackground)
                     .overlay(alignment: .leading) {
                         Rectangle()
-                            .fill(Color(NSColor.separatorColor))
+                            .fill(Color.separatorColor)
                             .frame(width: 1)
                     }
                     .shadow(color: .black.opacity(0.08), radius: 8, x: -2, y: 0)
@@ -150,16 +150,16 @@ struct InlineHistoryView: View {
     // MARK: - Top Bar
 
     private var topBar: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Spacing.standard) {
             HStack(spacing: 6) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(.secondary)
-                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                    .font(.rowDetail)
                 TextField("Search transcriptions...", text: $searchText)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 13))
+                    .font(.rowSubtitle)
             }
-            .padding(.horizontal, 10)
+            .padding(.horizontal, Spacing.standard)
             .padding(.vertical, 6)
             .background(
                 Capsule()
@@ -167,43 +167,39 @@ struct InlineHistoryView: View {
             )
             .frame(maxWidth: .infinity)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
+        .padding(.horizontal, Spacing.group)
+        .padding(.vertical, Spacing.standard)
     }
 
     private var selectionBar: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: Spacing.section) {
             Text("\(selectedTranscriptions.count) selected")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundColor(.secondary)
+                .font(.rowSubtitle)
+                .foregroundStyle(.secondary)
 
             Spacer()
 
-            Button(action: {
+            Button {
                 panelMode = .analysis
                 withAnimation(.smooth(duration: 0.3)) { isPanelPresented = true }
-            }) {
+            } label: {
                 Label("Analyze", systemImage: "chart.bar.xaxis")
-                    .font(.system(size: 12, weight: .medium))
             }
-            .buttonStyle(.plain)
-            .foregroundColor(.secondary)
+            .buttonStyle(.bordered)
 
-            Button(action: {
+            Button {
                 exportService.exportTranscriptionsToCSV(transcriptions: Array(selectedTranscriptions))
-            }) {
+            } label: {
                 Label("Export", systemImage: "square.and.arrow.up")
-                    .font(.system(size: 12, weight: .medium))
             }
-            .buttonStyle(.plain)
-            .foregroundColor(.secondary)
+            .buttonStyle(.bordered)
 
-            Button(action: { showDeleteConfirmation = true }) {
+            Button(role: .destructive) {
+                showDeleteConfirmation = true
+            } label: {
                 Label("Delete", systemImage: "trash")
-                    .font(.system(size: 12, weight: .medium))
             }
-            .buttonStyle(.plain)
-            .foregroundColor(.red.opacity(0.8))
+            .buttonStyle(.bordered)
 
             Divider()
                 .frame(height: 16)
@@ -212,22 +208,18 @@ struct InlineHistoryView: View {
                 Button("Deselect All") {
                     selectedTranscriptions.removeAll()
                 }
-                .font(.system(size: 12, weight: .medium))
-                .buttonStyle(.plain)
-                .foregroundColor(.secondary)
+                .buttonStyle(.bordered)
             } else {
                 Button("Select All") {
                     Task { await selectAllTranscriptions() }
                 }
-                .font(.system(size: 12, weight: .medium))
-                .buttonStyle(.plain)
-                .foregroundColor(.secondary)
+                .buttonStyle(.bordered)
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
+        .padding(.horizontal, Spacing.group)
+        .padding(.vertical, Spacing.standard)
         .background(
-            Color(NSColor.windowBackgroundColor)
+            Color.windowBackground
                 .shadow(color: Color.black.opacity(0.1), radius: 3, y: -2)
         )
     }
@@ -235,17 +227,17 @@ struct InlineHistoryView: View {
     // MARK: - Empty State
 
     private var emptyStateView: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: Spacing.comfy) {
             Spacer()
             Image(systemName: "doc.text.magnifyingglass")
                 .font(.system(size: 40))
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
             Text(searchText.isEmpty ? "No transcriptions yet" : "No results found")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.secondary)
+                .font(.sectionHeader)
+                .foregroundStyle(.secondary)
             Text(searchText.isEmpty ? "Your transcription history will appear here" : "Try a different search term")
-                .font(.system(size: 13))
-                .foregroundColor(.secondary.opacity(0.8))
+                .font(.rowSubtitle)
+                .foregroundStyle(.tertiary)
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -280,20 +272,18 @@ struct InlineHistoryView: View {
 
             if hasMoreContent {
                 Section {
-                    Button(action: {
+                    Button {
                         Task { await loadMoreContent() }
-                    }) {
-                        HStack(spacing: 8) {
+                    } label: {
+                        HStack(spacing: Spacing.standard) {
                             if isLoading {
                                 ProgressView().controlSize(.small)
                             }
                             Text(isLoading ? "Loading..." : "Load More")
-                                .font(.system(size: 13, weight: .medium))
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 4)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.bordered)
                     .disabled(isLoading)
                 }
             }
@@ -325,29 +315,24 @@ struct InlineHistoryView: View {
 
     private var infoPanelContent: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 12) {
+            HStack(spacing: Spacing.comfy) {
                 Text("Info")
-                    .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.sectionHeader)
                 Spacer()
-                Button(action: {
+                Button {
                     withAnimation(.smooth(duration: 0.3)) {
                         isPanelPresented = false
                         panelMode = .info
                     }
-                }) {
+                } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                        .padding(6)
-                        .background(Color.secondary.opacity(0.1))
-                        .clipShape(Circle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.bordered)
+                .help("Close")
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(Color(NSColor.windowBackgroundColor))
+            .padding(.horizontal, Spacing.group)
+            .padding(.vertical, Spacing.comfy)
+            .background(Color.windowBackground)
             .overlay(Divider().opacity(0.5), alignment: .bottom)
             .zIndex(1)
 
@@ -516,7 +501,7 @@ private struct HistoryCardRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 10) {
+            HStack(spacing: Spacing.standard) {
                 Toggle("", isOn: Binding(
                     get: { isChecked },
                     set: { _ in onToggleCheck() }
@@ -524,16 +509,16 @@ private struct HistoryCardRow: View {
                 .toggleStyle(CircularCheckboxStyle())
                 .labelsHidden()
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: Spacing.tight) {
                     Text(transcription.timestamp, format: .dateTime.month(.abbreviated).day().hour().minute())
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(.secondary)
+                        .font(.rowDetail)
+                        .foregroundStyle(.secondary)
 
                     if !isExpanded {
                         Text(transcription.enhancedText ?? transcription.text)
-                            .font(.system(size: 13))
+                            .font(.rowSubtitle)
                             .lineLimit(2)
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                     }
                 }
 
@@ -541,7 +526,7 @@ private struct HistoryCardRow: View {
 
                 Image(systemName: "chevron.right")
                     .font(.caption2.weight(.semibold))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .rotationEffect(.degrees(isExpanded ? 90 : 0))
                     .animation(.easeInOut(duration: 0.2), value: isExpanded)
             }
@@ -550,7 +535,7 @@ private struct HistoryCardRow: View {
 
             if isExpanded {
                 expandedContent
-                    .padding(.top, 10)
+                    .padding(.top, Spacing.standard)
             }
         }
     }
@@ -558,10 +543,10 @@ private struct HistoryCardRow: View {
     // MARK: - Expanded Content
 
     private var expandedContent: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Spacing.standard) {
             // Tabs
             if transcription.enhancedText != nil {
-                HStack(spacing: 4) {
+                HStack(spacing: Spacing.tight) {
                     ForEach(TranscriptionTab.allCases, id: \.self) { tab in
                         Button {
                             withAnimation(.easeInOut(duration: 0.15)) {
@@ -569,16 +554,17 @@ private struct HistoryCardRow: View {
                             }
                         } label: {
                             Text(tab.rawValue)
-                                .font(.system(size: 11, weight: .medium))
-                                .foregroundColor(selectedTab == tab ? .primary : .secondary)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
+                                .font(.rowDetail)
+                                .foregroundStyle(selectedTab == tab ? Color.labelPrimary : Color.labelSecondary)
+                                .padding(.horizontal, Spacing.standard)
+                                .padding(.vertical, Spacing.tight)
                                 .background(
                                     Capsule()
                                         .fill(selectedTab == tab ? Color.secondary.opacity(0.15) : Color.clear)
                                 )
                         }
                         .buttonStyle(.plain)
+                        .contentShape(Rectangle())
                     }
                     Spacer()
                 }
@@ -593,23 +579,21 @@ private struct HistoryCardRow: View {
             .frame(maxHeight: 350)
             .overlay(alignment: .bottomTrailing) {
                 CopyIconButton(textToCopy: displayText)
-                    .padding(8)
+                    .padding(Spacing.standard)
             }
 
             if hasAudioFile, let urlString = transcription.audioFileURL,
                let url = URL(string: urlString) {
                 Divider()
                 AudioPlayerView(url: url, transcription: transcription, onInfoTap: onShowInfo)
-                .padding(.vertical, 4)
+                .padding(.vertical, Spacing.tight)
             } else {
                 HStack {
                     Spacer()
                     Button(action: onShowInfo) {
                         Image(systemName: "info.circle")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.secondary)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.bordered)
                     .help("View details")
                 }
             }
