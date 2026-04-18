@@ -23,16 +23,70 @@ class FluidAudioModelManager: ObservableObject {
         modelVersionMap[modelName] ?? .v3
     }
 
+    // MARK: - Chunk-size settings (Nemotron / Parakeet EOU)
+
+    /// Allowed Nemotron chunk sizes (ms). Must be a member of NemotronChunkSize.
+    static let allowedNemotronChunkMs: [Int] = [80, 160, 560, 1120]
+    /// Allowed Parakeet EOU chunk sizes (ms). Must be a member of StreamingChunkSize.
+    static let allowedParakeetEouChunkMs: [Int] = [160, 320, 1280]
+
+    static let defaultNemotronChunkMs = 1120
+    static let defaultParakeetEouChunkMs = 1280
+
+    private static let nemotronChunkKey = "nemotron-chunk-size-ms"
+    private static let parakeetEouChunkKey = "parakeet-eou-chunk-size-ms"
+
+    var nemotronChunkSize: NemotronChunkSize {
+        get {
+            let stored = UserDefaults.standard.object(forKey: Self.nemotronChunkKey) as? Int
+                ?? Self.defaultNemotronChunkMs
+            return NemotronChunkSize(rawValue: stored) ?? .ms1120
+        }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: Self.nemotronChunkKey)
+            onModelsChanged?()
+        }
+    }
+
+    var parakeetEouChunkSize: StreamingChunkSize {
+        get {
+            let stored = UserDefaults.standard.object(forKey: Self.parakeetEouChunkKey) as? Int
+                ?? Self.defaultParakeetEouChunkMs
+            switch stored {
+            case 160: return .ms160
+            case 320: return .ms320
+            default:  return .ms1280
+            }
+        }
+        set {
+            let ms: Int
+            switch newValue {
+            case .ms160:  ms = 160
+            case .ms320:  ms = 320
+            case .ms1280: ms = 1280
+            }
+            UserDefaults.standard.set(ms, forKey: Self.parakeetEouChunkKey)
+            onModelsChanged?()
+        }
+    }
+
     init() {}
 
     // MARK: - Query helpers
 
-    func isFluidAudioModelDownloaded(named modelName: String) -> Bool {
-        UserDefaults.standard.bool(forKey: parakeetDefaultsKey(for: modelName))
+    func isFluidAudioModelDownloaded(_ model: FluidAudioModel) -> Bool {
+        UserDefaults.standard.bool(forKey: downloadedDefaultsKey(for: model))
     }
 
-    func isFluidAudioModelDownloaded(_ model: FluidAudioModel) -> Bool {
-        isFluidAudioModelDownloaded(named: model.name)
+    /// Legacy name-based lookup. Kept for call sites that only have a model name.
+    /// Resolves the PredefinedModels entry to pick up family + chunk size.
+    func isFluidAudioModelDownloaded(named modelName: String) -> Bool {
+        guard let model = PredefinedModels.models
+            .compactMap({ $0 as? FluidAudioModel })
+            .first(where: { $0.name == modelName }) else {
+            return false
+        }
+        return isFluidAudioModelDownloaded(model)
     }
 
     func isFluidAudioModelDownloading(_ model: FluidAudioModel) -> Bool {
@@ -64,10 +118,10 @@ class FluidAudioModelManager: ObservableObject {
             _ = try await AsrModels.downloadAndLoad(version: version)
             _ = try await VadManager()
 
-            UserDefaults.standard.set(true, forKey: parakeetDefaultsKey(for: modelName))
+            UserDefaults.standard.set(true, forKey: downloadedDefaultsKey(for: model))
             downloadProgress[modelName] = 1.0
         } catch {
-            UserDefaults.standard.set(false, forKey: parakeetDefaultsKey(for: modelName))
+            UserDefaults.standard.set(false, forKey: downloadedDefaultsKey(for: model))
             logger.error("❌ FluidAudio download failed for \(modelName, privacy: .public): \(error.localizedDescription, privacy: .public)")
         }
 
@@ -88,7 +142,7 @@ class FluidAudioModelManager: ObservableObject {
             if FileManager.default.fileExists(atPath: cacheDirectory.path) {
                 try FileManager.default.removeItem(at: cacheDirectory)
             }
-            UserDefaults.standard.set(false, forKey: parakeetDefaultsKey(for: model.name))
+            UserDefaults.standard.set(false, forKey: downloadedDefaultsKey(for: model))
         } catch {
             // Silently ignore removal errors
         }
@@ -109,8 +163,25 @@ class FluidAudioModelManager: ObservableObject {
 
     // MARK: - Private helpers
 
-    private func parakeetDefaultsKey(for modelName: String) -> String {
-        "ParakeetModelDownloaded_\(modelName)"
+    /// Stable UserDefaults key for tracking whether a given model+chunk variant is downloaded.
+    /// For parakeetTdt family, the key does not include chunk size (there is only one variant).
+    /// For nemotronStreaming / parakeetEou, the chunk size is appended so each variant
+    /// tracks its own download state.
+    private func downloadedDefaultsKey(for model: FluidAudioModel) -> String {
+        switch model.family {
+        case .parakeetTdt:
+            return "ParakeetModelDownloaded_\(model.name)"
+        case .nemotronStreaming:
+            return "NemotronStreamingDownloaded_\(nemotronChunkSize.rawValue)"
+        case .parakeetEou:
+            let ms: Int
+            switch parakeetEouChunkSize {
+            case .ms160:  ms = 160
+            case .ms320:  ms = 320
+            case .ms1280: ms = 1280
+            }
+            return "ParakeetEouDownloaded_\(ms)"
+        }
     }
 
     private func parakeetCacheDirectory(for version: AsrModelVersion) -> URL {
