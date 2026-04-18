@@ -96,9 +96,7 @@ class FluidAudioModelManager: ObservableObject {
     // MARK: - Download
 
     func downloadFluidAudioModel(_ model: FluidAudioModel) async {
-        if isFluidAudioModelDownloaded(model) {
-            return
-        }
+        if isFluidAudioModelDownloaded(model) { return }
 
         let modelName = model.name
         parakeetDownloadStates[modelName] = true
@@ -112,16 +110,33 @@ class FluidAudioModelManager: ObservableObject {
             }
         }
 
-        let version = FluidAudioModelManager.asrVersion(for: modelName)
+        let defaultsKey = downloadedDefaultsKey(for: model)
 
         do {
-            _ = try await AsrModels.downloadAndLoad(version: version)
-            _ = try await VadManager()
+            switch model.family {
+            case .parakeetTdt:
+                let version = FluidAudioModelManager.asrVersion(for: modelName)
+                _ = try await AsrModels.downloadAndLoad(version: version)
+                _ = try await VadManager()
 
-            UserDefaults.standard.set(true, forKey: downloadedDefaultsKey(for: model))
+            case .nemotronStreaming:
+                // StreamingNemotronAsrManager.loadModels(to:) downloads + loads if missing.
+                let manager = StreamingNemotronAsrManager(
+                    requestedChunkSize: nemotronChunkSize
+                )
+                try await manager.loadModels(to: nil, configuration: nil, progressHandler: nil)
+                await manager.cleanup()
+
+            case .parakeetEou:
+                let manager = StreamingEouAsrManager(chunkSize: parakeetEouChunkSize)
+                try await manager.loadModels(to: nil, configuration: nil, progressHandler: nil)
+                await manager.cleanup()
+            }
+
+            UserDefaults.standard.set(true, forKey: defaultsKey)
             downloadProgress[modelName] = 1.0
         } catch {
-            UserDefaults.standard.set(false, forKey: downloadedDefaultsKey(for: model))
+            UserDefaults.standard.set(false, forKey: defaultsKey)
             logger.error("❌ FluidAudio download failed for \(modelName, privacy: .public): \(error.localizedDescription, privacy: .public)")
         }
 
@@ -135,8 +150,7 @@ class FluidAudioModelManager: ObservableObject {
     // MARK: - Delete
 
     func deleteFluidAudioModel(_ model: FluidAudioModel) {
-        let version = FluidAudioModelManager.asrVersion(for: model.name)
-        let cacheDirectory = parakeetCacheDirectory(for: version)
+        let cacheDirectory = cacheDirectory(for: model)
 
         do {
             if FileManager.default.fileExists(atPath: cacheDirectory.path) {
@@ -147,15 +161,13 @@ class FluidAudioModelManager: ObservableObject {
             // Silently ignore removal errors
         }
 
-        // Notify TranscriptionModelManager to clear currentTranscriptionModel if it matches
         onModelDeleted?(model.name)
     }
 
     // MARK: - Finder
 
     func showFluidAudioModelInFinder(_ model: FluidAudioModel) {
-        let cacheDirectory = parakeetCacheDirectory(for: FluidAudioModelManager.asrVersion(for: model.name))
-
+        let cacheDirectory = cacheDirectory(for: model)
         if FileManager.default.fileExists(atPath: cacheDirectory.path) {
             NSWorkspace.shared.selectFile(cacheDirectory.path, inFileViewerRootedAtPath: "")
         }
@@ -184,7 +196,40 @@ class FluidAudioModelManager: ObservableObject {
         }
     }
 
-    private func parakeetCacheDirectory(for version: AsrModelVersion) -> URL {
-        AsrModels.defaultCacheDirectory(for: version)
+    /// Directory on disk backing the given model's currently-selected variant.
+    /// For parakeetTdt this is version-keyed; for Nemotron / EOU it is chunk-size-keyed
+    /// under the FluidAudio SDK's default Application Support cache.
+    private func cacheDirectory(for model: FluidAudioModel) -> URL {
+        switch model.family {
+        case .parakeetTdt:
+            let version = FluidAudioModelManager.asrVersion(for: model.name)
+            return AsrModels.defaultCacheDirectory(for: version)
+
+        case .nemotronStreaming:
+            // StreamingNemotronAsrManager caches under:
+            //   <AppSupport>/FluidAudio/Models/nemotron-streaming/<chunkSize>ms/
+            let root = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            return root
+                .appendingPathComponent("FluidAudio", isDirectory: true)
+                .appendingPathComponent("Models", isDirectory: true)
+                .appendingPathComponent("nemotron-streaming", isDirectory: true)
+                .appendingPathComponent("\(nemotronChunkSize.rawValue)ms", isDirectory: true)
+
+        case .parakeetEou:
+            // StreamingEouAsrManager caches under:
+            //   <AppSupport>/FluidAudio/Models/parakeet-eou-streaming/<folderName>/
+            let root = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            let subdir: String
+            switch parakeetEouChunkSize {
+            case .ms160:  subdir = "160ms"
+            case .ms320:  subdir = "320ms"
+            case .ms1280: subdir = "1280ms"
+            }
+            return root
+                .appendingPathComponent("FluidAudio", isDirectory: true)
+                .appendingPathComponent("Models", isDirectory: true)
+                .appendingPathComponent("parakeet-eou-streaming", isDirectory: true)
+                .appendingPathComponent(subdir, isDirectory: true)
+        }
     }
 }
