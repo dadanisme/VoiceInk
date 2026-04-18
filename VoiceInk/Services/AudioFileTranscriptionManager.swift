@@ -157,6 +157,7 @@ class AudioTranscriptionManager: ObservableObject {
             let transcriptionStart = Date()
             var text = try await serviceRegistry.transcribe(audioURL: permanentURL, model: currentModel)
             let transcriptionDuration = Date().timeIntervalSince(transcriptionStart)
+            let effectiveModel = serviceRegistry.effectiveBatchModel(for: currentModel)
             text = TranscriptionOutputFilter.filter(text)
             text = text.trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -186,7 +187,7 @@ class AudioTranscriptionManager: ObservableObject {
                         duration: duration,
                         enhancedText: enhancedText,
                         audioFileURL: permanentURL.absoluteString,
-                        transcriptionModelName: currentModel.displayName,
+                        transcriptionModelName: effectiveModel.displayName,
                         aiEnhancementModelName: enhancementService.getAIService()?.currentModel,
                         promptName: promptName,
                         transcriptionDuration: transcriptionDuration,
@@ -203,7 +204,7 @@ class AudioTranscriptionManager: ObservableObject {
                         duration: duration,
                         enhancedText: "Enhancement failed: \(error.localizedDescription)",
                         audioFileURL: permanentURL.absoluteString,
-                        transcriptionModelName: currentModel.displayName,
+                        transcriptionModelName: effectiveModel.displayName,
                         promptName: nil,
                         transcriptionDuration: transcriptionDuration,
                         powerModeName: powerModeName,
@@ -215,7 +216,7 @@ class AudioTranscriptionManager: ObservableObject {
                     text: text,
                     duration: duration,
                     audioFileURL: permanentURL.absoluteString,
-                    transcriptionModelName: currentModel.displayName,
+                    transcriptionModelName: effectiveModel.displayName,
                     promptName: nil,
                     transcriptionDuration: transcriptionDuration,
                     powerModeName: powerModeName,

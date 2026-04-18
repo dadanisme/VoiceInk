@@ -68,6 +68,17 @@ class TranscriptionServiceRegistry {
         }
     }
 
+    /// Returns the model that would actually be used for batch/file transcription.
+    /// For streaming-only models with a batch fallback (e.g. Nemotron → Parakeet V3),
+    /// this returns the fallback; otherwise returns `model` itself.
+    ///
+    /// Callers that persist transcription metadata should record this model's
+    /// displayName, not the originally-selected model's, so the record accurately
+    /// reflects which engine produced the text.
+    func effectiveBatchModel(for model: any TranscriptionModel) -> any TranscriptionModel {
+        return batchFallbackModel(for: model) ?? model
+    }
+
     // Maps streaming-only models to a batch-compatible equivalent for fallback.
     private func batchFallbackModel(for model: any TranscriptionModel) -> (any TranscriptionModel)? {
         switch (model.provider, model.name) {
