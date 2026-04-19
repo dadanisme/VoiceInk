@@ -10,7 +10,7 @@ struct EnhancementShortcutsView: View {
             HStack(alignment: .center, spacing: 12) {
                 HStack(spacing: 4) {
                     Text("Toggle AI Enhancement")
-                        .font(.system(size: 13))
+                        .font(.rowSubtitle)
 
                     InfoTip(
                         "Quickly enable or disable AI enhancement while recording. Available only when VoiceInk is running and the recorder is visible.",
@@ -36,7 +36,7 @@ struct EnhancementShortcutsView: View {
             HStack(alignment: .center, spacing: 12) {
                 HStack(spacing: 4) {
                     Text("Switch Enhancement Prompt")
-                        .font(.system(size: 13))
+                        .font(.rowSubtitle)
 
                     InfoTip(
                         "Switch between your saved prompts using ⌘1 through ⌘0 to activate the corresponding prompt in the order they are saved. Available only when VoiceInk is running and the recorder is visible.",
@@ -63,12 +63,12 @@ private struct KeyChip: View {
     var body: some View {
         Text(label)
             .font(.system(size: 12, weight: .medium, design: .monospaced))
-            .foregroundColor(.primary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .foregroundStyle(.primary)
+            .padding(.horizontal, Spacing.standard)
+            .padding(.vertical, Spacing.tight)
             .background(
                 RoundedRectangle(cornerRadius: 4, style: .continuous)
-                    .fill(Color(NSColor.controlBackgroundColor))
+                    .fill(Color.controlBackground)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 4, style: .continuous)

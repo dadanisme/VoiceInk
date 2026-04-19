@@ -37,8 +37,8 @@ struct AudioCleanupSettingsView: View {
                     Spacer()
 
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.secondary)
+                        .font(.rowDetail.weight(.semibold))
+                        .foregroundStyle(.secondary)
                         .rotationEffect(.degrees(isTranscriptionCleanupEnabled && isTranscriptExpanded ? 90 : 0))
                         .opacity(isTranscriptionCleanupEnabled ? 1 : 0.4)
                 }
@@ -53,7 +53,7 @@ struct AudioCleanupSettingsView: View {
                 }
 
                 if isTranscriptionCleanupEnabled && isTranscriptExpanded {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: Spacing.standard) {
                         Picker("Delete After", selection: $transcriptionRetentionMinutes) {
                             Text("Immediately").tag(0)
                             Text("1 hour").tag(60)
@@ -71,8 +71,8 @@ struct AudioCleanupSettingsView: View {
                             }
                         }
                     }
-                    .padding(.top, 12)
-                    .padding(.leading, 4)
+                    .padding(.top, Spacing.comfy)
+                    .padding(.leading, Spacing.tight)
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
@@ -130,7 +130,7 @@ struct AudioCleanupSettingsView: View {
                     }
 
                     if isAudioCleanupEnabled && isAudioExpanded {
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: Spacing.standard) {
                             Picker("Keep Audio For", selection: $audioRetentionPeriod) {
                                 Text("1 day").tag(1)
                                 Text("3 days").tag(3)

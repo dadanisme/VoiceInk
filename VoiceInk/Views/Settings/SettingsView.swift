@@ -65,9 +65,11 @@ struct SettingsView: View {
                                 withAnimation { hotkeyManager.selectedHotkey2 = .none }
                             } label: {
                                 Image(systemName: "minus.circle.fill")
-                                    .foregroundColor(.secondary)
+                                    .foregroundStyle(.secondary)
                             }
                             .buttonStyle(.plain)
+                            .contentShape(Rectangle())
+                            .help("Remove second shortcut")
                         }
                     }
                 }
@@ -132,7 +134,7 @@ struct SettingsView: View {
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 60)
                             Text("ms")
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
@@ -295,7 +297,7 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .alert("Reset Onboarding", isPresented: $showResetOnboardingAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Reset", role: .destructive) {
@@ -363,8 +365,8 @@ struct ExpandableSettingsRow<Content: View>: View {
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.secondary)
+                    .font(.rowDetail.weight(.semibold))
+                    .foregroundStyle(.secondary)
                     .rotationEffect(.degrees(isEnabled && isExpanded ? 90 : 0))
                     .opacity(isEnabled ? 1 : 0.4)
             }
@@ -380,11 +382,11 @@ struct ExpandableSettingsRow<Content: View>: View {
 
             // Expanded content with proper spacing
             if isEnabled && isExpanded {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: Spacing.standard) {
                     content()
                 }
-                .padding(.top, 12)
-                .padding(.leading, 4)
+                .padding(.top, Spacing.comfy)
+                .padding(.leading, Spacing.tight)
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
@@ -491,8 +493,8 @@ struct ExperimentalSection: View {
 extension Text {
     func settingsDescription() -> some View {
         self
-            .font(.system(size: 12))
-            .foregroundColor(.secondary)
+            .font(.rowDetail)
+            .foregroundStyle(.secondary)
             .fixedSize(horizontal: false, vertical: true)
     }
 }

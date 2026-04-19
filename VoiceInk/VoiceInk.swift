@@ -338,6 +338,18 @@ struct VoiceInkApp: App {
             }
         }
 
+        Settings {
+            SettingsView()
+                .environmentObject(updaterViewModel)
+                .environmentObject(menuBarManager)
+                .environmentObject(hotkeyManager)
+                .environmentObject(recorderUIManager)
+                .environmentObject(transcriptionModelManager)
+                .environmentObject(enhancementService)
+                .modelContainer(container)
+                .frame(minWidth: 560, idealWidth: 620, minHeight: 500)
+        }
+
         MenuBarExtra(isInserted: $showMenuBarIcon) {
             MenuBarView()
                 .environmentObject(engine)
