@@ -31,14 +31,15 @@ struct RecorderToggleButton: View {
         Button(action: action) {
             Group {
                 if isEmoji {
-                    Text(icon).font(.system(size: 14))
+                    Text(icon).font(Font.rowTitle)
                 } else {
-                    Image(systemName: icon).font(.system(size: 13))
+                    Image(systemName: icon).font(Font.rowSubtitle)
                 }
             }
-            .foregroundColor(disabled ? .white.opacity(0.3) : (isEnabled ? .white : .white.opacity(0.6)))
+            .foregroundStyle(disabled ? Color.secondary : (isEnabled ? Color.primary : Color.secondary))
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
         .disabled(disabled)
     }
 }
@@ -66,14 +67,16 @@ struct RecorderRecordButton: View {
                 }
             }
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
+        .help(isRecording ? "Stop recording" : "Start recording")
         .disabled(isProcessing)
     }
 
     private var buttonColor: Color {
-        if isProcessing { return Color(red: 0.4, green: 0.4, blue: 0.45) }
+        if isProcessing { return Color.secondary.opacity(0.2) }
         if isRecording  { return .red }
-        return Color(red: 0.3, green: 0.3, blue: 0.35)
+        return Color.accentColor
     }
 }
 
@@ -172,6 +175,7 @@ struct RecorderPromptButton: View {
         }
         .frame(width: buttonSize)
         .padding(padding)
+        .help("AI enhancement prompts")
         .onHover {
             isHoveringButton = $0
             syncPopoverVisibility()
@@ -232,6 +236,7 @@ struct RecorderPowerModeButton: View {
         }
         .frame(width: buttonSize)
         .padding(padding)
+        .help("Power mode")
         .onHover {
             isHoveringButton = $0
             syncPopoverVisibility()
@@ -272,11 +277,11 @@ struct LiveTranscriptView: View {
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
                 Text(text)
-                    .font(.system(size: 12))
-                    .foregroundColor(.white.opacity(0.8))
+                    .font(Font.rowSubtitle)
+                    .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, Spacing.section)
+                    .padding(.vertical, Spacing.tight + 2) // TODO HIG: 6pt not in scale
                     .id("bottom")
             }
             .frame(height: 56)
@@ -315,15 +320,15 @@ struct RecorderStatusDisplay: View {
     var body: some View {
         Group {
             if currentState == .enhancing {
-                ProcessingStatusDisplay(mode: .enhancing, color: .white).transition(.opacity)
+                ProcessingStatusDisplay(mode: .enhancing, color: .primary).transition(.opacity)
             } else if currentState == .transcribing {
-                ProcessingStatusDisplay(mode: .transcribing, color: .white).transition(.opacity)
+                ProcessingStatusDisplay(mode: .transcribing, color: .primary).transition(.opacity)
             } else if currentState == .recording {
-                AudioVisualizer(audioMeter: audioMeter, color: .white, isActive: true)
+                AudioVisualizer(audioMeter: audioMeter, color: .primary, isActive: true)
                     .scaleEffect(y: menuBarHeight != nil ? min(1.0, (menuBarHeight! - 8) / 25) : 1.0, anchor: .center)
                     .transition(.opacity)
             } else {
-                StaticVisualizer(color: .white)
+                StaticVisualizer(color: .primary)
                     .scaleEffect(y: menuBarHeight != nil ? min(1.0, (menuBarHeight! - 8) / 25) : 1.0, anchor: .center)
                     .transition(.opacity)
             }

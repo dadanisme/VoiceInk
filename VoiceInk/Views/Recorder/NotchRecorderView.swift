@@ -103,7 +103,13 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
             liveTextPanel
         }
         .frame(width: pillWidth, height: pillHeight)
-        .background(Color.black)
+        .background(
+            .regularMaterial,
+            in: NotchShape(
+                topCornerRadius: displayState == .liveText ? 12 : 8,
+                bottomCornerRadius: displayState == .liveText ? 22 : 16
+            )
+        )
         .clipShape(
             NotchShape(
                 topCornerRadius: displayState == .liveText ? 12 : 8,
@@ -157,9 +163,9 @@ struct NotchRecorderView<S: RecorderStateProvider & ObservableObject>: View {
     private var liveTextPanel: some View {
         VStack(spacing: 0) {
             if displayState == .liveText {
-                Divider().background(Color.white.opacity(0.15))
+                Divider()
                 LiveTranscriptView(text: stateProvider.partialTranscript)
-                    .padding(.horizontal, 8)
+                    .padding(.horizontal, Spacing.standard)
             }
         }
         .frame(height: displayState == .liveText ? transcriptPanelHeight : 0)

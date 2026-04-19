@@ -28,7 +28,7 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
                 buttonSize: 22,
                 padding: EdgeInsets()
             )
-            .padding(.leading, 12)
+            .padding(.leading, Spacing.comfy)
 
             Spacer(minLength: 0)
 
@@ -44,7 +44,7 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
                 buttonSize: 22,
                 padding: EdgeInsets()
             )
-            .padding(.trailing, 12)
+            .padding(.trailing, Spacing.comfy)
         }
         .frame(height: controlBarHeight)
     }
@@ -53,20 +53,21 @@ struct MiniRecorderView<S: RecorderStateProvider & ObservableObject>: View {
         VStack(spacing: 0) {
             if hasLiveTranscript {
                 LiveTranscriptView(text: stateProvider.partialTranscript)
-                Divider().background(Color.white.opacity(0.15))
+                Divider()
             }
         }
     }
 
     var body: some View {
         if windowManager.isVisible {
+            let cornerRadius = hasLiveTranscript ? expandedCornerRadius : compactCornerRadius
             VStack(spacing: 0) {
                 transcriptSection
                 controlBar
             }
             .frame(width: hasLiveTranscript ? expandedWidth : compactWidth)
-            .background(Color.black)
-            .clipShape(RoundedRectangle(cornerRadius: hasLiveTranscript ? expandedCornerRadius : compactCornerRadius, style: .continuous))
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             .animation(.easeInOut(duration: 0.3), value: hasLiveTranscript)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         }
