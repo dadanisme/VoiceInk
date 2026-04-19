@@ -92,32 +92,28 @@ struct TranscriptionInfoPanel: View {
         if transcription.aiRequestSystemMessage != nil || transcription.aiRequestUserMessage != nil {
             Section {
                 if let systemMsg = transcription.aiRequestSystemMessage, !systemMsg.isEmpty {
-                    VStack(alignment: .leading, spacing: 6) {
-                        // TODO HIG: unclear mapping
+                    VStack(alignment: .leading, spacing: Spacing.standard) {
                         Text("System Prompt")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.secondary)
-                        // TODO HIG: monospaced
+                            .font(.rowDetail.weight(.semibold))
+                            .foregroundStyle(.secondary)
                         Text(systemMsg)
-                            .font(.system(size: 11, weight: .regular, design: .monospaced))
+                            .font(Font.system(.footnote, design: .monospaced))
                             .lineSpacing(2)
                             .textSelection(.enabled)
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                     }
                 }
 
                 if let userMsg = transcription.aiRequestUserMessage, !userMsg.isEmpty {
-                    VStack(alignment: .leading, spacing: 6) {
-                        // TODO HIG: unclear mapping
+                    VStack(alignment: .leading, spacing: Spacing.standard) {
                         Text("User Message")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.secondary)
-                        // TODO HIG: monospaced
+                            .font(.rowDetail.weight(.semibold))
+                            .foregroundStyle(.secondary)
                         Text(userMsg)
-                            .font(.system(size: 11, weight: .regular, design: .monospaced))
+                            .font(Font.system(.footnote, design: .monospaced))
                             .lineSpacing(2)
                             .textSelection(.enabled)
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                     }
                 }
             } header: {
@@ -144,24 +140,21 @@ struct TranscriptionInfoPanel: View {
     }
 
     private func metadataRow(icon: String, label: String, value: String) -> some View {
-        HStack(spacing: 8) {
-            // TODO HIG: icon sizing
+        HStack(spacing: Spacing.standard) {
             Image(systemName: icon)
-                .font(.system(size: 11, weight: .medium))
-                .foregroundColor(.secondary)
+                .font(.rowDetail.weight(.medium))
+                .foregroundStyle(.secondary)
                 .frame(width: 20, height: 20)
 
-            // TODO HIG: unclear mapping
             Text(label)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(.secondary)
+                .font(.rowDetail.weight(.medium))
+                .foregroundStyle(.secondary)
 
             Spacer(minLength: 0)
 
-            // TODO HIG: unclear mapping
             Text(value)
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.primary)
+                .font(.rowDetail.weight(.semibold))
+                .foregroundStyle(.primary)
                 .lineLimit(1)
         }
     }

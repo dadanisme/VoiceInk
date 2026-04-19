@@ -125,9 +125,9 @@ struct SectionCard: View {
         Button(action: action) {
             SurfaceCard(style: isSelected ? .selected : .plain) {
                 VStack(alignment: .leading, spacing: Spacing.comfy) {
-                    // TODO HIG: icon sizing
+                    // HIG: decorative — size is layout-critical, not typography
                     Image(systemName: section.icon)
-                        .font(.system(size: 28))
+                        .font(.system(size: 28, weight: .regular, design: .default))
                         .symbolRenderingMode(.hierarchical)
                         .foregroundStyle(isSelected ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
 

@@ -83,10 +83,9 @@ struct EnhancementPromptRow: View {
 
                 if isSelected {
                     Spacer()
-                    // TODO HIG: icon sizing
                     Image(systemName: "checkmark")
-                        .foregroundColor(isDisabled ? .green.opacity(0.7) : .green)
-                        .font(.system(size: 10))
+                        .foregroundStyle(isDisabled ? .green.opacity(0.7) : .green)
+                        .font(.rowDetail)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

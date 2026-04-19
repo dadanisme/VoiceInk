@@ -289,8 +289,7 @@ func progressDotsWithNumber(value: Double) -> some View {
     HStack(spacing: Spacing.tight) {
         progressDots(value: value)
         Text(String(format: "%.1f", value))
-            // TODO HIG: unclear mapping
-            .font(.system(size: 10, weight: .medium, design: .monospaced))
+            .font(Font.system(.caption2, design: .monospaced).weight(.medium))
             .foregroundStyle(.secondary)
     }
 }

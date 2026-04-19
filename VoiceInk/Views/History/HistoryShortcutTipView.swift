@@ -6,9 +6,9 @@ struct HistoryShortcutTipView: View {
         SurfaceCard {
             VStack(alignment: .leading, spacing: Spacing.comfy) {
                 HStack(spacing: Spacing.comfy) {
-                    // TODO HIG: icon sizing
+                    // HIG: decorative — size is layout-critical, not typography
                     Image(systemName: "command.circle")
-                        .font(.system(size: 20))
+                        .font(.system(size: 20, weight: .regular, design: .default))
                         .foregroundStyle(Color.accentColor)
                         .frame(width: 24, height: 24)
 

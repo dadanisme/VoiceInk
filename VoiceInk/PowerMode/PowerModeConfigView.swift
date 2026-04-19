@@ -107,15 +107,15 @@ struct ConfigurationView: View {
                 Spacer()
 
                 Button(action: onDismiss) {
-                    // TODO HIG: icon sizing
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
+                        .font(.rowSubtitle.weight(.medium))
+                        .foregroundStyle(.secondary)
                         .padding(6)
                         .background(Color.secondary.opacity(0.1))
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
+                .contentShape(Rectangle())
                 .help("Close")
             }
             .padding(.horizontal, 20)
@@ -129,9 +129,9 @@ struct ConfigurationView: View {
                         Button {
                             isShowingEmojiPicker.toggle()
                         } label: {
-                            // TODO HIG: emoji sizing
+                            // HIG: decorative — size is layout-critical, not typography
                             Text(selectedEmoji)
-                                .font(.system(size: 22))
+                                .font(.system(size: 22, weight: .regular, design: .default))
                                 .frame(width: 32, height: 32)
                                 .background(
                                     RoundedRectangle(cornerRadius: 8)
@@ -199,10 +199,9 @@ struct ConfigurationView: View {
                                         Button {
                                             selectedAppConfigs.removeAll(where: { $0.id == appConfig.id })
                                         } label: {
-                                            // TODO HIG: icon sizing
                                             Image(systemName: "xmark.circle.fill")
-                                                .font(.system(size: 14))
-                                                .foregroundColor(.secondary)
+                                                .font(.rowSubtitle)
+                                                .foregroundStyle(.secondary)
                                         }
                                         .buttonStyle(.plain)
                                         .offset(x: 6, y: -6)

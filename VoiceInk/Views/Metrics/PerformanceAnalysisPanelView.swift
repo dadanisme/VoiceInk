@@ -47,9 +47,8 @@ struct PerformanceAnalysisPanelView: View {
                 .font(.sectionHeader)
             Spacer()
             Button(action: onClose) {
-                // TODO HIG: icon sizing
                 Image(systemName: "xmark")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.rowSubtitle.weight(.medium))
                     .foregroundStyle(.secondary)
                     .padding(Spacing.tight + 2)
                     .background(Color.secondary.opacity(0.1))
@@ -77,10 +76,9 @@ struct PerformanceAnalysisPanelView: View {
 
     private func summaryPill(icon: String, value: String, label: String, color: Color) -> some View {
         VStack(spacing: Spacing.tight) {
-            // TODO HIG: icon sizing
             Image(systemName: icon)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(color)
+                .font(.rowSubtitle.weight(.medium))
+                .foregroundStyle(color)
             Text(value)
                 .font(.titleEmphasis)
                 .foregroundStyle(.primary)
@@ -183,9 +181,8 @@ struct PerformanceAnalysisPanelView: View {
             // Secondary metrics
             HStack(spacing: 0) {
                 VStack(spacing: 2) {
-                    // TODO HIG: monospaced
                     Text(formatDuration(modelStat.avgAudioDuration))
-                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                        .font(Font.system(.footnote, design: .monospaced).weight(.semibold))
                         .foregroundColor(.indigo)
                     Text("Avg. Audio")
                         .font(.rowDetail)
@@ -198,9 +195,8 @@ struct PerformanceAnalysisPanelView: View {
                     .frame(width: 1, height: 24)
 
                 VStack(spacing: 2) {
-                    // TODO HIG: monospaced
                     Text(String(format: "%.2fs", modelStat.avgProcessingTime))
-                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                        .font(Font.system(.footnote, design: .monospaced).weight(.semibold))
                         .foregroundColor(.teal)
                     Text("Avg. Processing")
                         .font(.rowDetail)

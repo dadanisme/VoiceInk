@@ -23,15 +23,15 @@ struct EnhancementSettingsPanel: View {
                 Spacer()
 
                 Button(action: onDismiss) {
-                    // TODO HIG: icon sizing
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
+                        .font(.rowSubtitle.weight(.medium))
+                        .foregroundStyle(.secondary)
                         .padding(6)
                         .background(Color.secondary.opacity(0.1))
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
+                .contentShape(Rectangle())
                 .help("Close")
             }
             .padding(.horizontal, 20)
@@ -94,10 +94,9 @@ struct EnhancementSettingsPanel: View {
 
                             Spacer()
 
-                            // TODO HIG: icon sizing
                             Image(systemName: "chevron.right")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundColor(.secondary)
+                                .font(.rowDetail.weight(.semibold))
+                                .foregroundStyle(.secondary)
                                 .rotationEffect(.degrees(isSkipShortEnhancementEnabled && isShortEnhancementExpanded ? 90 : 0))
                                 .opacity(isSkipShortEnhancementEnabled ? 1 : 0.4)
                         }

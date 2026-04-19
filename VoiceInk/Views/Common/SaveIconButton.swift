@@ -14,12 +14,11 @@ struct SaveIconButton: View {
                 saveFile(as: .text, extension: "md")
             }
         } label: {
-            // TODO HIG: icon sizing
             Image(systemName: saved ? "checkmark" : "square.and.arrow.down")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(saved ? .green : .secondary)
+                .font(.rowDetail.weight(.semibold))
+                .foregroundStyle(saved ? .green : .secondary)
                 .frame(width: 28, height: 28)
-                .background(Color(NSColor.controlBackgroundColor).opacity(0.9))
+                .background(Color.controlBackground.opacity(0.9))
                 .clipShape(Circle())
         }
         .buttonStyle(.plain)

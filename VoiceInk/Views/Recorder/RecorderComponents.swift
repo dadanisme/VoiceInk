@@ -281,7 +281,7 @@ struct LiveTranscriptView: View {
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, Spacing.section)
-                    .padding(.vertical, Spacing.tight + 2) // TODO HIG: 6pt not in scale
+                    .padding(.vertical, Spacing.tight + 2)
                     .id("bottom")
             }
             .frame(height: 56)

@@ -15,9 +15,8 @@ struct ModelSettingsView: View {
             Section {
                 VStack(alignment: .leading, spacing: 8) {
                     if isEditing {
-                        // TODO HIG: unclear mapping
                         TextEditor(text: $customPrompt)
-                            .font(.system(size: 12))
+                            .font(.rowDetail)
                             .frame(minHeight: 40, maxHeight: 80)
                             .fixedSize(horizontal: false, vertical: true)
                             .scrollContentBackground(.hidden)
@@ -27,10 +26,9 @@ struct ModelSettingsView: View {
                             isEditing = false
                         }
                     } else {
-                        // TODO HIG: unclear mapping
                         Text(whisperPrompt.getLanguagePrompt(for: selectedLanguage))
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
+                            .font(.rowDetail)
+                            .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         Button("Edit") {

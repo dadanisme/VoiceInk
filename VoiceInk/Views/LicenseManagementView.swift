@@ -33,9 +33,9 @@ struct LicenseManagementView: View {
             // Title Section
             VStack(spacing: Spacing.section) {
                 HStack(spacing: Spacing.section) {
-                    // TODO HIG: icon sizing
+                    // HIG: decorative — size is layout-critical, not typography
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 32))
+                        .font(.system(size: 32, weight: .regular, design: .default))
                         .foregroundStyle(.blue)
 
                     HStack(alignment: .lastTextBaseline, spacing: Spacing.standard) {

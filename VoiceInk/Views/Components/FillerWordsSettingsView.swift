@@ -6,18 +6,16 @@ struct FillerWordChip: View {
     @State private var isHovered = false
 
     var body: some View {
-        HStack(spacing: 4) {
-            // TODO HIG: unclear mapping
+        HStack(spacing: Spacing.tight) {
             Text(word)
-                .font(.system(size: 12))
-                .foregroundColor(.primary)
+                .font(.rowDetail)
+                .foregroundStyle(.primary)
 
             Button(action: onDelete) {
-                // TODO HIG: icon sizing
                 Image(systemName: "xmark.circle.fill")
                     .symbolRenderingMode(.hierarchical)
                     .foregroundStyle(isHovered ? .red : .secondary)
-                    .font(.system(size: 10))
+                    .font(.rowDetail)
             }
             .buttonStyle(.borderless)
             .onHover { hover in
@@ -30,7 +28,7 @@ struct FillerWordChip: View {
         .padding(.vertical, 4)
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .fill(Color(.windowBackgroundColor).opacity(0.4))
+                .fill(Color.windowBackground.opacity(0.4))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 6)
@@ -64,11 +62,10 @@ struct FillerWordsSettingsView: View {
                             .onSubmit { addWord() }
 
                         Button(action: addWord) {
-                            // TODO HIG: icon sizing
                             Image(systemName: "plus.circle.fill")
                                 .symbolRenderingMode(.hierarchical)
                                 .foregroundStyle(.blue)
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(.rowTitle.weight(.semibold))
                         }
                         .buttonStyle(.borderless)
                         .help("Add filler word")

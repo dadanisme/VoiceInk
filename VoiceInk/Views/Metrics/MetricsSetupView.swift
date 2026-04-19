@@ -97,9 +97,9 @@ struct MetricsSetupView: View {
         }
         
         return HStack(spacing: Spacing.section) {
-            // TODO HIG: icon sizing
+            // HIG: decorative — size is layout-critical, not typography
             Image(systemName: stepInfo.icon)
-                .font(.system(size: 18))
+                .font(.system(size: 18, weight: .regular, design: .default))
                 .frame(width: 40, height: 40)
                 .background((stepInfo.isCompleted ? Color.green : Color.accentColor).opacity(0.1))
                 .foregroundColor(stepInfo.isCompleted ? .green : Color.accentColor)
@@ -116,14 +116,13 @@ struct MetricsSetupView: View {
             Spacer()
 
             if stepInfo.isCompleted {
-                // TODO HIG: icon sizing
+                // HIG: decorative — size is layout-critical, not typography
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(.green)
+                    .font(.system(size: 24, weight: .regular, design: .default))
+                    .foregroundStyle(.green)
             } else {
-                // TODO HIG: icon sizing
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.rowSubtitle.weight(.bold))
                     .foregroundStyle(.tertiary)
             }
         }

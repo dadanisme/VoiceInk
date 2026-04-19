@@ -19,9 +19,9 @@ struct PowerModeEmptyStateView: View {
     
     var body: some View {
         VStack(spacing: Spacing.section) {
-            // TODO HIG: icon sizing
+            // HIG: decorative — size is layout-critical, not typography
             Image(systemName: "bolt.circle.fill")
-                .font(.system(size: 48))
+                .font(.system(size: 48, weight: .regular, design: .default))
                 .foregroundStyle(.secondary)
 
             Text("No Power Modes")

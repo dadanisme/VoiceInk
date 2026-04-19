@@ -7,25 +7,24 @@ struct CompactHeroSection: View {
     var maxDescriptionWidth: CGFloat? = nil
 
     var body: some View {
-        VStack(spacing: 16) {
-            // TODO HIG: icon sizing
+        VStack(spacing: Spacing.section) {
+            // HIG: decorative — size is layout-critical, not typography
             Image(systemName: icon)
-                .font(.system(size: 28))
+                .font(.system(size: 28, weight: .regular, design: .default))
                 .foregroundStyle(.blue)
                 .symbolRenderingMode(.hierarchical)
 
-            VStack(spacing: 6) {
-                // TODO HIG: hero title sizing
+            VStack(spacing: Spacing.standard) {
                 Text(title)
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.titleEmphasis)
                 Text(description)
-                    .font(.system(size: 14))
+                    .font(.rowSubtitle)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: maxDescriptionWidth)
             }
         }
-        .padding(.vertical, 20)
+        .padding(.vertical, Spacing.group)
         .frame(maxWidth: .infinity)
     }
 }

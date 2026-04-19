@@ -257,10 +257,10 @@ struct SummaryCard: View {
 
     var body: some View {
         VStack(spacing: Spacing.standard) {
-            // TODO HIG: icon sizing
+            // HIG: decorative — size is layout-critical, not typography
             Image(systemName: icon)
-                .font(.system(size: 20, weight: .medium))
-                .foregroundColor(color)
+                .font(.system(size: 20, weight: .medium, design: .default))
+                .foregroundStyle(color)
 
             Text(value)
                 .font(.titleEmphasis)
@@ -465,9 +465,8 @@ struct MetricDisplay: View {
                 .textCase(.uppercase)
                 .tracking(0.5)
 
-            // TODO HIG: monospaced
             Text(value)
-                .font(.system(.body, design: .monospaced, weight: .semibold))
+                .font(Font.system(.body, design: .monospaced).weight(.semibold))
                 .foregroundColor(color)
         }
     }

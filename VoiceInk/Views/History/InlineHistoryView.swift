@@ -229,9 +229,9 @@ struct InlineHistoryView: View {
     private var emptyStateView: some View {
         VStack(spacing: Spacing.comfy) {
             Spacer()
-            // TODO HIG: icon sizing
+            // HIG: decorative — size is layout-critical, not typography
             Image(systemName: "doc.text.magnifyingglass")
-                .font(.system(size: 40))
+                .font(.system(size: 40, weight: .regular, design: .default))
                 .foregroundStyle(.secondary)
             Text(searchText.isEmpty ? "No transcriptions yet" : "No results found")
                 .font(.sectionHeader)

@@ -48,10 +48,9 @@ struct HelpAndResourcesSection: View {
             }
         }) {
             HStack {
-                // TODO HIG: icon sizing
                 Image(systemName: icon)
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(.accentColor)
+                    .font(.rowSubtitle.weight(.medium))
+                    .foregroundStyle(Color.accentColor)
                     .frame(width: 20)
 
                 Text(title)

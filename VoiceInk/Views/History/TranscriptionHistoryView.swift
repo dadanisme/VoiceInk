@@ -185,9 +185,9 @@ struct TranscriptionHistoryView: View {
             ZStack(alignment: .bottom) {
                 if displayedTranscriptions.isEmpty && !isLoading {
                     VStack(spacing: Spacing.comfy) {
-                        // TODO HIG: icon sizing
+                        // HIG: decorative — size is layout-critical, not typography
                         Image(systemName: "doc.text.magnifyingglass")
-                            .font(.system(size: 40))
+                            .font(.system(size: 40, weight: .regular, design: .default))
                             .foregroundStyle(.secondary)
                         Text("No transcriptions")
                             .font(.rowTitle)
@@ -252,9 +252,9 @@ struct TranscriptionHistoryView: View {
                             .frame(minHeight: 40)
 
                         VStack(spacing: Spacing.comfy) {
-                            // TODO HIG: icon sizing
+                            // HIG: decorative — size is layout-critical, not typography
                             Image(systemName: "doc.text")
-                                .font(.system(size: 50))
+                                .font(.system(size: 50, weight: .regular, design: .default))
                                 .foregroundStyle(.secondary)
                             Text("No Selection")
                                 .font(.titleEmphasis)
@@ -286,9 +286,9 @@ struct TranscriptionHistoryView: View {
                     .id(transcription.id)
             } else {
                 VStack(spacing: Spacing.comfy) {
-                    // TODO HIG: icon sizing
+                    // HIG: decorative — size is layout-critical, not typography
                     Image(systemName: "info.circle")
-                        .font(.system(size: 40))
+                        .font(.system(size: 40, weight: .regular, design: .default))
                         .foregroundStyle(.secondary)
                     Text("No Metadata")
                         .font(.rowTitle)

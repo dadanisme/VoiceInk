@@ -133,9 +133,9 @@ struct MetricsContent: View {
 
     private var emptyStateView: some View {
         VStack(spacing: Spacing.section) {
-            // TODO HIG: icon sizing
+            // HIG: decorative — size is layout-critical, not typography
             Image(systemName: "waveform")
-                .font(.system(size: 56, weight: .semibold))
+                .font(.system(size: 56, weight: .semibold, design: .default))
                 .foregroundStyle(.secondary)
             Text("No Transcriptions Yet")
                 .font(.titleEmphasis)

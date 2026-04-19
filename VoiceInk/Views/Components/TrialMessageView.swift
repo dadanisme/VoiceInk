@@ -12,40 +12,36 @@ struct TrialMessageView: View {
     }
     
     var body: some View {
-        HStack(spacing: 12) {
-            // TODO HIG: icon sizing
+        HStack(spacing: Spacing.comfy) {
+            // HIG: decorative — size is layout-critical, not typography
             Image(systemName: icon)
-                .font(.system(size: 20))
-                .foregroundColor(iconColor)
-            
-            VStack(alignment: .leading, spacing: 4) {
+                .font(.system(size: 20, weight: .regular, design: .default))
+                .foregroundStyle(iconColor)
+
+            VStack(alignment: .leading, spacing: Spacing.tight) {
                 Text(title)
-                    .font(.headline)
+                    .font(.sectionHeader)
                 Text(message)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.rowSubtitle)
+                    .foregroundStyle(.secondary)
             }
-            
+
             Spacer()
-            
-            HStack(spacing: 12) {
-                Button(action: {
+
+            HStack(spacing: Spacing.comfy) {
+                Button {
                     onAddLicenseKey?()
-                }) {
+                } label: {
                     Text("Enter License")
-                        // TODO HIG: unclear mapping
-                        .font(.system(size: 13, weight: .medium))
                 }
                 .buttonStyle(.bordered)
 
-                Button(action: {
+                Button {
                     if let url = URL(string: "https://tryvoiceink.com/buy") {
                         NSWorkspace.shared.open(url)
                     }
-                }) {
+                } label: {
                     Text("Buy License")
-                        // TODO HIG: unclear mapping
-                        .font(.system(size: 13, weight: .medium))
                 }
                 .buttonStyle(.borderedProminent)
             }

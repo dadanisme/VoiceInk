@@ -6,12 +6,11 @@ struct CopyIconButton: View {
 
     var body: some View {
         Button(action: copy) {
-            // TODO HIG: icon sizing
             Image(systemName: copied ? "checkmark" : "doc.on.doc")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(copied ? .green : .secondary)
+                .font(.rowDetail.weight(.semibold))
+                .foregroundStyle(copied ? .green : .secondary)
                 .frame(width: 28, height: 28)
-                .background(Color(NSColor.controlBackgroundColor).opacity(0.9))
+                .background(Color.controlBackground.opacity(0.9))
                 .clipShape(Circle())
         }
         .buttonStyle(.plain)

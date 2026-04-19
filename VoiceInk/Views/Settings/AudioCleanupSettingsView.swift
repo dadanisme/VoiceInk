@@ -113,10 +113,9 @@ struct AudioCleanupSettingsView: View {
 
                         Spacer()
 
-                        // TODO HIG: icon sizing
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(.secondary)
+                            .font(.rowDetail.weight(.semibold))
+                            .foregroundStyle(.secondary)
                             .rotationEffect(.degrees(isAudioCleanupEnabled && isAudioExpanded ? 90 : 0))
                             .opacity(isAudioCleanupEnabled ? 1 : 0.4)
                     }
