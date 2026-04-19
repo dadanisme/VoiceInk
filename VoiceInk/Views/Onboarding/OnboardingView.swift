@@ -1,4 +1,3 @@
-// TODO HIG: not in scope of 2026-04-19 redesign
 import SwiftUI
 
 struct OnboardingView: View {
@@ -27,17 +26,18 @@ struct OnboardingView: View {
                                     .frame(height: 40)
                                 
                                 // Title and subtitle
-                                VStack(spacing: 16) {
+                                VStack(spacing: Spacing.section) {
                                     Text("Welcome to the Future of Typing")
-                                        .font(.system(size: min(geometry.size.width * 0.055, 42), weight: .bold, design: .rounded))
-                                        .foregroundColor(.white)
+                                        .font(.largeTitle)
+                                        .dynamicTypeSize(.large ... .xxLarge)
+                                        .foregroundStyle(.primary)
                                         .opacity(textOpacity)
                                         .multilineTextAlignment(.center)
                                         .padding(.horizontal)
-                                    
+
                                     Text("A New Way to Type")
-                                        .font(.system(size: min(geometry.size.width * 0.032, 24), weight: .medium, design: .rounded))
-                                        .foregroundColor(.white.opacity(0.7))
+                                        .font(.titleEmphasis)
+                                        .foregroundStyle(.secondary)
                                         .opacity(textOpacity)
                                         .multilineTextAlignment(.center)
                                 }
@@ -56,26 +56,23 @@ struct OnboardingView: View {
                             
                             // Bottom navigation
                             if showSecondaryElements {
-                                VStack(spacing: 20) {
-                                    Button(action: {
+                                VStack(spacing: Spacing.group) {
+                                    Button {
                                         withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                                             showPermissions = true
                                         }
-                                    }) {
+                                    } label: {
                                         Text("Get Started")
-                                            .font(.system(size: 18, weight: .semibold))
-                                            .foregroundColor(.black)
-                                            .frame(width: min(geometry.size.width * 0.3, 200), height: 50)
-                                            .background(Color.white)
-                                            .cornerRadius(25)
+                                            .frame(minWidth: min(geometry.size.width * 0.3, 200))
                                     }
-                                    .buttonStyle(ScaleButtonStyle())
-                                    
+                                    .buttonStyle(.borderedProminent)
+                                    .controlSize(.large)
+
                                     SkipButton(text: "Skip Tour") {
                                         hasCompletedOnboarding = true
                                     }
                                 }
-                                .padding(.bottom, 35)
+                                .padding(.bottom, Spacing.page)
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                             }
                         }
@@ -134,22 +131,24 @@ struct TypewriterRoles: View {
         VStack {
             HStack(spacing: 0) {
                 Text(displayedText)
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .font(.largeTitle)
+                    .dynamicTypeSize(.large ... .xxLarge)
                     .foregroundStyle(
                         LinearGradient(
                             colors: [
                                 Color.accentColor,
                                 Color.accentColor.opacity(0.8),
-                                Color.white.opacity(0.9)
+                                Color.primary.opacity(0.9)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
-                
+
                 // Blinking cursor
                 Text("|")
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .font(.largeTitle)
+                    .dynamicTypeSize(.large ... .xxLarge)
                     .foregroundStyle(
                         LinearGradient(
                             colors: [
@@ -238,8 +237,8 @@ struct SkipButton: View {
     
     var body: some View {
         Text(text)
-            .font(.system(size: 13, weight: .regular))
-            .foregroundColor(.white.opacity(0.2))
+            .font(.rowDetail)
+            .foregroundStyle(.tertiary)
             .onTapGesture(perform: action)
     }
 }
@@ -252,20 +251,9 @@ struct OnboardingBackgroundView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Base background with black gradient
-                Color.black
-                    .overlay(
-                        LinearGradient(
-                            colors: [
-                                Color.black,
-                                Color.black.opacity(0.8),
-                                Color.black.opacity(0.6)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                
+                // Base adaptive background
+                Color.windowBackground
+
                 // Animated glow effect
                 Circle()
                     .fill(Color.accentColor)
@@ -277,7 +265,7 @@ struct OnboardingBackgroundView: View {
                         x: geometry.size.width * 0.5,
                         y: geometry.size.height * 0.3
                     )
-                
+
                 // Enhanced particles with reduced opacity
                 ParticlesView(isActive: $particlesActive)
                     .opacity(0.2)
@@ -326,7 +314,7 @@ struct ParticlesView: View {
                             width: scale,
                             height: scale
                         )),
-                        with: .color(.white)
+                        with: .color(Color.labelPrimary)
                     )
                 }
             }

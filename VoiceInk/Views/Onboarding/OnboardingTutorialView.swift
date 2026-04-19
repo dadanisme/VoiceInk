@@ -1,4 +1,3 @@
-// TODO HIG: not in scope of 2026-04-19 redesign
 import SwiftUI
 import KeyboardShortcuts
 
@@ -20,73 +19,68 @@ struct OnboardingTutorialView: View {
                 
                 HStack(spacing: 0) {
                     // Left side - Tutorial instructions
-                    VStack(alignment: .leading, spacing: 40) {
+                    VStack(alignment: .leading, spacing: Spacing.page) {
                         // Title and description
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: Spacing.section) {
                             Text("Try It Out!")
-                                .font(.system(size: 44, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
-                            
+                                .font(.largeTitle)
+                                .dynamicTypeSize(.large ... .xxLarge)
+                                .foregroundStyle(.primary)
+
                             Text("Let's test your VoiceInk setup.")
-                                .font(.system(size: 24, weight: .medium, design: .rounded))
-                                .foregroundColor(.white.opacity(0.7))
+                                .font(.titleEmphasis)
+                                .foregroundStyle(.secondary)
                                 .lineSpacing(4)
                         }
-                        
+
                         // Keyboard shortcut display
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: Spacing.group) {
                             HStack {
                                 Text("Your Shortcut")
-                                    .font(.system(size: 28, weight: .semibold, design: .rounded))
-                                    .foregroundColor(.white)
-                                
-                                
+                                    .font(.titleEmphasis)
+                                    .foregroundStyle(.primary)
                             }
-                            
+
                             if hotkeyManager.selectedHotkey1 == .custom,
                                let shortcut = KeyboardShortcuts.getShortcut(for: .toggleMiniRecorder) {
                                 KeyboardShortcutView(shortcut: shortcut)
                                     .scaleEffect(1.2)
                             } else if hotkeyManager.selectedHotkey1 != .none && hotkeyManager.selectedHotkey1 != .custom {
                                 Text(hotkeyManager.selectedHotkey1.displayName)
-                                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                                    .foregroundColor(.accentColor)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(Color.white.opacity(0.1))
+                                    .font(.titleEmphasis)
+                                    .foregroundStyle(Color.accentColor)
+                                    .padding(.horizontal, Spacing.section)
+                                    .padding(.vertical, Spacing.standard)
+                                    .background(Color.primary.opacity(0.1))
                                     .cornerRadius(8)
                             }
                         }
-                        
+
                         // Instructions
-                        VStack(alignment: .leading, spacing: 24) {
+                        VStack(alignment: .leading, spacing: Spacing.group) {
                             ForEach(1...4, id: \.self) { step in
                                 instructionStep(number: step, text: getInstructionText(for: step))
                             }
                         }
-                        
+
                         Spacer()
-                        
+
                         // Continue button
-                        Button(action: {
+                        Button {
                             hasCompletedOnboarding = true
-                        }) {
+                        } label: {
                             Text("Complete Setup")
-                                .font(.system(size: 18, weight: .semibold, design: .rounded))
-                                .foregroundColor(.white)
-                                .frame(width: 200, height: 50)
-                                .background(Color.accentColor)
-                                .cornerRadius(25)
+                                .frame(minWidth: 200)
                         }
-                        .buttonStyle(ScaleButtonStyle())
-                        .opacity(transcribedText.isEmpty ? 0.5 : 1)
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
                         .disabled(transcribedText.isEmpty)
-                        
+
                         SkipButton(text: "Skip for now") {
                             hasCompletedOnboarding = true
                         }
                     }
-                    .padding(60)
+                    .padding(Spacing.page)
                     .frame(width: geometry.size.width * 0.5)
                     
                     // Right side - Interactive area
@@ -95,49 +89,40 @@ struct OnboardingTutorialView: View {
                         ZStack {
                             // Glowing background
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.black.opacity(0.4))
+                                .fill(Color.controlBackground.opacity(0.6))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                                )
-                                .overlay(
-                                    // Subtle gradient overlay
-                                    LinearGradient(
-                                        colors: [
-                                            Color.accentColor.opacity(0.05),
-                                            Color.black.opacity(0.1)
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
+                                        .stroke(Color.separatorColor, lineWidth: 1)
                                 )
                                 .shadow(color: Color.accentColor.opacity(0.1), radius: 15, x: 0, y: 0)
-                            
+
                             // Text editor with custom styling
                             TextEditor(text: $transcribedText)
-                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .font(.largeTitle)
+                                .dynamicTypeSize(.large ... .xxLarge)
                                 .focused($isFocused)
                                 .scrollContentBackground(.hidden)
                                 .background(Color.clear)
-                                .foregroundColor(.white)
-                                .padding(20)
-                            
+                                .foregroundStyle(.primary)
+                                .padding(Spacing.group)
+
                             // Placeholder text with magical appearance
                             if transcribedText.isEmpty {
-                                VStack(spacing: 16) {
+                                VStack(spacing: Spacing.section) {
+                                    // HIG: decorative — size is layout-critical, not typography
                                     Image(systemName: "wand.and.stars")
-                                        .font(.system(size: 36))
-                                        .foregroundColor(.white.opacity(0.3))
-                                    
+                                        .font(.system(size: 36, weight: .regular, design: .default))
+                                        .foregroundStyle(.tertiary)
+
                                     Text("Click here and start speaking...")
-                                        .font(.system(size: 28, weight: .semibold, design: .rounded))
-                                        .foregroundColor(.white.opacity(0.5))
+                                        .font(.titleEmphasis)
+                                        .foregroundStyle(.secondary)
                                         .multilineTextAlignment(.center)
                                 }
                                 .padding()
                                 .allowsHitTesting(false)
                             }
-                            
+
                             // Subtle animated border
                             RoundedRectangle(cornerRadius: 20)
                                 .strokeBorder(
@@ -155,7 +140,7 @@ struct OnboardingTutorialView: View {
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .padding(60)
+                    .padding(Spacing.page)
                     .frame(width: geometry.size.width * 0.5)
                 }
             }
@@ -177,20 +162,20 @@ struct OnboardingTutorialView: View {
     }
     
     private func instructionStep(number: Int, text: String) -> some View {
-        HStack(spacing: 20) {
+        HStack(spacing: Spacing.group) {
             Text("\(number)")
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
+                .font(.titleEmphasis)
+                .foregroundStyle(.primary)
                 .frame(width: 40, height: 40)
                 .background(Circle().fill(Color.accentColor.opacity(0.2)))
                 .overlay(
                     Circle()
                         .stroke(Color.accentColor.opacity(0.3), lineWidth: 1)
                 )
-            
+
             Text(text)
-                .font(.system(size: 18, weight: .medium, design: .rounded))
-                .foregroundColor(.white.opacity(0.9))
+                .font(.rowTitle.weight(.medium))
+                .foregroundStyle(.primary)
                 .lineSpacing(4)
         }
     }

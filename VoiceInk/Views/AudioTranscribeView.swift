@@ -1,4 +1,3 @@
-// TODO HIG: not in scope of 2026-04-19 redesign
 import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
@@ -22,7 +21,7 @@ struct AudioTranscribeView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .onDrop(of: [.fileURL, .data, .audio, .movie], isTargeted: $isDropTargeted) { providers in
             handleDroppedFiles(providers)
             return true
@@ -54,40 +53,41 @@ struct AudioTranscribeView: View {
 
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.windowBackgroundColor).opacity(0.4))
+                    .fill(Color.windowBackground.opacity(0.4))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .strokeBorder(
                                 style: StrokeStyle(lineWidth: 2, dash: [8])
                             )
-                            .foregroundColor(isDropTargeted ? .accentColor : .gray.opacity(0.5))
+                            .foregroundStyle(isDropTargeted ? Color.accentColor : Color.separatorColor)
                     )
                     .animation(.easeInOut(duration: 0.15), value: isDropTargeted)
 
-                VStack(spacing: 14) {
+                VStack(spacing: Spacing.section) {
+                    // HIG: decorative — size is layout-critical, not typography
                     Image(systemName: "arrow.down.doc")
-                        .font(.system(size: 32))
-                        .foregroundColor(isDropTargeted ? .accentColor : .gray)
+                        .font(.system(size: 32, weight: .regular, design: .default))
+                        .foregroundStyle(isDropTargeted ? Color.accentColor : .secondary)
 
                     Text("Drop audio or video files here")
-                        .font(.headline)
+                        .font(.sectionHeader)
 
                     Text("or")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
 
                     Button("Choose Files") {
                         selectFiles()
                     }
                     .buttonStyle(.bordered)
                 }
-                .padding(32)
+                .padding(Spacing.page)
             }
             .frame(maxWidth: 480, maxHeight: 200)
 
             Text("Supports WAV, MP3, M4A, AIFF, MP4, MOV, AAC, FLAC, CAF, AMR, OGG, OPUS, 3GP")
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .padding(.top, 12)
+                .font(.rowDetail)
+                .foregroundStyle(.secondary)
+                .padding(.top, Spacing.comfy)
 
             Spacer()
         }
@@ -132,10 +132,10 @@ struct AudioTranscribeView: View {
             .scrollContentBackground(.hidden)
             .safeAreaInset(edge: .bottom) {
                 Text("Drop files anywhere to add more")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.rowDetail)
+                    .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, Spacing.standard)
             }
         }
     }
@@ -143,29 +143,18 @@ struct AudioTranscribeView: View {
     // MARK: - Top Bar
 
     private var topBar: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Spacing.comfy) {
             Text("\(transcriptionManager.queue.count) file\(transcriptionManager.queue.count == 1 ? "" : "s")")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+                .font(.rowSubtitle)
+                .foregroundStyle(.secondary)
 
             Button {
                 selectFiles()
             } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 12, weight: .medium))
-                    Text("Add")
-                        .font(.system(size: 12, weight: .medium))
-                }
-                .foregroundColor(.secondary)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(
-                    Capsule()
-                        .fill(Color.secondary.opacity(0.12))
-                )
+                Label("Add", systemImage: "plus")
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.bordered)
+            .controlSize(.small)
             .help("Add files")
 
             Spacer()
@@ -173,45 +162,22 @@ struct AudioTranscribeView: View {
             enhancementControls
 
             if transcriptionManager.isProcessingQueue {
-                Button {
+                Button(role: .destructive) {
                     transcriptionManager.cancelProcessing()
                 } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "stop.fill")
-                            .font(.system(size: 10, weight: .medium))
-                        Text("Cancel")
-                            .font(.system(size: 12, weight: .medium))
-                    }
-                    .foregroundColor(.red)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(
-                        Capsule()
-                            .fill(Color.red.opacity(0.12))
-                    )
+                    Label("Cancel", systemImage: "stop.fill")
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.bordered)
+                .controlSize(.small)
                 .help("Cancel transcription")
             } else if transcriptionManager.hasPendingItems {
                 Button {
                     transcriptionManager.startProcessing(modelContext: modelContext, engine: engine)
                 } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 10, weight: .medium))
-                        Text("Start")
-                            .font(.system(size: 12, weight: .semibold))
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        Capsule()
-                            .fill(Color(.controlAccentColor))
-                            .shadow(color: Color(.controlAccentColor).opacity(0.2), radius: 2, x: 0, y: 1)
-                    )
+                    Label("Start", systemImage: "play.fill")
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
             }
 
             Button {
@@ -220,25 +186,14 @@ struct AudioTranscribeView: View {
                     expandedItemId = nil
                 }
             } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "xmark.bin")
-                        .font(.system(size: 12, weight: .medium))
-                    Text("Clear")
-                        .font(.system(size: 12, weight: .medium))
-                }
-                .foregroundColor(.secondary)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(
-                    Capsule()
-                        .fill(Color.secondary.opacity(0.12))
-                )
+                Label("Clear", systemImage: "xmark.bin")
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.bordered)
+            .controlSize(.small)
             .help("Clear all items")
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
+        .padding(.horizontal, Spacing.group)
+        .padding(.vertical, Spacing.comfy)
     }
 
     private var enhancementControls: some View {
@@ -289,10 +244,10 @@ struct AudioTranscribeView: View {
             )
             .overlay {
                 Text("Drop to add files")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundColor(.accentColor)
+                    .font(.rowSubtitle.weight(.medium))
+                    .foregroundStyle(Color.accentColor)
             }
-            .padding(16)
+            .padding(Spacing.section)
             .transition(.opacity)
             .animation(.easeInOut(duration: 0.15), value: isDropTargeted)
     }

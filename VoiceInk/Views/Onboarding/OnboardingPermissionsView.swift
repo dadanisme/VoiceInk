@@ -1,4 +1,3 @@
-// TODO HIG: not in scope of 2026-04-19 redesign
 import SwiftUI
 import AVFoundation
 import AppKit
@@ -81,49 +80,50 @@ struct OnboardingPermissionsView: View {
                     // Reusable background
                     OnboardingBackgroundView()
                     
-                    VStack(spacing: 40) {
+                    VStack(spacing: Spacing.page) {
                         // Progress indicator
-                        HStack(spacing: 8) {
+                        HStack(spacing: Spacing.standard) {
                             ForEach(0..<permissions.count, id: \.self) { index in
                                 Circle()
-                                    .fill(index <= currentPermissionIndex ? Color.accentColor : Color.white.opacity(0.1))
+                                    .fill(index <= currentPermissionIndex ? Color.accentColor : Color.primary.opacity(0.1))
                                     .frame(width: 8, height: 8)
                                     .scaleEffect(index == currentPermissionIndex ? 1.2 : 1.0)
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: currentPermissionIndex)
                             }
                         }
-                        .padding(.top, 40)
+                        .padding(.top, Spacing.page)
                         
                         // Current permission card
-                        VStack(spacing: 30) {
+                        VStack(spacing: Spacing.page) {
                             // Permission icon
                             ZStack {
                                 Circle()
                                     .fill(Color.accentColor.opacity(0.1))
                                     .frame(width: 100, height: 100)
-                                
+
                                 if permissionStates[currentPermissionIndex] {
+                                    // HIG: decorative — size is layout-critical, not typography
                                     Image(systemName: "checkmark.seal.fill")
-                                        .font(.system(size: 50))
-                                        .foregroundColor(.accentColor)
+                                        .font(.system(size: 50, weight: .regular, design: .default))
+                                        .foregroundStyle(Color.accentColor)
                                         .transition(.scale.combined(with: .opacity))
                                 } else {
+                                    // HIG: decorative — size is layout-critical, not typography
                                     Image(systemName: permissions[currentPermissionIndex].icon)
-                                        .font(.system(size: 40))
-                                        .foregroundColor(.accentColor)
+                                        .font(.system(size: 40, weight: .regular, design: .default))
+                                        .foregroundStyle(Color.accentColor)
                                 }
                             }
                             .scaleEffect(scale)
                             .opacity(opacity)
-                            
+
                             // Permission text
-                            VStack(spacing: 12) {
-                                HStack(spacing: 8) {
+                            VStack(spacing: Spacing.comfy) {
+                                HStack(spacing: Spacing.standard) {
                                     Text(permissions[currentPermissionIndex].title)
-                                        .font(.title2)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.white)
-                                    
+                                        .font(.titleEmphasis)
+                                        .foregroundStyle(.primary)
+
                                     if permissions[currentPermissionIndex].type == .screenRecording {
                                         InfoTip(
                                             "VoiceInk captures on-screen text to understand the context of your voice input, which significantly improves transcription accuracy. Your privacy is important: this data is processed locally and is not stored.",
@@ -131,10 +131,10 @@ struct OnboardingPermissionsView: View {
                                         )
                                     }
                                 }
-                                
+
                                 Text(permissions[currentPermissionIndex].description)
-                                    .font(.body)
-                                    .foregroundColor(.white.opacity(0.7))
+                                    .font(.rowTitle)
+                                    .foregroundStyle(.secondary)
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal)
                             }
@@ -143,16 +143,17 @@ struct OnboardingPermissionsView: View {
                             
                             // Audio device selection (only shown for audio device selection step)
                             if permissions[currentPermissionIndex].type == .audioDeviceSelection {
-                                VStack(spacing: 20) {
+                                VStack(spacing: Spacing.group) {
                                     if audioDeviceManager.availableDevices.isEmpty {
-                                        VStack(spacing: 12) {
+                                        VStack(spacing: Spacing.comfy) {
+                                            // HIG: decorative — size is layout-critical, not typography
                                             Image(systemName: "mic.slash.circle.fill")
-                                                .font(.system(size: 36))
+                                                .font(.system(size: 36, weight: .regular, design: .default))
                                                 .symbolRenderingMode(.hierarchical)
                                                 .foregroundStyle(.secondary)
-                                            
+
                                             Text("No microphones found")
-                                                .font(.subheadline)
+                                                .font(.rowSubtitle)
                                                 .foregroundStyle(.secondary)
                                         }
                                         .padding()
@@ -189,8 +190,8 @@ struct OnboardingPermissionsView: View {
                                     }
                                     
                                     Text("For best results, using your Mac's built-in microphone is recommended.")
-                                        .font(.caption)
-                                        .foregroundColor(.white.opacity(0.7))
+                                        .font(.rowDetail)
+                                        .foregroundStyle(.secondary)
                                         .multilineTextAlignment(.center)
                                         .padding(.horizontal)
                                 }
@@ -217,16 +218,13 @@ struct OnboardingPermissionsView: View {
                         .padding(.vertical, 40)
                         
                         // Action buttons
-                        VStack(spacing: 16) {
+                        VStack(spacing: Spacing.section) {
                             Button(action: requestPermission) {
                                 Text(getButtonTitle())
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .frame(width: 200, height: 50)
-                                    .background(Color.accentColor)
-                                    .cornerRadius(25)
+                                    .frame(minWidth: 200)
                             }
-                            .buttonStyle(ScaleButtonStyle())
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.large)
                             
                             if !permissionStates[currentPermissionIndex] && 
                                permissions[currentPermissionIndex].type != .keyboardShortcut &&
@@ -402,14 +400,14 @@ struct OnboardingPermissionsView: View {
         optionDisplayName: @escaping (T) -> String,
         onSelection: @escaping (T) -> Void
     ) -> some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 12) {
+        VStack(spacing: Spacing.section) {
+            HStack(spacing: Spacing.comfy) {
                 Spacer()
-                
+
                 Text(label)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white.opacity(0.8))
-                
+                    .font(.rowTitle.weight(.medium))
+                    .foregroundStyle(.secondary)
+
                 Menu {
                     ForEach(options, id: \.self) { option in
                         Button(action: {
@@ -425,30 +423,30 @@ struct OnboardingPermissionsView: View {
                         }
                     }
                 } label: {
-                    HStack(spacing: 8) {
+                    HStack(spacing: Spacing.standard) {
                         Text(displayValue)
-                            .foregroundColor(.white)
-                            .font(.system(size: 16, weight: .medium))
+                            .foregroundStyle(.primary)
+                            .font(.rowTitle.weight(.medium))
                         Image(systemName: "chevron.up.chevron.down")
-                            .font(.system(size: 12))
-                            .foregroundColor(.white.opacity(0.6))
+                            .font(.rowDetail)
+                            .foregroundStyle(.secondary)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(Color.white.opacity(0.1))
+                    .padding(.horizontal, Spacing.section)
+                    .padding(.vertical, Spacing.comfy)
+                    .background(Color.primary.opacity(0.1))
                     .cornerRadius(10)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                            .stroke(Color.separatorColor, lineWidth: 1)
                     )
                 }
                 .menuStyle(.borderlessButton)
-                
+
                 Spacer()
             }
         }
         .padding()
-        .background(Color.white.opacity(0.05))
+        .background(Color.controlBackground.opacity(0.5))
         .cornerRadius(12)
     }
 

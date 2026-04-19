@@ -1,4 +1,3 @@
-// TODO HIG: not in scope of 2026-04-19 redesign
 import SwiftUI
 import AVFoundation
 
@@ -178,8 +177,8 @@ struct WaveformView: View {
                         ProgressView()
                             .controlSize(.small)
                         Text("Loading...")
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary)
+                            .font(.rowDetail)
+                            .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -200,13 +199,11 @@ struct WaveformView: View {
                     .padding(.horizontal, 2)
 
                     if isHovering {
-                        // TODO HIG: not in scope of 2026-04-19 redesign
                         Text(formatTime(duration * Double(hoverLocation / geometry.size.width)))
-                            .font(.system(size: 10, weight: .medium))
-                            .monospacedDigit()
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 3)
+                            .font(.rowDetail.monospacedDigit())
+                            .foregroundColor(.white) // TODO HIG: contrast over branded fill
+                            .padding(.horizontal, Spacing.standard)
+                            .padding(.vertical, Spacing.tight)
                             .background(Capsule().fill(Color.accentColor))
                             .offset(x: max(0, min(hoverLocation - 25, geometry.size.width - 50)))
                             .offset(y: -26)
@@ -289,7 +286,7 @@ private struct CircleIconButton: View {
     let icon: String
     let action: () -> Void
     var fillOpacity: Double = 0.06
-    var iconFont: Font = .system(size: 14, weight: .semibold)
+    var iconFont: Font = .rowSubtitle.weight(.semibold)
 
     var body: some View {
         Button(action: action) {
@@ -324,11 +321,11 @@ private struct AsyncCircleButton: View {
                                 .controlSize(.small)
                         } else if showSuccess {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.rowSubtitle.weight(.semibold))
                                 .foregroundStyle(Color.green)
                         } else {
                             Image(systemName: defaultIcon)
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.rowSubtitle.weight(.semibold))
                                 .foregroundStyle(.primary)
                         }
                     }
@@ -343,14 +340,14 @@ private struct StatusBanner: View {
     let isError: Bool
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Spacing.standard) {
             Image(systemName: isError ? "exclamationmark.circle.fill" : "checkmark.circle.fill")
-                .foregroundColor(isError ? .red : .green)
+                .foregroundStyle(isError ? .red : .green)
             Text(message)
-                .font(.system(size: 14, weight: .medium))
+                .font(.rowSubtitle.weight(.medium))
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .padding(.horizontal, Spacing.section)
+        .padding(.vertical, Spacing.comfy)
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .fill(isError ? Color.red.opacity(0.1) : Color.green.opacity(0.1))
@@ -394,7 +391,7 @@ struct AudioPlayerView: View {
     }
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: Spacing.standard) {
             WaveformView(
                 samples: playerManager.waveformSamples,
                 currentTime: playerManager.currentTime,
@@ -402,17 +399,16 @@ struct AudioPlayerView: View {
                 isLoading: playerManager.isLoadingWaveform,
                 onSeek: { playerManager.seek(to: $0) }
             )
-            .padding(.horizontal, 10)
+            .padding(.horizontal, Spacing.comfy)
 
-            HStack(spacing: 8) {
+            HStack(spacing: Spacing.standard) {
                 Text(formatTime(playerManager.currentTime))
-                    .font(.system(size: 11, weight: .medium))
-                    .monospacedDigit()
-                    .foregroundColor(.secondary)
+                    .font(.rowDetail.monospacedDigit())
+                    .foregroundStyle(.secondary)
 
                 Spacer()
 
-                HStack(spacing: 8) {
+                HStack(spacing: Spacing.standard) {
                     CircleIconButton(icon: "folder", action: showInFinder)
                         .help("Show in Finder")
 
@@ -422,7 +418,7 @@ struct AudioPlayerView: View {
                             .frame(width: 32, height: 32)
                             .overlay(
                                 Text(playerManager.playbackRate == 1.0 ? "1×" : playerManager.playbackRate == 1.5 ? "1.5×" : "2×")
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(.rowDetail.weight(.semibold))
                                     .foregroundStyle(.primary)
                             )
                     }
@@ -481,14 +477,13 @@ struct AudioPlayerView: View {
                 Spacer()
 
                 Text(formatTime(playerManager.duration))
-                    .font(.system(size: 11, weight: .medium))
-                    .monospacedDigit()
-                    .foregroundColor(.secondary)
+                    .font(.rowDetail.monospacedDigit())
+                    .foregroundStyle(.secondary)
             }
-            .padding(.horizontal, 10)
+            .padding(.horizontal, Spacing.comfy)
         }
-        .padding(.top, 8)
-        .padding(.bottom, 6)
+        .padding(.top, Spacing.standard)
+        .padding(.bottom, Spacing.standard)
         .onAppear {
             playerManager.loadAudio(from: url)
         }
@@ -511,7 +506,7 @@ struct AudioPlayerView: View {
                 }
                 Spacer()
             }
-            .padding(.top, 16)
+            .padding(.top, Spacing.section)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: bannerState)
         )
     }

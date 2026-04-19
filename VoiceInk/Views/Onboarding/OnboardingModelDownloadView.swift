@@ -1,4 +1,3 @@
-// TODO HIG: not in scope of 2026-04-19 redesign
 import SwiftUI
 
 struct OnboardingModelDownloadView: View {
@@ -23,70 +22,70 @@ struct OnboardingModelDownloadView: View {
                     // Reusable background
                     OnboardingBackgroundView()
                     
-                    VStack(spacing: 40) {
+                    VStack(spacing: Spacing.page) {
                         // Model icon and title
-                        VStack(spacing: 30) {
+                        VStack(spacing: Spacing.page) {
                             // Model icon
                             ZStack {
                                 Circle()
                                     .fill(Color.accentColor.opacity(0.1))
                                     .frame(width: 100, height: 100)
-                                
+
                                 if isModelSet {
+                                    // HIG: decorative — size is layout-critical, not typography
                                     Image(systemName: "checkmark.seal.fill")
-                                        .font(.system(size: 50))
-                                        .foregroundColor(.accentColor)
+                                        .font(.system(size: 50, weight: .regular, design: .default))
+                                        .foregroundStyle(Color.accentColor)
                                         .transition(.scale.combined(with: .opacity))
                                 } else {
+                                    // HIG: decorative — size is layout-critical, not typography
                                     Image(systemName: "brain")
-                                        .font(.system(size: 40))
-                                        .foregroundColor(.accentColor)
+                                        .font(.system(size: 40, weight: .regular, design: .default))
+                                        .foregroundStyle(Color.accentColor)
                                 }
                             }
                             .scaleEffect(scale)
                             .opacity(opacity)
-                            
+
                             // Title and description
-                            VStack(spacing: 12) {
+                            VStack(spacing: Spacing.comfy) {
                                 Text("Download AI Model")
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.white)
-                                
+                                    .font(.titleEmphasis)
+                                    .foregroundStyle(.primary)
+
                                 Text("We'll download the optimized model to get you started.")
-                                    .font(.body)
-                                    .foregroundColor(.white.opacity(0.7))
+                                    .font(.rowTitle)
+                                    .foregroundStyle(.secondary)
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal)
                             }
                             .scaleEffect(scale)
                             .opacity(opacity)
                         }
-                        
+
                         // Model card - Centered and compact
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: Spacing.section) {
                             // Model name and details
-                            VStack(alignment: .center, spacing: 8) {
+                            VStack(alignment: .center, spacing: Spacing.standard) {
                                 Text(turboModel.displayName)
-                                    .font(.headline)
-                                    .foregroundColor(.white)
+                                    .font(.sectionHeader)
+                                    .foregroundStyle(.primary)
                                 Text("\(turboModel.size) • \(turboModel.language)")
-                                    .font(.caption)
-                                    .foregroundColor(.white.opacity(0.7))
+                                    .font(.rowDetail)
+                                    .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: .infinity)
-                            
+
                             Divider()
-                                .background(Color.white.opacity(0.1))
-                            
+
                             // Performance indicators in a more compact layout
-                            HStack(spacing: 20) {
+                            HStack(spacing: Spacing.group) {
                                 performanceIndicator(label: "Speed", value: turboModel.speed)
                                 performanceIndicator(label: "Accuracy", value: turboModel.accuracy)
                                 ramUsageLabel(gb: turboModel.ramUsage)
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
-                            
+
                             // Download progress
                             if isDownloading {
                                 DownloadProgressView(
@@ -96,30 +95,27 @@ struct OnboardingModelDownloadView: View {
                                 .transition(.opacity)
                             }
                         }
-                        .padding(24)
+                        .padding(Spacing.group)
                         .frame(width: min(geometry.size.width * 0.6, 400))
-                        .background(Color.black.opacity(0.3))
+                        .background(Color.controlBackground.opacity(0.6))
                         .cornerRadius(16)
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                .stroke(Color.separatorColor, lineWidth: 1)
                         )
                         .scaleEffect(scale)
                         .opacity(opacity)
-                        
+
                         // Action buttons
-                        VStack(spacing: 16) {
+                        VStack(spacing: Spacing.section) {
                             Button(action: handleAction) {
                                 Text(getButtonTitle())
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .frame(width: 200, height: 50)
-                                    .background(Color.accentColor)
-                                    .cornerRadius(25)
+                                    .frame(minWidth: 200)
                             }
-                            .buttonStyle(ScaleButtonStyle())
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.large)
                             .disabled(isDownloading)
-                            
+
                             if !isModelSet {
                                 SkipButton(text: "Skip for now") {
                                     withAnimation {
@@ -201,30 +197,30 @@ struct OnboardingModelDownloadView: View {
     }
     
     private func performanceIndicator(label: String, value: Double) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: Spacing.tight) {
             Text(label)
-                .font(.caption)
-                .foregroundColor(.white.opacity(0.7))
-            
-            HStack(spacing: 4) {
+                .font(.rowDetail)
+                .foregroundStyle(.secondary)
+
+            HStack(spacing: Spacing.tight) {
                 ForEach(0..<5) { index in
                     Circle()
-                        .fill(Double(index) / 5.0 <= value ? Color.accentColor : Color.white.opacity(0.2))
+                        .fill(Double(index) / 5.0 <= value ? Color.accentColor : Color.primary.opacity(0.2))
                         .frame(width: 6, height: 6)
                 }
             }
         }
     }
-    
+
     private func ramUsageLabel(gb: Double) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: Spacing.tight) {
             Text("RAM")
-                .font(.caption)
-                .foregroundColor(.white.opacity(0.7))
-            
+                .font(.rowDetail)
+                .foregroundStyle(.secondary)
+
             Text(String(format: "%.1f GB", gb))
-                .font(.system(size: 12, weight: .bold))
-                .foregroundColor(.white)
+                .font(.rowDetail.weight(.bold))
+                .foregroundStyle(.primary)
         }
     }
 }
