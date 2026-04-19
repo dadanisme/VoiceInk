@@ -51,7 +51,6 @@ struct PowerModePopover: View {
         .frame(maxHeight: 340)
         .padding(.vertical, Spacing.standard)
         .background(Color.windowBackground)
-        .environment(\.colorScheme, .dark)
         .onAppear {
             selectedConfig = powerModeManager.activeConfiguration
         }
