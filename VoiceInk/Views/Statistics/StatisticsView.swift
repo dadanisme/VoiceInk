@@ -54,7 +54,7 @@ struct StatisticsView: View {
             }
         }
         .task {
-            await reload()
+            scheduleReload()
         }
         .onReceive(NotificationCenter.default.publisher(for: .transcriptionCreated)) { _ in
             scheduleReload()
