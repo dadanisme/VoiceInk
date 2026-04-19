@@ -26,10 +26,8 @@ class WindowManager: NSObject {
         }
         logger.notice("configureWindow: registering main window")
         
-        let requiredStyleMask: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
+        let requiredStyleMask: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .resizable]
         window.styleMask.formUnion(requiredStyleMask)
-        window.titlebarAppearsTransparent = true
-        window.titleVisibility = .hidden
         window.backgroundColor = .windowBackgroundColor
         window.isReleasedWhenClosed = false
         window.title = "VoiceInk"
