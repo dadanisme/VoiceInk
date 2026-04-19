@@ -42,8 +42,7 @@ struct AudioInputSettingsView: View {
     private var inputModeSection: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Input Mode")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(.titleEmphasis)
             
             HStack(spacing: 20) {
                 ForEach(AudioInputMode.allCases, id: \.self) { mode in
@@ -60,8 +59,7 @@ struct AudioInputSettingsView: View {
     private var systemDefaultSection: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Current Device")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(.titleEmphasis)
 
             SurfaceCard {
                 HStack {
@@ -91,8 +89,7 @@ struct AudioInputSettingsView: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
                 Text("Available Devices")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .font(.titleEmphasis)
 
                 Spacer()
 
@@ -132,8 +129,7 @@ struct AudioInputSettingsView: View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Prioritized Devices")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .font(.titleEmphasis)
                 Text("Devices will be used in order of priority. If a device is unavailable, the next one will be tried. If no prioritized device is available, the built-in microphone will be used.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -153,8 +149,7 @@ struct AudioInputSettingsView: View {
     private var availableDevicesContent: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Available Devices")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(.titleEmphasis)
             
             availableDevicesList
         }
@@ -163,9 +158,9 @@ struct AudioInputSettingsView: View {
     private var emptyDevicesState: some View {
         SurfaceCard {
             VStack(spacing: 16) {
-                // TODO HIG: icon sizing
+                // HIG: decorative — size is layout-critical, not typography
                 Image(systemName: "mic.slash.circle.fill")
-                    .font(.system(size: 48))
+                    .font(.system(size: 48, weight: .regular, design: .default))
                     .symbolRenderingMode(.hierarchical)
                     .foregroundStyle(.secondary)
 
@@ -288,9 +283,9 @@ struct InputModeCard: View {
         Button(action: action) {
             SurfaceCard(style: isSelected ? .selected : .plain) {
                 VStack(alignment: .leading, spacing: 12) {
-                    // TODO HIG: icon sizing
+                    // HIG: decorative — size is layout-critical, not typography
                     Image(systemName: icon)
-                        .font(.system(size: 28))
+                        .font(.system(size: 28, weight: .regular, design: .default))
                         .symbolRenderingMode(.hierarchical)
                         .foregroundStyle(isSelected ? .blue : .secondary)
 
@@ -321,11 +316,11 @@ struct DeviceSelectionCard: View {
         Button(action: action) {
             SurfaceCard(style: isSelected ? .selected : .plain) {
                 HStack {
-                    // TODO HIG: icon sizing
+                    // HIG: decorative — size is layout-critical, not typography
                     Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                         .symbolRenderingMode(.hierarchical)
                         .foregroundStyle(isSelected ? .blue : .secondary)
-                        .font(.system(size: 18))
+                        .font(.system(size: 18, weight: .regular, design: .default))
 
                     Text(name)
                         .foregroundStyle(.primary)
@@ -367,15 +362,13 @@ struct DevicePriorityCard: View {
             HStack {
                 // Priority number or dash
                 if let priority = priority {
-                    // TODO HIG: unclear mapping
                     Text("\(priority + 1)")
-                        .font(.system(size: 18, weight: .medium))
+                        .font(.titleEmphasis)
                         .foregroundStyle(.secondary)
                         .frame(width: 24)
                 } else {
-                    // TODO HIG: unclear mapping
                     Text("-")
-                        .font(.system(size: 18, weight: .medium))
+                        .font(.titleEmphasis)
                         .foregroundStyle(.secondary)
                         .frame(width: 24)
                 }
@@ -407,7 +400,7 @@ struct DevicePriorityCard: View {
                             .padding(.vertical, 4)
                             .background(
                                 Capsule()
-                                    .fill(Color(.windowBackgroundColor).opacity(0.4))
+                                    .fill(Color.windowBackground.opacity(0.4))
                             )
                     }
 
