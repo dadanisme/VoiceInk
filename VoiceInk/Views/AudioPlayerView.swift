@@ -201,7 +201,7 @@ struct WaveformView: View {
                     if isHovering {
                         Text(formatTime(duration * Double(hoverLocation / geometry.size.width)))
                             .font(.rowDetail.monospacedDigit())
-                            .foregroundColor(.white) // TODO HIG: contrast over branded fill
+                            .foregroundStyle(.white)
                             .padding(.horizontal, Spacing.standard)
                             .padding(.vertical, Spacing.tight)
                             .background(Capsule().fill(Color.accentColor))

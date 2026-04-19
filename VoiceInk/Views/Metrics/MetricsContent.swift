@@ -149,51 +149,41 @@ struct MetricsContent: View {
     // MARK: - Sections
     
     private var heroSection: some View {
-        VStack(spacing: 10) {
-            HStack {
-                Spacer(minLength: 0)
-                
-                // TODO HIG: contrast over branded fill
-                (Text("You have saved ")
-                    .fontWeight(.bold)
-                    .foregroundColor(.white.opacity(0.85))
-                 +
-                 Text(formattedTimeSaved)
-                    .fontWeight(.black)
-                    .font(.system(size: 36, design: .rounded))
-                    .foregroundStyle(.white)
-                 +
-                 Text(" with VoiceInk")
-                    .fontWeight(.bold)
-                    .foregroundColor(.white.opacity(0.85))
-                )
-                .font(.system(size: 30))
-                .multilineTextAlignment(.center)
-                
-                Spacer(minLength: 0)
+        SurfaceCard(style: .material, cornerRadius: 12) {
+            VStack(spacing: 10) {
+                HStack {
+                    Spacer(minLength: 0)
+
+                    (Text("You have saved ")
+                        .fontWeight(.bold)
+                        .foregroundStyle(.secondary)
+                     +
+                     Text(formattedTimeSaved)
+                        .fontWeight(.black)
+                        .font(.system(size: 36, design: .rounded))
+                        .foregroundStyle(.primary)
+                     +
+                     Text(" with VoiceInk")
+                        .fontWeight(.bold)
+                        .foregroundStyle(.secondary)
+                    )
+                    .font(.system(size: 30))
+                    .multilineTextAlignment(.center)
+
+                    Spacer(minLength: 0)
+                }
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+
+                Text(heroSubtitle)
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
             }
-            .lineLimit(1)
-            .minimumScaleFactor(0.5)
-            
-            // TODO HIG: contrast over branded fill
-            Text(heroSubtitle)
-                .font(.system(size: 15, weight: .medium))
-                .foregroundColor(.white.opacity(0.85))
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity)
-            
+            .padding(Spacing.comfy)
+            .frame(maxWidth: .infinity)
         }
-        .padding(Spacing.group)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(heroGradient)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
-        )
-        .shadow(color: Color.black.opacity(0.08), radius: 30, x: 0, y: 16)
     }
 
     private var metricsSection: some View {
@@ -252,18 +242,6 @@ struct MetricsContent: View {
         let sessionText = totalCount == 1 ? "session" : "sessions"
 
         return "Dictated \(wordsText) words across \(totalCount) \(sessionText)."
-    }
-    
-    private var heroGradient: LinearGradient {
-        LinearGradient(
-            gradient: Gradient(colors: [
-                Color(nsColor: .controlAccentColor),
-                Color(nsColor: .controlAccentColor).opacity(0.85),
-                Color(nsColor: .controlAccentColor).opacity(0.7)
-            ]),
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
     }
     
     // MARK: - Computed Metrics

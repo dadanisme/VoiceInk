@@ -36,7 +36,6 @@ struct DashboardPromotionsSection: View {
                         title: "Unlock VoiceInk Pro For Less",
                         message: "Share VoiceInk on your socials, and instantly unlock a 30% discount on VoiceInk Pro.",
                         accentSymbol: "megaphone.fill",
-                        glowColor: .accentColor,
                         actionTitle: "Share & Unlock",
                         actionIcon: "arrow.up.right",
                         action: openSocialShare
@@ -50,7 +49,6 @@ struct DashboardPromotionsSection: View {
                         title: "Earn With The VoiceInk Affiliate Program",
                         message: "Share VoiceInk with friends or your audience and receive 30% on every referral that upgrades.",
                         accentSymbol: "link.badge.plus",
-                        glowColor: .accentColor,
                         actionTitle: "Explore Affiliate",
                         actionIcon: "arrow.up.right",
                         action: openAffiliateProgram,
@@ -90,87 +88,56 @@ private struct DashboardPromotionCard: View {
     let title: String
     let message: String
     let accentSymbol: String
-    let glowColor: Color
     let actionTitle: String
     let actionIcon: String
     let action: () -> Void
     var onDismiss: (() -> Void)? = nil
 
-    private static let defaultGradient: LinearGradient = LinearGradient(
-        colors: [
-            Color.accentColor,
-            Color.accentColor.opacity(0.6)
-        ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-    
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading, spacing: Spacing.section) {
-                // TODO HIG: contrast over branded fill
-                Text(badge.uppercased())
-                    .font(.system(size: 11, weight: .heavy))
-                    .tracking(0.8)
-                    .padding(.horizontal, Spacing.comfy)
-                    .padding(.vertical, Spacing.tight + 2)
-                    .background(.white.opacity(0.2))
-                    .clipShape(Capsule())
-                    .foregroundColor(.white)
+        SurfaceCard(cornerRadius: 12) {
+            ZStack(alignment: .topTrailing) {
+                VStack(alignment: .leading, spacing: Spacing.section) {
+                    Text(badge.uppercased())
+                        .font(.system(size: 11, weight: .heavy))
+                        .tracking(0.8)
+                        .padding(.horizontal, Spacing.comfy)
+                        .padding(.vertical, Spacing.tight + 2)
+                        .background(Color.accentColor)
+                        .clipShape(Capsule())
+                        .foregroundStyle(.white)
 
-                // TODO HIG: contrast over branded fill
-                Text(title)
-                    .font(.titleEmphasis)
-                    .foregroundColor(.white)
-                    .fixedSize(horizontal: false, vertical: true)
+                    Text(title)
+                        .font(.titleEmphasis)
+                        .foregroundStyle(.primary)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                // TODO HIG: contrast over branded fill
-                Text(message)
-                    .font(.rowSubtitle)
-                    .foregroundColor(.white.opacity(0.85))
-                    .fixedSize(horizontal: false, vertical: true)
+                    Text(message)
+                        .font(.rowSubtitle)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                Button(action: action) {
-                    HStack(spacing: Spacing.tight + 2) {
-                        Text(actionTitle)
-                        Image(systemName: actionIcon)
+                    Button(action: action) {
+                        HStack(spacing: Spacing.tight + 2) {
+                            Text(actionTitle)
+                            Image(systemName: actionIcon)
+                        }
                     }
-                    .font(.system(size: 13, weight: .semibold))
-                    .padding(.horizontal, Spacing.section)
-                    .padding(.vertical, Spacing.standard + 1)
-                    .background(.white.opacity(0.22))
-                    .clipShape(Capsule())
-                    // TODO HIG: contrast over branded fill
-                    .foregroundColor(.white)
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
                 }
-                .buttonStyle(.plain)
-                .contentShape(Rectangle())
-            }
-            .padding(Spacing.section + 2)
-            .frame(maxWidth: .infinity, alignment: .topLeading)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
 
-            if let onDismiss = onDismiss {
-                Button(action: onDismiss) {
-                    // TODO HIG: contrast over branded fill
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.white.opacity(0.7))
+                if let onDismiss = onDismiss {
+                    Button(action: onDismiss) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .contentShape(Rectangle())
+                    .help("Dismiss this promotion")
                 }
-                .buttonStyle(.plain)
-                .contentShape(Rectangle())
-                .padding(Spacing.comfy)
-                .help("Dismiss this promotion")
             }
         }
-        .background(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(Self.defaultGradient)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .stroke(.white.opacity(0.08), lineWidth: 1)
-        )
-        .shadow(color: glowColor.opacity(0.15), radius: 12, x: 0, y: 8)
     }
 }

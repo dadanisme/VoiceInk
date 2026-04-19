@@ -70,14 +70,12 @@ struct EnhancementPromptRow: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 // Use the icon from the prompt
-                // TODO HIG: contrast over branded fill
                 Image(systemName: prompt.icon)
                     .font(.system(size: 14))
-                    .foregroundColor(isDisabled ? .white.opacity(0.4) : .white.opacity(0.7))
+                    .foregroundStyle(isDisabled ? AnyShapeStyle(Color.secondary.opacity(0.5)) : AnyShapeStyle(Color.secondary))
 
-                // TODO HIG: contrast over branded fill
                 Text(prompt.title)
-                    .foregroundColor(isDisabled ? .white.opacity(0.4) : .white.opacity(0.9))
+                    .foregroundStyle(isDisabled ? AnyShapeStyle(Color.secondary) : AnyShapeStyle(Color.primary))
                     .font(.system(size: 13))
                     .lineLimit(1)
 

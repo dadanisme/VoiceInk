@@ -2,19 +2,18 @@ import SwiftUI
 
 struct ProBadge: View {
     var body: some View {
-        // TODO HIG: contrast over branded fill
         Text("PRO")
             .font(.system(size: 10, weight: .semibold))
-            .foregroundColor(.white)
+            .foregroundStyle(.white)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
             .background(
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.blue.opacity(0.8))
+                    .fill(Color.accentColor)
             )
     }
 }
 
 #Preview {
     ProBadge()
-} 
+}
