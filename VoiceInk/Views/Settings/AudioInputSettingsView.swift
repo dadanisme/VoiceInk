@@ -63,27 +63,27 @@ struct AudioInputSettingsView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            HStack {
-                Image(systemName: "display")
-                    .foregroundStyle(.secondary)
+            SurfaceCard {
+                HStack {
+                    Image(systemName: "display")
+                        .foregroundStyle(.secondary)
 
-                Text(audioDeviceManager.getSystemDefaultDeviceName() ?? "No device available")
-                    .foregroundStyle(.primary)
+                    Text(audioDeviceManager.getSystemDefaultDeviceName() ?? "No device available")
+                        .foregroundStyle(.primary)
 
-                Spacer()
+                    Spacer()
 
-                Label("Active", systemImage: "wave.3.right")
-                    .font(.caption)
-                    .foregroundStyle(.green)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(
-                        Capsule()
-                            .fill(.green.opacity(0.1))
-                    )
+                    Label("Active", systemImage: "wave.3.right")
+                        .font(.caption)
+                        .foregroundStyle(.green)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .fill(.green.opacity(0.1))
+                        )
+                }
             }
-            .padding()
-            .background(CardBackground(isSelected: false))
         }
     }
 
@@ -161,23 +161,24 @@ struct AudioInputSettingsView: View {
     }
     
     private var emptyDevicesState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "mic.slash.circle.fill")
-                .font(.system(size: 48))
-                .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(.secondary)
-            
-            VStack(spacing: 8) {
-                Text("No Audio Devices")
-                    .font(.headline)
-                Text("Connect an audio input device to get started")
-                    .font(.subheadline)
+        SurfaceCard {
+            VStack(spacing: 16) {
+                Image(systemName: "mic.slash.circle.fill")
+                    .font(.system(size: 48))
+                    .symbolRenderingMode(.hierarchical)
                     .foregroundStyle(.secondary)
+
+                VStack(spacing: 8) {
+                    Text("No Audio Devices")
+                        .font(.headline)
+                    Text("Connect an audio input device to get started")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 24)
         }
-        .frame(maxWidth: .infinity)
-        .padding(40)
-        .background(CardBackground(isSelected: false))
     }
     
     private var prioritizedDevicesList: some View {
@@ -284,25 +285,25 @@ struct InputModeCard: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 12) {
-                Image(systemName: icon)
-                    .font(.system(size: 28))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(isSelected ? .blue : .secondary)
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(mode.rawValue)
-                        .font(.headline)
-                    
-                    Text(description)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+            SurfaceCard(style: isSelected ? .selected : .plain) {
+                VStack(alignment: .leading, spacing: 12) {
+                    Image(systemName: icon)
+                        .font(.system(size: 28))
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(isSelected ? .blue : .secondary)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(mode.rawValue)
+                            .font(.headline)
+
+                        Text(description)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
-            .background(CardBackground(isSelected: isSelected))
         }
         .buttonStyle(.plain)
     }
@@ -316,31 +317,31 @@ struct DeviceSelectionCard: View {
     
     var body: some View {
         Button(action: action) {
-            HStack {
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(isSelected ? .blue : .secondary)
-                    .font(.system(size: 18))
-                
-                Text(name)
-                    .foregroundStyle(.primary)
-                
-                Spacer()
-                
-                if isActive {
-                    Label("Active", systemImage: "wave.3.right")
-                        .font(.caption)
-                        .foregroundStyle(.green)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .fill(.green.opacity(0.1))
-                        )
+            SurfaceCard(style: isSelected ? .selected : .plain) {
+                HStack {
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(isSelected ? .blue : .secondary)
+                        .font(.system(size: 18))
+
+                    Text(name)
+                        .foregroundStyle(.primary)
+
+                    Spacer()
+
+                    if isActive {
+                        Label("Active", systemImage: "wave.3.right")
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(
+                                Capsule()
+                                    .fill(.green.opacity(0.1))
+                            )
+                    }
                 }
             }
-            .padding()
-            .background(CardBackground(isSelected: isSelected))
         }
         .buttonStyle(.plain)
     }
@@ -359,78 +360,78 @@ struct DevicePriorityCard: View {
     let onMoveDown: () -> Void
     
     var body: some View {
-        HStack {
-            // Priority number or dash
-            if let priority = priority {
-                Text("\(priority + 1)")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 24)
-            } else {
-                Text("-")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 24)
-            }
-            
-            // Device name
-            Text(name)
-                .foregroundStyle(isAvailable ? .primary : .secondary)
-            
-            Spacer()
-            
-            // Status and Controls
-            HStack(spacing: 12) {
-                // Active status
-                if isActive {
-                    Label("Active", systemImage: "wave.3.right")
-                        .font(.caption)
-                        .foregroundStyle(.green)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .fill(.green.opacity(0.1))
-                        )
-                } else if !isAvailable && isPrioritized {
-                    Label("Unavailable", systemImage: "exclamationmark.triangle")
-                        .font(.caption)
+        SurfaceCard {
+            HStack {
+                // Priority number or dash
+                if let priority = priority {
+                    Text("\(priority + 1)")
+                        .font(.system(size: 18, weight: .medium))
                         .foregroundStyle(.secondary)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .fill(Color(.windowBackgroundColor).opacity(0.4))
-                        )
+                        .frame(width: 24)
+                } else {
+                    Text("-")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 24)
                 }
-                
-                // Priority controls (only show if prioritized)
-                if isPrioritized {
-                    HStack(spacing: 2) {
-                        Button(action: onMoveUp) {
-                            Image(systemName: "chevron.up")
-                                .foregroundStyle(canMoveUp ? .blue : .secondary.opacity(0.5))
+
+                // Device name
+                Text(name)
+                    .foregroundStyle(isAvailable ? .primary : .secondary)
+
+                Spacer()
+
+                // Status and Controls
+                HStack(spacing: 12) {
+                    // Active status
+                    if isActive {
+                        Label("Active", systemImage: "wave.3.right")
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(
+                                Capsule()
+                                    .fill(.green.opacity(0.1))
+                            )
+                    } else if !isAvailable && isPrioritized {
+                        Label("Unavailable", systemImage: "exclamationmark.triangle")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(
+                                Capsule()
+                                    .fill(Color(.windowBackgroundColor).opacity(0.4))
+                            )
+                    }
+
+                    // Priority controls (only show if prioritized)
+                    if isPrioritized {
+                        HStack(spacing: 2) {
+                            Button(action: onMoveUp) {
+                                Image(systemName: "chevron.up")
+                                    .foregroundStyle(canMoveUp ? .blue : .secondary.opacity(0.5))
+                            }
+                            .disabled(!canMoveUp)
+
+                            Button(action: onMoveDown) {
+                                Image(systemName: "chevron.down")
+                                    .foregroundStyle(canMoveDown ? .blue : .secondary.opacity(0.5))
+                            }
+                            .disabled(!canMoveDown)
                         }
-                        .disabled(!canMoveUp)
-                        
-                        Button(action: onMoveDown) {
-                            Image(systemName: "chevron.down")
-                                .foregroundStyle(canMoveDown ? .blue : .secondary.opacity(0.5))
-                        }
-                        .disabled(!canMoveDown)
+                    }
+
+                    // Toggle priority button
+                    Button(action: onTogglePriority) {
+                        Image(systemName: isPrioritized ? "minus.circle.fill" : "plus.circle.fill")
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(isPrioritized ? .red : .blue)
                     }
                 }
-                
-                // Toggle priority button
-                Button(action: onTogglePriority) {
-                    Image(systemName: isPrioritized ? "minus.circle.fill" : "plus.circle.fill")
-                        .symbolRenderingMode(.hierarchical)
-                        .foregroundStyle(isPrioritized ? .red : .blue)
-                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
-        .padding()
-        .background(CardBackground(isSelected: false))
     }
-} 
+}
