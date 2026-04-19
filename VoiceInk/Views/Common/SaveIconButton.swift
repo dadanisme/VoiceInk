@@ -14,6 +14,7 @@ struct SaveIconButton: View {
                 saveFile(as: .text, extension: "md")
             }
         } label: {
+            // TODO HIG: icon sizing
             Image(systemName: saved ? "checkmark" : "square.and.arrow.down")
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundColor(saved ? .green : .secondary)

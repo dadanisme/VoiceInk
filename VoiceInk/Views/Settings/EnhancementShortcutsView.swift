@@ -61,6 +61,7 @@ private struct KeyChip: View {
     let label: String
 
     var body: some View {
+        // TODO HIG: monospaced
         Text(label)
             .font(.system(size: 12, weight: .medium, design: .monospaced))
             .foregroundStyle(.primary)

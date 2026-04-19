@@ -6,6 +6,7 @@ struct CopyIconButton: View {
 
     var body: some View {
         Button(action: copy) {
+            // TODO HIG: icon sizing
             Image(systemName: copied ? "checkmark" : "doc.on.doc")
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundColor(copied ? .green : .secondary)

@@ -126,6 +126,7 @@ struct PowerModeView: View {
                                                 .frame(height: geometry.size.height * 0.2)
 
                                             VStack(spacing: Spacing.section) {
+                                                // TODO HIG: icon sizing
                                                 Image(systemName: "square.grid.2x2.fill")
                                                     .font(.system(size: 48, weight: .regular))
                                                     .foregroundStyle(.tertiary)

@@ -146,6 +146,7 @@ struct KeyCapView: View {
     }
     
     var body: some View {
+        // TODO HIG: hero title sizing
         Text(text)
             .font(.system(size: 25, weight: .semibold, design: .rounded))
             .foregroundColor(colorScheme == .dark ? .white : .black)

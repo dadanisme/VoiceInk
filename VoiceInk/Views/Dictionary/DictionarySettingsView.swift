@@ -125,6 +125,7 @@ struct SectionCard: View {
         Button(action: action) {
             SurfaceCard(style: isSelected ? .selected : .plain) {
                 VStack(alignment: .leading, spacing: Spacing.comfy) {
+                    // TODO HIG: icon sizing
                     Image(systemName: section.icon)
                         .font(.system(size: 28))
                         .symbolRenderingMode(.hierarchical)

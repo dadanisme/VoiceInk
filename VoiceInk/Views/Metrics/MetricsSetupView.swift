@@ -97,6 +97,7 @@ struct MetricsSetupView: View {
         }
         
         return HStack(spacing: Spacing.section) {
+            // TODO HIG: icon sizing
             Image(systemName: stepInfo.icon)
                 .font(.system(size: 18))
                 .frame(width: 40, height: 40)
@@ -115,10 +116,12 @@ struct MetricsSetupView: View {
             Spacer()
 
             if stepInfo.isCompleted {
+                // TODO HIG: icon sizing
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 24))
                     .foregroundColor(.green)
             } else {
+                // TODO HIG: icon sizing
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .bold))
                     .foregroundStyle(.tertiary)

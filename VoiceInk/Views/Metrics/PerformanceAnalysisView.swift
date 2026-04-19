@@ -257,6 +257,7 @@ struct SummaryCard: View {
 
     var body: some View {
         VStack(spacing: Spacing.standard) {
+            // TODO HIG: icon sizing
             Image(systemName: icon)
                 .font(.system(size: 20, weight: .medium))
                 .foregroundColor(color)

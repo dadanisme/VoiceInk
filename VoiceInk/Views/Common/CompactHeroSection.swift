@@ -8,12 +8,14 @@ struct CompactHeroSection: View {
 
     var body: some View {
         VStack(spacing: 16) {
+            // TODO HIG: icon sizing
             Image(systemName: icon)
                 .font(.system(size: 28))
                 .foregroundStyle(.blue)
                 .symbolRenderingMode(.hierarchical)
 
             VStack(spacing: 6) {
+                // TODO HIG: hero title sizing
                 Text(title)
                     .font(.system(size: 22, weight: .bold))
                 Text(description)

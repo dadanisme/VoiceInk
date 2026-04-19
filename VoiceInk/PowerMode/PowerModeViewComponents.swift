@@ -19,6 +19,7 @@ struct PowerModeEmptyStateView: View {
     
     var body: some View {
         VStack(spacing: Spacing.section) {
+            // TODO HIG: icon sizing
             Image(systemName: "bolt.circle.fill")
                 .font(.system(size: 48))
                 .foregroundStyle(.secondary)

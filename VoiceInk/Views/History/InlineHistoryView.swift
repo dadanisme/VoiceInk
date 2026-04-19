@@ -229,6 +229,7 @@ struct InlineHistoryView: View {
     private var emptyStateView: some View {
         VStack(spacing: Spacing.comfy) {
             Spacer()
+            // TODO HIG: icon sizing
             Image(systemName: "doc.text.magnifyingglass")
                 .font(.system(size: 40))
                 .foregroundStyle(.secondary)

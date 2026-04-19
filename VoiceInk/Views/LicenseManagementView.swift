@@ -33,6 +33,7 @@ struct LicenseManagementView: View {
             // Title Section
             VStack(spacing: Spacing.section) {
                 HStack(spacing: Spacing.section) {
+                    // TODO HIG: icon sizing
                     Image(systemName: "checkmark.seal.fill")
                         .font(.system(size: 32))
                         .foregroundStyle(.blue)

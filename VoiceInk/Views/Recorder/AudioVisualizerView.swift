@@ -91,6 +91,7 @@ struct ProcessingStatusDisplay: View {
 
     var body: some View {
         VStack(spacing: 4) {
+            // TODO HIG: unclear mapping
             Text(label)
                 .foregroundColor(color)
                 .font(.system(size: 11, weight: .medium))

@@ -23,6 +23,7 @@ struct EnhancementSettingsPanel: View {
                 Spacer()
 
                 Button(action: onDismiss) {
+                    // TODO HIG: icon sizing
                     Image(systemName: "xmark")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.secondary)
@@ -93,6 +94,7 @@ struct EnhancementSettingsPanel: View {
 
                             Spacer()
 
+                            // TODO HIG: icon sizing
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.secondary)

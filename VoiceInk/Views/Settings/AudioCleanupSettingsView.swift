@@ -113,6 +113,7 @@ struct AudioCleanupSettingsView: View {
 
                         Spacer()
 
+                        // TODO HIG: icon sizing
                         Image(systemName: "chevron.right")
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(.secondary)

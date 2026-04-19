@@ -108,6 +108,7 @@ private struct DashboardPromotionCard: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             VStack(alignment: .leading, spacing: Spacing.section) {
+                // TODO HIG: contrast over branded fill
                 Text(badge.uppercased())
                     .font(.system(size: 11, weight: .heavy))
                     .tracking(0.8)
@@ -117,11 +118,13 @@ private struct DashboardPromotionCard: View {
                     .clipShape(Capsule())
                     .foregroundColor(.white)
 
+                // TODO HIG: contrast over branded fill
                 Text(title)
                     .font(.titleEmphasis)
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
 
+                // TODO HIG: contrast over branded fill
                 Text(message)
                     .font(.rowSubtitle)
                     .foregroundColor(.white.opacity(0.85))
@@ -137,6 +140,7 @@ private struct DashboardPromotionCard: View {
                     .padding(.vertical, Spacing.standard + 1)
                     .background(.white.opacity(0.22))
                     .clipShape(Capsule())
+                    // TODO HIG: contrast over branded fill
                     .foregroundColor(.white)
                 }
                 .buttonStyle(.plain)
@@ -147,6 +151,7 @@ private struct DashboardPromotionCard: View {
 
             if let onDismiss = onDismiss {
                 Button(action: onDismiss) {
+                    // TODO HIG: contrast over branded fill
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(.white.opacity(0.7))

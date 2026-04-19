@@ -10,15 +10,15 @@ struct AppPickerPopover: View {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.secondary)
-                    .font(.system(size: 12))
+                    .font(.caption)
                 TextField("Search apps...", text: $searchText)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 13))
+                    .font(.body)
                 if !searchText.isEmpty {
                     Button(action: { searchText = "" }) {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.secondary)
-                            .font(.system(size: 12))
+                            .font(.caption)
                     }
                     .buttonStyle(.plain)
                 }
@@ -43,7 +43,7 @@ struct AppPickerPopover: View {
                                     .cornerRadius(6)
 
                                 Text(app.name)
-                                    .font(.system(size: 13))
+                                    .font(.body)
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
 
@@ -51,7 +51,7 @@ struct AppPickerPopover: View {
 
                                 if isSelected {
                                     Image(systemName: "checkmark")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .font(.caption.weight(.semibold))
                                         .foregroundColor(.accentColor)
                                 }
                             }

@@ -185,6 +185,7 @@ struct TranscriptionHistoryView: View {
             ZStack(alignment: .bottom) {
                 if displayedTranscriptions.isEmpty && !isLoading {
                     VStack(spacing: Spacing.comfy) {
+                        // TODO HIG: icon sizing
                         Image(systemName: "doc.text.magnifyingglass")
                             .font(.system(size: 40))
                             .foregroundStyle(.secondary)
@@ -251,6 +252,7 @@ struct TranscriptionHistoryView: View {
                             .frame(minHeight: 40)
 
                         VStack(spacing: Spacing.comfy) {
+                            // TODO HIG: icon sizing
                             Image(systemName: "doc.text")
                                 .font(.system(size: 50))
                                 .foregroundStyle(.secondary)
@@ -284,6 +286,7 @@ struct TranscriptionHistoryView: View {
                     .id(transcription.id)
             } else {
                 VStack(spacing: Spacing.comfy) {
+                    // TODO HIG: icon sizing
                     Image(systemName: "info.circle")
                         .font(.system(size: 40))
                         .foregroundStyle(.secondary)

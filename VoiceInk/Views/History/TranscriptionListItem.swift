@@ -61,6 +61,7 @@ struct CircularCheckboxStyle: ToggleStyle {
         Button {
             configuration.isOn.toggle()
         } label: {
+            // TODO HIG: icon sizing
             Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(configuration.isOn ? Color.accentColor : Color.labelSecondary)

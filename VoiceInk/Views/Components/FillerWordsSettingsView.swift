@@ -7,11 +7,13 @@ struct FillerWordChip: View {
 
     var body: some View {
         HStack(spacing: 4) {
+            // TODO HIG: unclear mapping
             Text(word)
                 .font(.system(size: 12))
                 .foregroundColor(.primary)
 
             Button(action: onDelete) {
+                // TODO HIG: icon sizing
                 Image(systemName: "xmark.circle.fill")
                     .symbolRenderingMode(.hierarchical)
                     .foregroundStyle(isHovered ? .red : .secondary)
@@ -62,6 +64,7 @@ struct FillerWordsSettingsView: View {
                             .onSubmit { addWord() }
 
                         Button(action: addWord) {
+                            // TODO HIG: icon sizing
                             Image(systemName: "plus.circle.fill")
                                 .symbolRenderingMode(.hierarchical)
                                 .foregroundStyle(.blue)

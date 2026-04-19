@@ -93,9 +93,11 @@ struct TranscriptionInfoPanel: View {
             Section {
                 if let systemMsg = transcription.aiRequestSystemMessage, !systemMsg.isEmpty {
                     VStack(alignment: .leading, spacing: 6) {
+                        // TODO HIG: unclear mapping
                         Text("System Prompt")
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundColor(.secondary)
+                        // TODO HIG: monospaced
                         Text(systemMsg)
                             .font(.system(size: 11, weight: .regular, design: .monospaced))
                             .lineSpacing(2)
@@ -106,9 +108,11 @@ struct TranscriptionInfoPanel: View {
 
                 if let userMsg = transcription.aiRequestUserMessage, !userMsg.isEmpty {
                     VStack(alignment: .leading, spacing: 6) {
+                        // TODO HIG: unclear mapping
                         Text("User Message")
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundColor(.secondary)
+                        // TODO HIG: monospaced
                         Text(userMsg)
                             .font(.system(size: 11, weight: .regular, design: .monospaced))
                             .lineSpacing(2)
@@ -141,17 +145,20 @@ struct TranscriptionInfoPanel: View {
 
     private func metadataRow(icon: String, label: String, value: String) -> some View {
         HStack(spacing: 8) {
+            // TODO HIG: icon sizing
             Image(systemName: icon)
                 .font(.system(size: 11, weight: .medium))
                 .foregroundColor(.secondary)
                 .frame(width: 20, height: 20)
 
+            // TODO HIG: unclear mapping
             Text(label)
                 .font(.system(size: 12, weight: .medium))
                 .foregroundColor(.secondary)
 
             Spacer(minLength: 0)
 
+            // TODO HIG: unclear mapping
             Text(value)
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundColor(.primary)

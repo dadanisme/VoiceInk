@@ -70,10 +70,12 @@ struct EnhancementPromptRow: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 // Use the icon from the prompt
+                // TODO HIG: contrast over branded fill
                 Image(systemName: prompt.icon)
                     .font(.system(size: 14))
                     .foregroundColor(isDisabled ? .white.opacity(0.4) : .white.opacity(0.7))
 
+                // TODO HIG: contrast over branded fill
                 Text(prompt.title)
                     .foregroundColor(isDisabled ? .white.opacity(0.4) : .white.opacity(0.9))
                     .font(.system(size: 13))
@@ -81,6 +83,7 @@ struct EnhancementPromptRow: View {
 
                 if isSelected {
                     Spacer()
+                    // TODO HIG: icon sizing
                     Image(systemName: "checkmark")
                         .foregroundColor(isDisabled ? .green.opacity(0.7) : .green)
                         .font(.system(size: 10))

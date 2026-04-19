@@ -133,6 +133,7 @@ struct MetricsContent: View {
 
     private var emptyStateView: some View {
         VStack(spacing: Spacing.section) {
+            // TODO HIG: icon sizing
             Image(systemName: "waveform")
                 .font(.system(size: 56, weight: .semibold))
                 .foregroundStyle(.secondary)
@@ -152,6 +153,7 @@ struct MetricsContent: View {
             HStack {
                 Spacer(minLength: 0)
                 
+                // TODO HIG: contrast over branded fill
                 (Text("You have saved ")
                     .fontWeight(.bold)
                     .foregroundColor(.white.opacity(0.85))
@@ -173,6 +175,7 @@ struct MetricsContent: View {
             .lineLimit(1)
             .minimumScaleFactor(0.5)
             
+            // TODO HIG: contrast over branded fill
             Text(heroSubtitle)
                 .font(.system(size: 15, weight: .medium))
                 .foregroundColor(.white.opacity(0.85))

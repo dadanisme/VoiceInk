@@ -47,6 +47,7 @@ struct PerformanceAnalysisPanelView: View {
                 .font(.sectionHeader)
             Spacer()
             Button(action: onClose) {
+                // TODO HIG: icon sizing
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(.secondary)
@@ -76,6 +77,7 @@ struct PerformanceAnalysisPanelView: View {
 
     private func summaryPill(icon: String, value: String, label: String, color: Color) -> some View {
         VStack(spacing: Spacing.tight) {
+            // TODO HIG: icon sizing
             Image(systemName: icon)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(color)

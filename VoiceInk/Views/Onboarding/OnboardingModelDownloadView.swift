@@ -1,3 +1,4 @@
+// TODO HIG: not in scope of 2026-04-19 redesign
 import SwiftUI
 
 struct OnboardingModelDownloadView: View {

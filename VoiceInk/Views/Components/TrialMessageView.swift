@@ -13,6 +13,7 @@ struct TrialMessageView: View {
     
     var body: some View {
         HStack(spacing: 12) {
+            // TODO HIG: icon sizing
             Image(systemName: icon)
                 .font(.system(size: 20))
                 .foregroundColor(iconColor)
@@ -32,6 +33,7 @@ struct TrialMessageView: View {
                     onAddLicenseKey?()
                 }) {
                     Text("Enter License")
+                        // TODO HIG: unclear mapping
                         .font(.system(size: 13, weight: .medium))
                 }
                 .buttonStyle(.bordered)
@@ -42,6 +44,7 @@ struct TrialMessageView: View {
                     }
                 }) {
                     Text("Buy License")
+                        // TODO HIG: unclear mapping
                         .font(.system(size: 13, weight: .medium))
                 }
                 .buttonStyle(.borderedProminent)

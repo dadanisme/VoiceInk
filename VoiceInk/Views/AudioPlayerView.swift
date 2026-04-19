@@ -1,3 +1,4 @@
+// TODO HIG: not in scope of 2026-04-19 redesign
 import SwiftUI
 import AVFoundation
 
@@ -199,6 +200,7 @@ struct WaveformView: View {
                     .padding(.horizontal, 2)
 
                     if isHovering {
+                        // TODO HIG: not in scope of 2026-04-19 redesign
                         Text(formatTime(duration * Double(hoverLocation / geometry.size.width)))
                             .font(.system(size: 10, weight: .medium))
                             .monospacedDigit()

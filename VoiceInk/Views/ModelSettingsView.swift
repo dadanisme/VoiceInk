@@ -15,6 +15,7 @@ struct ModelSettingsView: View {
             Section {
                 VStack(alignment: .leading, spacing: 8) {
                     if isEditing {
+                        // TODO HIG: unclear mapping
                         TextEditor(text: $customPrompt)
                             .font(.system(size: 12))
                             .frame(minHeight: 40, maxHeight: 80)
@@ -26,6 +27,7 @@ struct ModelSettingsView: View {
                             isEditing = false
                         }
                     } else {
+                        // TODO HIG: unclear mapping
                         Text(whisperPrompt.getLanguagePrompt(for: selectedLanguage))
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)

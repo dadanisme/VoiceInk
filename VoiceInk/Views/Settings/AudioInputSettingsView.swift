@@ -163,6 +163,7 @@ struct AudioInputSettingsView: View {
     private var emptyDevicesState: some View {
         SurfaceCard {
             VStack(spacing: 16) {
+                // TODO HIG: icon sizing
                 Image(systemName: "mic.slash.circle.fill")
                     .font(.system(size: 48))
                     .symbolRenderingMode(.hierarchical)
@@ -287,6 +288,7 @@ struct InputModeCard: View {
         Button(action: action) {
             SurfaceCard(style: isSelected ? .selected : .plain) {
                 VStack(alignment: .leading, spacing: 12) {
+                    // TODO HIG: icon sizing
                     Image(systemName: icon)
                         .font(.system(size: 28))
                         .symbolRenderingMode(.hierarchical)
@@ -319,6 +321,7 @@ struct DeviceSelectionCard: View {
         Button(action: action) {
             SurfaceCard(style: isSelected ? .selected : .plain) {
                 HStack {
+                    // TODO HIG: icon sizing
                     Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                         .symbolRenderingMode(.hierarchical)
                         .foregroundStyle(isSelected ? .blue : .secondary)
@@ -364,11 +367,13 @@ struct DevicePriorityCard: View {
             HStack {
                 // Priority number or dash
                 if let priority = priority {
+                    // TODO HIG: unclear mapping
                     Text("\(priority + 1)")
                         .font(.system(size: 18, weight: .medium))
                         .foregroundStyle(.secondary)
                         .frame(width: 24)
                 } else {
+                    // TODO HIG: unclear mapping
                     Text("-")
                         .font(.system(size: 18, weight: .medium))
                         .foregroundStyle(.secondary)
