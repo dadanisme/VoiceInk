@@ -273,7 +273,7 @@ private struct TranscriptPane: View {
     }
 
     private var statusDescription: String {
-        switch meeting.transcriptionStatus {
+        switch meeting.transcriptionStage {
         case .pending: return "Transcription has not started yet."
         case .running: return "Transcription is in progress…"
         case .failed:  return "Transcription failed. Try re-running."
@@ -350,7 +350,7 @@ private struct SummaryPane: View {
 
     @ViewBuilder
     private var summaryContent: some View {
-        let status = meeting.summaryStatus
+        let status = meeting.summaryStage
 
         if status == .pending || status == .running {
             VStack(spacing: 10) {
@@ -628,22 +628,22 @@ struct MeetingDetailView: View {
             HStack(spacing: 8) {
                 MeetingStatusChip(
                     label: "Tx",
-                    status: meeting.transcriptionStatus,
-                    onRerun: meeting.transcriptionStatus == .failed ? {
+                    status: meeting.transcriptionStage,
+                    onRerun: meeting.transcriptionStage == .failed ? {
                         Task { await pipeline.rerunTranscription(for: meeting) }
                     } : nil
                 )
                 MeetingStatusChip(
                     label: "Dx",
-                    status: meeting.diarizationStatus,
-                    onRerun: meeting.diarizationStatus == .failed ? {
+                    status: meeting.diarizationStage,
+                    onRerun: meeting.diarizationStage == .failed ? {
                         Task { await pipeline.rerunDiarization(for: meeting) }
                     } : nil
                 )
                 MeetingStatusChip(
                     label: "Sm",
-                    status: meeting.summaryStatus,
-                    onRerun: meeting.summaryStatus == .failed ? {
+                    status: meeting.summaryStage,
+                    onRerun: meeting.summaryStage == .failed ? {
                         Task { await pipeline.rerunSummary(for: meeting) }
                     } : nil
                 )

@@ -22,9 +22,24 @@ final class Meeting {
     var summaryKeyPoints: [String]
     var summaryActionItems: [String]
 
-    var transcriptionStatus: MeetingStageStatus
-    var diarizationStatus: MeetingStageStatus
-    var summaryStatus: MeetingStageStatus
+    // Raw String storage keeps SwiftData schema compatible with data written under the original
+    // `String` field type. Access via the typed `*Stage` accessors below, not directly.
+    var transcriptionStatus: String
+    var diarizationStatus: String
+    var summaryStatus: String
+
+    var transcriptionStage: MeetingStageStatus {
+        get { MeetingStageStatus(rawValue: transcriptionStatus) ?? .pending }
+        set { transcriptionStatus = newValue.rawValue }
+    }
+    var diarizationStage: MeetingStageStatus {
+        get { MeetingStageStatus(rawValue: diarizationStatus) ?? .pending }
+        set { diarizationStatus = newValue.rawValue }
+    }
+    var summaryStage: MeetingStageStatus {
+        get { MeetingStageStatus(rawValue: summaryStatus) ?? .pending }
+        set { summaryStatus = newValue.rawValue }
+    }
 
     @Relationship(deleteRule: .cascade, inverse: \Speaker.meeting)
     var speakers: [Speaker]
@@ -59,9 +74,9 @@ final class Meeting {
         self.summaryTldr = summaryTldr
         self.summaryKeyPoints = summaryKeyPoints
         self.summaryActionItems = summaryActionItems
-        self.transcriptionStatus = transcriptionStatus
-        self.diarizationStatus = diarizationStatus
-        self.summaryStatus = summaryStatus
+        self.transcriptionStatus = transcriptionStatus.rawValue
+        self.diarizationStatus = diarizationStatus.rawValue
+        self.summaryStatus = summaryStatus.rawValue
         self.speakers = speakers
         self.segments = segments
     }

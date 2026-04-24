@@ -245,9 +245,9 @@ private struct MeetingRowView: View {
     let meeting: Meeting
 
     private var isInProgress: Bool {
-        meeting.transcriptionStatus == .running
-            || meeting.diarizationStatus == .running
-            || meeting.summaryStatus == .running
+        meeting.transcriptionStage == .running
+            || meeting.diarizationStage == .running
+            || meeting.summaryStage == .running
     }
 
     var body: some View {
