@@ -12,16 +12,36 @@ final class FluidAudioDiarizationModelManager {
 
     private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "FluidAudioDiarizationModelManager")
 
-    // UserDefaults key tracking whether the offline diarizer models are on disk.
+    // Cached UserDefaults flag used only as a fast-path hint — the source of truth is disk.
     private let downloadedDefaultsKey = "OfflineDiarizerModelsDownloaded"
 
+    // Required model files inside the offline diarizer directory.
+    private let requiredFiles = ["Segmentation.mlmodelc", "FBank.mlmodelc", "Embedding.mlmodelc", "PldaRho.mlmodelc"]
+
+    private var modelsDirectory: URL {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("FluidAudio/Models/speaker-diarization")
+    }
+
     var areModelsDownloaded: Bool {
-        UserDefaults.standard.bool(forKey: downloadedDefaultsKey)
+        // Probe disk — don't trust UserDefaults alone. If the cache was wiped externally
+        // (e.g. user deleted the folder), the flag can lie and the next diarize call will
+        // fail deep in model-load. Re-download instead.
+        let dir = modelsDirectory
+        for file in requiredFiles {
+            if !FileManager.default.fileExists(atPath: dir.appendingPathComponent(file).path) {
+                return false
+            }
+        }
+        return true
     }
 
     /// Ensures offline diarizer models are present locally, downloading if needed.
     func ensureModelsDownloaded() async throws {
-        if areModelsDownloaded { return }
+        if areModelsDownloaded {
+            UserDefaults.standard.set(true, forKey: downloadedDefaultsKey)
+            return
+        }
 
         isDownloading = true
         downloadProgress = 0.0
@@ -29,8 +49,8 @@ final class FluidAudioDiarizationModelManager {
         // Simulate incremental progress while download+compile runs in the background.
         let timer = Timer.scheduledTimer(withTimeInterval: 1.2, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
-                guard let self, let current = Optional(self.downloadProgress), current < 0.9 else { return }
-                self.downloadProgress = current + 0.005
+                guard let self, self.downloadProgress < 0.9 else { return }
+                self.downloadProgress += 0.005
             }
         }
 

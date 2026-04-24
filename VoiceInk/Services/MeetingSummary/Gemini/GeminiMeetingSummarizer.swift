@@ -56,8 +56,9 @@ final class GeminiMeetingSummarizer: MeetingSummarizer {
         }
 
         if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+            // Response body can echo the prompt back (which includes the full meeting transcript) — keep it private.
             let snippet = String(data: data.prefix(500), encoding: .utf8) ?? "<unreadable>"
-            logger.error("Gemini HTTP \(httpResponse.statusCode, privacy: .public): \(snippet, privacy: .public)")
+            logger.error("Gemini HTTP \(httpResponse.statusCode, privacy: .public): \(snippet, privacy: .private)")
             throw MeetingSummaryError.requestFailed("HTTP \(httpResponse.statusCode): \(snippet)")
         }
 
@@ -113,7 +114,7 @@ final class GeminiMeetingSummarizer: MeetingSummarizer {
             outerResponse = try JSONDecoder().decode(GeminiOuterResponse.self, from: data)
         } catch {
             let snippet = String(data: data.prefix(500), encoding: .utf8) ?? "<unreadable>"
-            logger.error("Failed to decode Gemini outer response: \(error.localizedDescription, privacy: .public) — body: \(snippet, privacy: .public)")
+            logger.error("Failed to decode Gemini outer response: \(error.localizedDescription, privacy: .public) — body: \(snippet, privacy: .private)")
             throw MeetingSummaryError.invalidResponse("Could not decode Gemini response: \(error.localizedDescription)")
         }
 
@@ -129,7 +130,7 @@ final class GeminiMeetingSummarizer: MeetingSummarizer {
         do {
             inner = try JSONDecoder().decode(GeminiSummaryPayload.self, from: jsonData)
         } catch {
-            logger.error("Failed to decode inner summary JSON: \(error.localizedDescription, privacy: .public) — text: \(jsonText, privacy: .public)")
+            logger.error("Failed to decode inner summary JSON: \(error.localizedDescription, privacy: .public) — text: \(jsonText, privacy: .private)")
             throw MeetingSummaryError.invalidResponse("Could not decode summary JSON: \(error.localizedDescription)")
         }
 

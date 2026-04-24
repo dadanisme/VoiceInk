@@ -166,9 +166,9 @@ struct MeetingsListView: View {
             summaryTldr: "Design proposes wallet v2 ship in Q3; engineering pushes back on auth redesign; compromise: soft-launch wallet with existing auth.",
             summaryKeyPoints: ["Wallet v2 target: Q3 soft-launch", "Auth redesign deferred to Q4", "Hiring: +2 iOS eng by June"],
             summaryActionItems: ["Sarah drafts wallet v2 scope doc by Fri", "Eng team to ship prototype by May 15", "HR posts 2 iOS roles this week"],
-            transcriptionStatus: "done",
-            diarizationStatus: "done",
-            summaryStatus: "done"
+            transcriptionStatus: .done,
+            diarizationStatus: .done,
+            summaryStatus: .done
         )
         modelContext.insert(m1)
 
@@ -199,9 +199,9 @@ struct MeetingsListView: View {
             audioFilePath: "",
             durationSec: 1820,
             createdAt: Calendar.current.date(byAdding: .day, value: -1, to: now) ?? now.addingTimeInterval(-86400),
-            transcriptionStatus: "done",
-            diarizationStatus: "done",
-            summaryStatus: "failed"
+            transcriptionStatus: .done,
+            diarizationStatus: .done,
+            summaryStatus: .failed
         )
         modelContext.insert(m2)
 
@@ -229,9 +229,9 @@ struct MeetingsListView: View {
             audioFilePath: "",
             durationSec: 3400,
             createdAt: now.addingTimeInterval(-30 * 60),
-            transcriptionStatus: "running",
-            diarizationStatus: "running",
-            summaryStatus: "running"
+            transcriptionStatus: .running,
+            diarizationStatus: .running,
+            summaryStatus: .running
         )
         modelContext.insert(m3)
 
@@ -245,9 +245,9 @@ private struct MeetingRowView: View {
     let meeting: Meeting
 
     private var isInProgress: Bool {
-        meeting.transcriptionStatus == "running"
-            || meeting.diarizationStatus == "running"
-            || meeting.summaryStatus == "running"
+        meeting.transcriptionStatus == .running
+            || meeting.diarizationStatus == .running
+            || meeting.summaryStatus == .running
     }
 
     var body: some View {
@@ -334,7 +334,9 @@ private struct NativeSearchField: NSViewRepresentable {
         if nsView.stringValue != text {
             nsView.stringValue = text
         }
-        nsView.placeholderString = placeholder
+        if nsView.placeholderString != placeholder {
+            nsView.placeholderString = placeholder
+        }
     }
 
     final class Coordinator: NSObject, NSSearchFieldDelegate {

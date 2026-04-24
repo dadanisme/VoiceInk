@@ -19,9 +19,10 @@ final class MeetingSummarizerRegistry {
     func currentSummarizer() -> any MeetingSummarizer {
         // MVP: Gemini only. Adding OpenAI/Anthropic later means a new service + a branch here.
         guard let summarizer = _geminiSummarizer else {
-            // Registry was used before configure(aiService:) was called — return an unconfigured
-            // instance so callers get .notConfigured rather than a crash.
-            return GeminiMeetingSummarizer(aiService: AIService())
+            // Hitting this means composition root forgot to call configure(aiService:) — a programmer error,
+            // not a runtime failure mode. Fail loudly in debug; crash cleanly in release.
+            assertionFailure("MeetingSummarizerRegistry.currentSummarizer() called before configure(aiService:)")
+            fatalError("MeetingSummarizerRegistry was not configured")
         }
         return summarizer
     }

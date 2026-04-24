@@ -58,9 +58,9 @@ final class MeetingPipeline: ObservableObject {
                 title: sourceURL.deletingPathExtension().lastPathComponent,
                 audioFilePath: "",
                 durationSec: 0,
-                transcriptionStatus: "failed",
-                diarizationStatus: "failed",
-                summaryStatus: "failed"
+                transcriptionStatus: .failed,
+                diarizationStatus: .failed,
+                summaryStatus: .failed
             )
             modelContext.insert(bad)
             try? modelContext.save()
@@ -79,14 +79,15 @@ final class MeetingPipeline: ObservableObject {
 
         // Insert Meeting row FIRST so the UI shows a spinner immediately. Audio path + duration filled in after extraction.
         let title = sourceURL.deletingPathExtension().lastPathComponent
+        // Start as "pending" per stage; each stage flips to "running" when it begins.
         let meeting = Meeting(
             id: id,
             title: title,
             audioFilePath: destURL.path,
             durationSec: 0,
-            transcriptionStatus: "running",
-            diarizationStatus: "running",
-            summaryStatus: "running"
+            transcriptionStatus: .pending,
+            diarizationStatus: .pending,
+            summaryStatus: .pending
         )
         modelContext.insert(meeting)
         try? modelContext.save()
@@ -96,10 +97,12 @@ final class MeetingPipeline: ObservableObject {
         let audioReady = await extractAudio(from: sourceURL, to: destURL)
 
         guard audioReady else {
+            // Clean up the partial .wav so a re-import on the same file doesn't race against a half-written file.
+            try? FileManager.default.removeItem(at: destURL)
             meeting.audioFilePath = ""
-            meeting.transcriptionStatus = "failed"
-            meeting.diarizationStatus = "failed"
-            meeting.summaryStatus = "failed"
+            meeting.transcriptionStatus = .failed
+            meeting.diarizationStatus = .failed
+            meeting.summaryStatus = .failed
             try? modelContext.save()
             activeImports.removeValue(forKey: id)
             return meeting
@@ -110,33 +113,39 @@ final class MeetingPipeline: ObservableObject {
 
         // Stage: transcribe
         activeImports[id] = ImportProgress(stage: "transcribing")
+        meeting.transcriptionStatus = .running
+        try? modelContext.save()
         let transcriptSegments = await runTranscription(audioURL: destURL)
         guard let segments = transcriptSegments else {
-            meeting.transcriptionStatus = "failed"
-            meeting.diarizationStatus = "failed"
-            meeting.summaryStatus = "failed"
+            meeting.transcriptionStatus = .failed
+            meeting.diarizationStatus = .failed
+            meeting.summaryStatus = .failed
             try? modelContext.save()
             activeImports.removeValue(forKey: id)
             return meeting
         }
-        meeting.transcriptionStatus = "done"
+        meeting.transcriptionStatus = .done
         try? modelContext.save()
 
         // Stage: diarize
         activeImports[id] = ImportProgress(stage: "diarizing")
+        meeting.diarizationStatus = .running
+        try? modelContext.save()
         let diarized = await runDiarization(audioURL: destURL, meeting: meeting, transcriptSegments: segments)
         if !diarized {
-            meeting.diarizationStatus = "failed"
-            meeting.summaryStatus = "failed"
+            meeting.diarizationStatus = .failed
+            meeting.summaryStatus = .failed
             try? modelContext.save()
             activeImports.removeValue(forKey: id)
             return meeting
         }
-        meeting.diarizationStatus = "done"
+        meeting.diarizationStatus = .done
         try? modelContext.save()
 
         // Stage: summarize
         activeImports[id] = ImportProgress(stage: "summarizing")
+        meeting.summaryStatus = .running
+        try? modelContext.save()
         await runSummary(meeting: meeting)
         try? modelContext.save()
 
@@ -149,31 +158,31 @@ final class MeetingPipeline: ObservableObject {
         guard !meeting.audioFilePath.isEmpty else { return }
         let audioURL = URL(fileURLWithPath: meeting.audioFilePath)
 
-        meeting.transcriptionStatus = "running"
-        meeting.diarizationStatus = "running"
-        meeting.summaryStatus = "running"
+        meeting.transcriptionStatus = .running
+        meeting.diarizationStatus = .running
+        meeting.summaryStatus = .running
         deleteSegmentsAndSpeakers(for: meeting)
         try? modelContext.save()
 
         let transcriptSegments = await runTranscription(audioURL: audioURL)
         guard let segments = transcriptSegments else {
-            meeting.transcriptionStatus = "failed"
-            meeting.diarizationStatus = "failed"
-            meeting.summaryStatus = "failed"
+            meeting.transcriptionStatus = .failed
+            meeting.diarizationStatus = .failed
+            meeting.summaryStatus = .failed
             try? modelContext.save()
             return
         }
-        meeting.transcriptionStatus = "done"
+        meeting.transcriptionStatus = .done
         try? modelContext.save()
 
         let diarized = await runDiarization(audioURL: audioURL, meeting: meeting, transcriptSegments: segments)
         if !diarized {
-            meeting.diarizationStatus = "failed"
-            meeting.summaryStatus = "failed"
+            meeting.diarizationStatus = .failed
+            meeting.summaryStatus = .failed
             try? modelContext.save()
             return
         }
-        meeting.diarizationStatus = "done"
+        meeting.diarizationStatus = .done
         try? modelContext.save()
 
         await runSummary(meeting: meeting)
@@ -192,18 +201,18 @@ final class MeetingPipeline: ObservableObject {
             TranscriptSegment(startSec: $0.startSec, endSec: $0.endSec, text: $0.text)
         }
 
-        meeting.diarizationStatus = "running"
+        meeting.diarizationStatus = .running
         deleteSegmentsAndSpeakers(for: meeting)
         try? modelContext.save()
 
         let diarized = await runDiarization(audioURL: audioURL, meeting: meeting, transcriptSegments: transcriptSegments)
-        meeting.diarizationStatus = diarized ? "done" : "failed"
+        meeting.diarizationStatus = diarized ? .done : .failed
         try? modelContext.save()
     }
 
     // Re-runs summary only.
     func rerunSummary(for meeting: Meeting) async {
-        meeting.summaryStatus = "running"
+        meeting.summaryStatus = .running
         try? modelContext.save()
         await runSummary(meeting: meeting)
         try? modelContext.save()
@@ -290,7 +299,7 @@ final class MeetingPipeline: ObservableObject {
         let summarizer = summarizerRegistry.currentSummarizer()
         guard summarizer.isConfigured else {
             logger.warning("Meeting summarizer not configured — skipping summary")
-            meeting.summaryStatus = "failed"
+            meeting.summaryStatus = .failed
             return
         }
 
@@ -304,7 +313,7 @@ final class MeetingPipeline: ObservableObject {
                 meeting.summaryTldr = summary.tldr
                 meeting.summaryKeyPoints = summary.keyPoints
                 meeting.summaryActionItems = summary.actionItems
-                meeting.summaryStatus = "done"
+                meeting.summaryStatus = .done
                 return
             } catch {
                 logger.error("Summary attempt \(attempt, privacy: .public) failed: \(error.localizedDescription, privacy: .public)")
@@ -313,7 +322,7 @@ final class MeetingPipeline: ObservableObject {
                 }
             }
         }
-        meeting.summaryStatus = "failed"
+        meeting.summaryStatus = .failed
     }
 
     // MARK: - Helpers
@@ -326,7 +335,10 @@ final class MeetingPipeline: ObservableObject {
 
     private func extractAudio(from sourceURL: URL, to destURL: URL) async -> Bool {
         do {
-            try await AudioExtractor.extractAudio(from: sourceURL, to: destURL)
+            // Decode on a background executor so AVAudioFile / AVAudioConverter don't pin the main actor.
+            try await Task.detached(priority: .userInitiated) {
+                try await AudioExtractor.extractAudio(from: sourceURL, to: destURL)
+            }.value
             return true
         } catch {
             logger.error("Audio extraction failed: \(error.localizedDescription, privacy: .public)")
@@ -390,8 +402,9 @@ final class MeetingPipeline: ObservableObject {
     }
 
     private func deleteSegmentsAndSpeakers(for meeting: Meeting) {
-        for seg in meeting.segments { modelContext.delete(seg) }
-        for spk in meeting.speakers { modelContext.delete(spk) }
+        // Snapshot before deleting — SwiftData mutates the relationship mid-iteration.
+        for seg in Array(meeting.segments) { modelContext.delete(seg) }
+        for spk in Array(meeting.speakers) { modelContext.delete(spk) }
     }
 
     private func appSupportURL() -> URL {

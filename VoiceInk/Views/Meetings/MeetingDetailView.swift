@@ -43,27 +43,27 @@ private func speakerColor(_ speaker: Speaker) -> Color {
 
 private struct MeetingStatusChip: View {
     let label: String
-    let status: String
+    let status: MeetingStageStatus
     let onRerun: (() -> Void)?
 
     private var chipColor: Color {
         switch status {
-        case "done":    return .green
-        case "running": return .blue
-        case "failed":  return .red
-        default:        return Color.secondary
+        case .done:    return .green
+        case .running: return .blue
+        case .failed:  return .red
+        case .pending: return Color.secondary
         }
     }
 
     var body: some View {
         HStack(spacing: 4) {
             HStack(spacing: 4) {
-                if status == "running" {
+                if status == .running {
                     ProgressView()
                         .controlSize(.mini)
                         .scaleEffect(0.7)
                 }
-                Text("\(label) \(status)")
+                Text("\(label) \(status.rawValue)")
                     .font(.system(size: 10, weight: .medium))
                     .foregroundStyle(chipColor)
             }
@@ -72,7 +72,7 @@ private struct MeetingStatusChip: View {
             .background(chipColor.opacity(0.12))
             .clipShape(Capsule())
 
-            if status == "failed", let rerun = onRerun {
+            if status == .failed, let rerun = onRerun {
                 Button("Re-run", action: rerun)
                     .font(.system(size: 10, weight: .medium))
                     .foregroundStyle(.blue)
@@ -274,10 +274,10 @@ private struct TranscriptPane: View {
 
     private var statusDescription: String {
         switch meeting.transcriptionStatus {
-        case "pending": return "Transcription has not started yet."
-        case "running": return "Transcription is in progress…"
-        case "failed":  return "Transcription failed. Try re-running."
-        default:        return "No segments found."
+        case .pending: return "Transcription has not started yet."
+        case .running: return "Transcription is in progress…"
+        case .failed:  return "Transcription failed. Try re-running."
+        case .done:    return "No segments found."
         }
     }
 }
@@ -352,24 +352,24 @@ private struct SummaryPane: View {
     private var summaryContent: some View {
         let status = meeting.summaryStatus
 
-        if status == "pending" || status == "running" {
+        if status == .pending || status == .running {
             VStack(spacing: 10) {
                 Spacer()
-                if status == "running" {
+                if status == .running {
                     ProgressView()
                         .controlSize(.regular)
                 }
-                Text(status == "running" ? "Generating summary…" : "Summary not ready")
+                Text(status == .running ? "Generating summary…" : "Summary not ready")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(.secondary)
-                Text(status == "running" ? "This may take a moment." : "Processing hasn't started yet.")
+                Text(status == .running ? "This may take a moment." : "Processing hasn't started yet.")
                     .font(.system(size: 12))
                     .foregroundStyle(.tertiary)
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding()
-        } else if status == "failed" {
+        } else if status == .failed {
             VStack(spacing: 12) {
                 Spacer()
                 Image(systemName: "exclamationmark.circle")
@@ -387,7 +387,7 @@ private struct SummaryPane: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding()
-        } else if status == "done" {
+        } else if status == .done {
             let hasTldr   = !(meeting.summaryTldr ?? "").isEmpty
             let hasPoints = !meeting.summaryKeyPoints.isEmpty
             let hasItems  = !meeting.summaryActionItems.isEmpty
@@ -629,21 +629,21 @@ struct MeetingDetailView: View {
                 MeetingStatusChip(
                     label: "Tx",
                     status: meeting.transcriptionStatus,
-                    onRerun: meeting.transcriptionStatus == "failed" ? {
+                    onRerun: meeting.transcriptionStatus == .failed ? {
                         Task { await pipeline.rerunTranscription(for: meeting) }
                     } : nil
                 )
                 MeetingStatusChip(
                     label: "Dx",
                     status: meeting.diarizationStatus,
-                    onRerun: meeting.diarizationStatus == "failed" ? {
+                    onRerun: meeting.diarizationStatus == .failed ? {
                         Task { await pipeline.rerunDiarization(for: meeting) }
                     } : nil
                 )
                 MeetingStatusChip(
                     label: "Sm",
                     status: meeting.summaryStatus,
-                    onRerun: meeting.summaryStatus == "failed" ? {
+                    onRerun: meeting.summaryStatus == .failed ? {
                         Task { await pipeline.rerunSummary(for: meeting) }
                     } : nil
                 )

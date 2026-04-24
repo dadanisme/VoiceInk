@@ -1,6 +1,13 @@
 import Foundation
 import SwiftData
 
+enum MeetingStageStatus: String, Codable, CaseIterable, Sendable {
+    case pending
+    case running
+    case done
+    case failed
+}
+
 @Model
 final class Meeting {
     var id: UUID
@@ -15,9 +22,9 @@ final class Meeting {
     var summaryKeyPoints: [String]
     var summaryActionItems: [String]
 
-    var transcriptionStatus: String
-    var diarizationStatus: String
-    var summaryStatus: String
+    var transcriptionStatus: MeetingStageStatus
+    var diarizationStatus: MeetingStageStatus
+    var summaryStatus: MeetingStageStatus
 
     @Relationship(deleteRule: .cascade, inverse: \Speaker.meeting)
     var speakers: [Speaker]
@@ -36,9 +43,9 @@ final class Meeting {
         summaryTldr: String? = nil,
         summaryKeyPoints: [String] = [],
         summaryActionItems: [String] = [],
-        transcriptionStatus: String = "pending",
-        diarizationStatus: String = "pending",
-        summaryStatus: String = "pending",
+        transcriptionStatus: MeetingStageStatus = .pending,
+        diarizationStatus: MeetingStageStatus = .pending,
+        summaryStatus: MeetingStageStatus = .pending,
         speakers: [Speaker] = [],
         segments: [Segment] = []
     ) {
