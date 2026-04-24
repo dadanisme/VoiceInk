@@ -139,12 +139,16 @@ struct VoiceInkApp: App {
         whisperModelManager.loadAvailableModels()
         transcriptionModelManager.refreshAllAvailableModels()
         transcriptionModelManager.loadCurrentTranscriptionModel()
+        transcriptionModelManager.loadCurrentMeetingsTranscriptionModel()
 
         _whisperModelManager = StateObject(wrappedValue: whisperModelManager)
         _fluidAudioModelManager = StateObject(wrappedValue: fluidAudioModelManager)
         _transcriptionModelManager = StateObject(wrappedValue: transcriptionModelManager)
         _recorderUIManager = StateObject(wrappedValue: recorderUIManager)
         _engine = StateObject(wrappedValue: engine)
+
+        // Inject the service registry into the model manager so meetingsEligibleModels can filter streaming-only variants.
+        transcriptionModelManager.configure(registry: engine.serviceRegistry)
 
         // Configure registries that need the composed AIService instance.
         MeetingSummarizerRegistry.shared.configure(aiService: aiService)

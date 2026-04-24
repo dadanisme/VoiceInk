@@ -212,9 +212,9 @@ final class MeetingPipeline: ObservableObject {
     // MARK: - Stage implementations
 
     private func runTranscription(audioURL: URL) async -> [TranscriptSegment]? {
-        let model = engine.transcriptionModelManager.currentTranscriptionModel
+        let model = engine.transcriptionModelManager.currentMeetingsTranscriptionModel
         guard let model = model else {
-            logger.error("No current transcription model selected")
+            logger.error("No Meetings transcription model selected. Configure one in Settings → AI Models → Meetings Transcription Model.")
             return nil
         }
         let effectiveModel = transcriptionRegistry.effectiveBatchModel(for: model)
